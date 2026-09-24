@@ -1,0 +1,866 @@
+from __future__ import annotations
+
+import pytest
+
+from poetry.core.constraints.version import EmptyConstraint
+from poetry.core.constraints.version import Version
+from poetry.core.constraints.version import VersionRange
+from poetry.core.constraints.version import parse_constraint
+
+
+@pytest.fixture()
+def v003() -> Version:
+    return Version.parse("0.0.3")
+
+
+@pytest.fixture()
+def v010() -> Version:
+    return Version.parse("0.1.0")
+
+
+@pytest.fixture()
+def v080() -> Version:
+    return Version.parse("0.8.0")
+
+
+@pytest.fixture()
+def v072() -> Version:
+    return Version.parse("0.7.2")
+
+
+@pytest.fixture()
+def v114() -> Version:
+    return Version.parse("1.1.4")
+
+
+@pytest.fixture()
+def v123() -> Version:
+    return Version.parse("1.2.3")
+
+
+@pytest.fixture()
+def v124() -> Version:
+    return Version.parse("1.2.4")
+
+
+@pytest.fixture()
+def v130() -> Version:
+    return Version.parse("1.3.0")
+
+
+@pytest.fixture()
+def v140() -> Version:
+    return Version.parse("1.4.0")
+
+
+@pytest.fixture()
+def v200() -> Version:
+    return Version.parse("2.0.0")
+
+
+@pytest.fixture()
+def v234() -> Version:
+    return Version.parse("2.3.4")
+
+
+@pytest.fixture()
+def v250() -> Version:
+    return Version.parse("2.5.0")
+
+
+@pytest.fixture()
+def v300() -> Version:
+    return Version.parse("3.0.0")
+
+
+@pytest.fixture()
+def v300b1() -> Version:
+    return Version.parse("3.0.0b1")
+
+
+@pytest.mark.parametrize(
+    ("constraint", "check_version", "allowed"),
+    [
+        # Inclusive ordering
+        ("<=3.0.0", "3.0.0", True),
+        ("<=3.0.0", "3.0.0+local.1", True),
+        (">=3.0.0", "3.0.0", True),
+        (">=3.0.0", "3.0.0+local.1", True),
+        (">=3.0.0", "3.0.0-1", True),
+        ("<=3.0.0+local.1", "3.0.0", True),
+        ("<=3.0.0+local.1", "3.0.0+local.1", True),
+        ("<=3.0.0+local.1", "3.0.0+local.2", False),
+        ("<=3.0.0+local.1", "3.0.0-1", False),
+        ("<=3.0.0+local.1", "3.0.0-1+local.1", False),
+        (">=3.0.0+local.1", "3.0.0", False),
+        (">=3.0.0+local.1", "3.0.0+local.1", True),
+        (">=3.0.0+local.1", "3.0.0+local.2", True),
+        (">=3.0.0+local.1", "3.0.0-1", True),
+        (">=3.0.0+local.1", "3.0.0-1+local.1", True),
+        ("<=3.0.0+local.2", "3.0.0+local.1", True),
+        ("<=3.0.0+local.2", "3.0.0+local.2", True),
+        (">=3.0.0+local.2", "3.0.0+local.1", False),
+        (">=3.0.0+local.2", "3.0.0+local.2", True),
+        (">=3.0.0+local.2", "3.0.0-1+local.1", True),
+        ("<=3.0.0-1", "3.0.0", True),
+        ("<=3.0.0-1", "3.0.0+local.1", True),
+        ("<=3.0.0-1", "3.0.0+local.2", True),
+        ("<=3.0.0-1", "3.0.0-1", True),
+        ("<=3.0.0-1", "3.0.0-1+local.1", True),
+        ("<=3.0.0-1", "3.0.0-2", False),
+        (">=3.0.0-1", "3.0.0", False),
+        (">=3.0.0-1", "3.0.0+local.1", False),
+        (">=3.0.0-1", "3.0.0+local.2", False),
+        (">=3.0.0-1", "3.0.0-1+local.1", True),
+        (">=3.0.0-1", "3.0.0-2", True),
+        ("<=3.0.0-1+local.1", "3.0.0+local.1", True),
+        ("<=3.0.0-1+local.1", "3.0.0+local.2", True),
+        ("<=3.0.0-1+local.1", "3.0.0-1", True),
+        (">=3.0.0-1+local.1", "3.0.0+local.1", False),
+        (">=3.0.0-1+local.1", "3.0.0+local.2", False),
+        (">=3.0.0-1+local.1", "3.0.0-1", False),
+        ("<=3.0.0-2", "3.0.0-1", True),
+        ("<=3.0.0-2", "3.0.0-2", True),
+        (">=3.0.0-2", "3.0.0-1", False),
+        (">=3.0.0-2", "3.0.0-2", True),
+        # Exclusive ordering
+        (">1.7", "1.7.0", False),
+        (">1.7", "1.7.1", True),
+        (">1.7", "1.6.1", False),
+        ("<1.7", "1.7.0", False),
+        ("<1.7", "1.7.1", False),
+        ("<1.7", "1.6.1", True),
+        ## >V MUST NOT allow a post-release of the given version unless V itself is a post release
+        (">1.7", "1.7.0.post1", False),
+        (">1.7.post2", "1.7.0", False),
+        (">1.7.post2", "1.7.1", True),
+        (">1.7.post2", "1.7.0.post2", False),
+        (">1.7.post2", "1.7.0.post3", True),
+        (">1.7", "1.7.0.post1+local.1", False),
+        ## >V MUST NOT match a local version of the specified version
+        (">1.7.0", "1.7.0+local.1", False),
+        ("<1.7.0", "1.7.0+local.1", False),  # spec does not clarify this
+        ("<1.7.0+local.2", "1.7.0+local.1", False),  # spec does not clarify this
+        ## <V MUST NOT allow a pre-release of the specified version unless the specified version is itself a pre-release
+        ("<1.7.0", "1.7.0.rc1", False),
+        ("<1.7.0.rc1", "1.7.0.rc1", False),
+        ("<1.7.0.rc2", "1.7.0.rc1", True),
+        # Misc. Cases
+        (">=3.0.0+cuda", "3.0.0+cuda", True),
+        (">=3.0.0+cpu", "3.0.0+cuda", True),  # cuda > cpu (lexicographically)
+    ],
+)
+def test_version_ranges(constraint: str, check_version: str, allowed: bool) -> None:
+    assert parse_constraint(constraint).allows(Version.parse(check_version)) == allowed
+
+
+def test_allows_all(
+    v123: Version, v124: Version, v140: Version, v250: Version, v300: Version
+) -> None:
+    assert VersionRange(v123, v250).allows_all(EmptyConstraint())
+
+    range = VersionRange(v123, v250, include_max=True)
+    assert not range.allows_all(v123)
+    assert range.allows_all(v124)
+    assert range.allows_all(v250)
+    assert not range.allows_all(v300)
+
+
+def test_allows_all_with_no_min(
+    v080: Version, v140: Version, v250: Version, v300: Version
+) -> None:
+    range = VersionRange(max=v250)
+    assert range.allows_all(VersionRange(v080, v140))
+    assert not range.allows_all(VersionRange(v080, v300))
+    assert range.allows_all(VersionRange(max=v140))
+    assert not range.allows_all(VersionRange(max=v300))
+    assert range.allows_all(range)
+    assert not range.allows_all(VersionRange())
+
+
+def test_allows_all_with_no_max(
+    v003: Version, v010: Version, v080: Version, v140: Version
+) -> None:
+    range = VersionRange(min=v010)
+    assert range.allows_all(VersionRange(v080, v140))
+    assert not range.allows_all(VersionRange(v003, v140))
+    assert range.allows_all(VersionRange(v080))
+    assert not range.allows_all(VersionRange(v003))
+    assert range.allows_all(range)
+    assert not range.allows_all(VersionRange())
+
+
+def test_allows_all_bordering_range_not_more_inclusive(
+    v010: Version, v250: Version
+) -> None:
+    # Allows bordering range that is not more inclusive
+    exclusive = VersionRange(v010, v250)
+    inclusive = VersionRange(v010, v250, True, True)
+    assert inclusive.allows_all(exclusive)
+    assert inclusive.allows_all(inclusive)
+    assert not exclusive.allows_all(inclusive)
+    assert exclusive.allows_all(exclusive)
+
+
+def test_allows_all_contained_unions(
+    v010: Version,
+    v114: Version,
+    v123: Version,
+    v124: Version,
+    v140: Version,
+    v200: Version,
+    v234: Version,
+) -> None:
+    # Allows unions that are completely contained
+    range = VersionRange(v114, v200)
+    assert range.allows_all(VersionRange(v123, v124).union(v140))
+    assert not range.allows_all(VersionRange(v010, v124).union(v140))
+    assert not range.allows_all(VersionRange(v123, v234).union(v140))
+
+
+def test_allows_any(
+    v003: Version,
+    v010: Version,
+    v072: Version,
+    v080: Version,
+    v114: Version,
+    v123: Version,
+    v124: Version,
+    v140: Version,
+    v200: Version,
+    v234: Version,
+    v250: Version,
+    v300: Version,
+) -> None:
+    # disallows an empty constraint
+    assert not VersionRange(v123, v250).allows_any(EmptyConstraint())
+
+    # allows allowed versions
+    range = VersionRange(v123, v250, include_max=True)
+    assert not range.allows_any(v123)
+    assert range.allows_any(v124)
+    assert range.allows_any(v250)
+    assert not range.allows_any(v300)
+
+    # with no min
+    range = VersionRange(max=v200)
+    assert range.allows_any(VersionRange(v140, v300))
+    assert not range.allows_any(VersionRange(v234, v300))
+    assert range.allows_any(VersionRange(v140))
+    assert not range.allows_any(VersionRange(v234))
+    assert range.allows_any(range)
+
+    # with no max
+    range = VersionRange(min=v072)
+    assert range.allows_any(VersionRange(v003, v140))
+    assert not range.allows_any(VersionRange(v003, v010))
+    assert range.allows_any(VersionRange(max=v080))
+    assert not range.allows_any(VersionRange(max=v003))
+    assert range.allows_any(range)
+
+    # with min and max
+    range = VersionRange(v072, v200)
+    assert range.allows_any(VersionRange(v003, v140))
+    assert range.allows_any(VersionRange(v140, v300))
+    assert not range.allows_any(VersionRange(v003, v010))
+    assert not range.allows_any(VersionRange(v234, v300))
+    assert not range.allows_any(VersionRange(max=v010))
+    assert not range.allows_any(VersionRange(v234))
+    assert range.allows_any(range)
+
+    # allows a bordering range when both are inclusive
+    assert not VersionRange(max=v250).allows_any(VersionRange(min=v250))
+    assert not VersionRange(max=v250, include_max=True).allows_any(
+        VersionRange(min=v250)
+    )
+    assert not VersionRange(max=v250).allows_any(
+        VersionRange(min=v250, include_min=True)
+    )
+    assert not VersionRange(min=v250).allows_any(VersionRange(max=v250))
+    assert VersionRange(max=v250, include_max=True).allows_any(
+        VersionRange(min=v250, include_min=True)
+    )
+
+    # allows unions that are partially contained'
+    range = VersionRange(v114, v200)
+    assert range.allows_any(VersionRange(v010, v080).union(v140))
+    assert range.allows_any(VersionRange(v123, v234).union(v300))
+    assert not range.allows_any(VersionRange(v234, v300).union(v010))
+
+    # pre-release min does not allow lesser than itself
+    range = VersionRange(Version.parse("1.9b1"), include_min=True)
+    assert not range.allows_any(
+        VersionRange(Version.parse("1.8.0"), Version.parse("1.9.0b0"), include_min=True)
+    )
+
+
+def test_intersect(
+    v114: Version,
+    v123: Version,
+    v124: Version,
+    v200: Version,
+    v250: Version,
+    v300: Version,
+) -> None:
+    # two overlapping ranges
+    assert VersionRange(v123, v250).intersect(VersionRange(v200, v300)) == VersionRange(
+        v200, v250
+    )
+
+    # a non-overlapping range allows no versions
+    a = VersionRange(v114, v124)
+    b = VersionRange(v200, v250)
+    assert a.intersect(b).is_empty()
+
+    # adjacent ranges allow no versions if exclusive
+    a = VersionRange(v114, v124)
+    b = VersionRange(v124, v200)
+    assert a.intersect(b).is_empty()
+
+    # adjacent ranges allow version if inclusive
+    a = VersionRange(v114, v124, include_max=True)
+    b = VersionRange(v124, v200, include_min=True)
+    assert a.intersect(b) == v124
+
+    # with an open range
+    open = VersionRange()
+    a = VersionRange(v114, v124)
+    assert open.intersect(open) == open
+    assert open.intersect(a) == a
+
+    # returns the version if the range allows it
+    assert VersionRange(v114, v124).intersect(v123) == v123
+    assert VersionRange(v123, v124).intersect(v114).is_empty()
+
+
+def test_union(
+    v003: Version,
+    v010: Version,
+    v072: Version,
+    v080: Version,
+    v114: Version,
+    v123: Version,
+    v124: Version,
+    v130: Version,
+    v140: Version,
+    v200: Version,
+    v234: Version,
+    v250: Version,
+    v300: Version,
+) -> None:
+    # with a version returns the range if it contains the version
+    range = VersionRange(v114, v124)
+    assert range.union(v123) == range
+
+    # with a version on the edge of the range, expands the range
+    range = VersionRange(v114, v124)
+    assert range.union(v124) == VersionRange(v114, v124, include_max=True)
+    assert range.union(v114) == VersionRange(v114, v124, include_min=True)
+
+    # with a version allows both the range and the version if the range
+    # doesn't contain the version
+    result = VersionRange(v003, v114).union(v124)
+    assert result.allows(v010)
+    assert not result.allows(v123)
+    assert result.allows(v124)
+
+    # returns a VersionUnion for a disjoint range
+    result = VersionRange(v003, v114).union(VersionRange(v130, v200))
+    assert result.allows(v080)
+    assert not result.allows(v123)
+    assert result.allows(v140)
+
+    # considers open ranges disjoint
+    result = VersionRange(v003, v114).union(VersionRange(v114, v200))
+    assert result.allows(v080)
+    assert not result.allows(v114)
+    assert result.allows(v140)
+    result = VersionRange(v114, v200).union(VersionRange(v003, v114))
+    assert result.allows(v080)
+    assert not result.allows(v114)
+    assert result.allows(v140)
+
+    # returns a merged range for an overlapping range
+    result = VersionRange(v003, v114).union(VersionRange(v080, v200))
+    assert result == VersionRange(v003, v200)
+
+    # considers closed ranges overlapping
+    result = VersionRange(v003, v114, include_max=True).union(VersionRange(v114, v200))
+    assert result == VersionRange(v003, v200)
+    result = VersionRange(v003, v114).union(VersionRange(v114, v200, include_min=True))
+    assert result == VersionRange(v003, v200)
+
+
+@pytest.mark.parametrize(
+    ("version", "spec", "expected"),
+    [
+        (v, s, True)
+        for v, s in [
+            # Test the equality operation
+            ("2.0", "==2"),
+            ("2.0", "==2.0"),
+            ("2.0", "==2.0.0"),
+            ("2.0+deadbeef", "==2"),
+            ("2.0+deadbeef", "==2.0"),
+            ("2.0+deadbeef", "==2.0.0"),
+            ("2.0+deadbeef", "==2+deadbeef"),
+            ("2.0+deadbeef", "==2.0+deadbeef"),
+            ("2.0+deadbeef", "==2.0.0+deadbeef"),
+            ("2.0+deadbeef.0", "==2.0.0+deadbeef.00"),
+            # Test the equality operation with a prefix
+            ("2.dev1", "==2.*"),
+            ("2a1", "==2.*"),
+            ("2a1.post1", "==2.*"),
+            ("2b1", "==2.*"),
+            ("2b1.dev1", "==2.*"),
+            ("2c1", "==2.*"),
+            ("2c1.post1.dev1", "==2.*"),
+            ("2rc1", "==2.*"),
+            ("2", "==2.*"),
+            ("2.0", "==2.*"),
+            ("2.0.0", "==2.*"),
+            ("2.0.post1", "==2.0.post1.*"),
+            ("2.0.post1.dev1", "==2.0.post1.*"),
+            ("2.1+local.version", "==2.1.*"),
+            # Test the in-equality operation
+            ("2.1", "!=2"),
+            ("2.1", "!=2.0"),
+            ("2.0.1", "!=2"),
+            ("2.0.1", "!=2.0"),
+            ("2.0.1", "!=2.0.0"),
+            ("2.0", "!=2.0+deadbeef"),
+            # != must not inherit exclusive ordered comparison rules from < and >
+            # (pre-releases, post-releases, dev-releases of the specified
+            # version are not equal to it)
+            ("2.0.dev1", "!=2"),
+            ("2.0a1", "!=2"),
+            ("2.0b1", "!=2"),
+            ("2.0rc1", "!=2"),
+            ("2.0.post1", "!=2"),
+            # Test the in-equality operation with a prefix
+            ("2.0", "!=3.*"),
+            ("2.1", "!=2.0.*"),
+            # Test the greater than equal operation
+            ("2.0", ">=2"),
+            ("2.0", ">=2.0"),
+            ("2.0", ">=2.0.0"),
+            ("2.0.post1", ">=2"),
+            ("2.0.post1.dev1", ">=2"),
+            ("3", ">=2"),
+            # Test the less than equal operation
+            ("2.0", "<=2"),
+            ("2.0", "<=2.0"),
+            ("2.0", "<=2.0.0"),
+            ("2.0.dev1", "<=2"),
+            ("2.0a1", "<=2"),
+            ("2.0a1.dev1", "<=2"),
+            ("2.0b1", "<=2"),
+            ("2.0b1.post1", "<=2"),
+            ("2.0c1", "<=2"),
+            ("2.0c1.post1.dev1", "<=2"),
+            ("2.0rc1", "<=2"),
+            ("1", "<=2"),
+            # Test the greater than operation
+            ("3", ">2"),
+            ("2.1", ">2.0"),
+            ("2.0.1", ">2"),
+            ("2.1.post1", ">2"),
+            ("2.1+local.version", ">2"),
+            # Test the less than operation
+            ("1", "<2"),
+            ("2.0", "<2.1"),
+            ("2.0.dev0", "<2.1"),
+            # Test the compatibility operation
+            ("1", "~=1.0"),
+            ("1.0.1", "~=1.0"),
+            ("1.1", "~=1.0"),
+            ("1.9999999", "~=1.0"),
+            ("1.1", "~=1.0a1"),
+            # Test that epochs are handled sanely
+            ("2!1.0", "~=2!1.0"),
+            ("2!1.0", "==2!1.*"),
+            ("2!1.0", "==2!1.0"),
+            ("2!1.0", "!=1.0"),
+            ("1.0", "!=2!1.0"),
+            ("1.0", "<=2!0.1"),
+            ("2!1.0", ">=2.0"),
+            ("1.0", "<2!0.1"),
+            ("2!1.0", ">2.0"),
+            # Test some normalization rules
+            ("2.0.5", ">2.0dev"),
+        ]
+    ]
+    + [
+        (v, s, False)
+        for v, s in [
+            # Test the equality operation
+            ("2.1", "==2"),
+            ("2.1", "==2.0"),
+            ("2.1", "==2.0.0"),
+            ("2.0", "==2.0+deadbeef"),
+            # Test the equality operation with a prefix
+            ("2.0", "==3.*"),
+            ("2.1", "==2.0.*"),
+            # Test the in-equality operation
+            ("2.0", "!=2"),
+            ("2.0", "!=2.0"),
+            ("2.0", "!=2.0.0"),
+            ("2.0+deadbeef", "!=2"),
+            ("2.0+deadbeef", "!=2.0"),
+            ("2.0+deadbeef", "!=2.0.0"),
+            ("2.0+deadbeef", "!=2+deadbeef"),
+            ("2.0+deadbeef", "!=2.0+deadbeef"),
+            ("2.0+deadbeef", "!=2.0.0+deadbeef"),
+            ("2.0+deadbeef.0", "!=2.0.0+deadbeef.00"),
+            # Test the in-equality operation with a prefix
+            ("2.dev1", "!=2.*"),
+            ("2a1", "!=2.*"),
+            ("2a1.post1", "!=2.*"),
+            ("2b1", "!=2.*"),
+            ("2b1.dev1", "!=2.*"),
+            ("2c1", "!=2.*"),
+            ("2c1.post1.dev1", "!=2.*"),
+            ("2rc1", "!=2.*"),
+            ("2", "!=2.*"),
+            ("2.0", "!=2.*"),
+            ("2.0.0", "!=2.*"),
+            ("2.0.post1", "!=2.0.post1.*"),
+            ("2.0.post1.dev1", "!=2.0.post1.*"),
+            # Test the greater than equal operation
+            ("2.0.dev1", ">=2"),
+            ("2.0a1", ">=2"),
+            ("2.0a1.dev1", ">=2"),
+            ("2.0b1", ">=2"),
+            ("2.0b1.post1", ">=2"),
+            ("2.0c1", ">=2"),
+            ("2.0c1.post1.dev1", ">=2"),
+            ("2.0rc1", ">=2"),
+            ("1", ">=2"),
+            # Test the less than equal operation
+            ("2.0.post1", "<=2"),
+            ("2.0.post1.dev1", "<=2"),
+            ("3", "<=2"),
+            # Test the greater than operation
+            ("1", ">2"),
+            ("2.0.dev1", ">2"),
+            ("2.0a1", ">2"),
+            ("2.0a1.post1", ">2"),
+            ("2.0b1", ">2"),
+            ("2.0b1.dev1", ">2"),
+            ("2.0c1", ">2"),
+            ("2.0c1.post1.dev1", ">2"),
+            ("2.0rc1", ">2"),
+            ("2.0", ">2"),
+            ("2.0.post1", ">2"),
+            ("2.0.post1.dev1", ">2"),
+            ("2.0+local.version", ">2"),
+            # Test the less than operation
+            ("2.0.dev1", "<2"),
+            ("2.0a1", "<2"),
+            ("2.0a1.post1", "<2"),
+            ("2.0b1", "<2"),
+            ("2.0b2.dev1", "<2"),
+            ("2.0c1", "<2"),
+            ("2.0c1.post1.dev1", "<2"),
+            ("2.0rc1", "<2"),
+            ("2.0", "<2"),
+            ("2.post1", "<2"),
+            ("2.post1.dev1", "<2"),
+            ("3", "<2"),
+            # Test the compatibility operation
+            ("2.0", "~=1.0"),
+            ("1.1.0", "~=1.0.0"),
+            ("1.1.post1", "~=1.0.0"),
+            # Test that epochs are handled sanely
+            ("1.0", "~=2!1.0"),
+            ("2!1.0", "~=1.0"),
+            ("2!1.0", "==1.0"),
+            ("1.0", "==2!1.0"),
+            ("2!1.0", "==1.*"),
+            ("1.0", "==2!1.*"),
+            ("2!1.0", "!=2!1.0"),
+        ]
+    ],
+)
+def test_specifiers(version: str, spec: str, expected: bool) -> None:
+    """
+    Test derived from
+    https://github.com/pypa/packaging/blob/8b86d85797b9f26d98ecfbe0271ce4dc9495d98c/tests/test_specifiers.py#L469
+    """
+    constraint = parse_constraint(spec)
+    v = Version.parse(version)
+
+    allowed = constraint.allows(v)
+    assert allowed is expected
+
+
+@pytest.mark.parametrize(
+    ("include_min", "include_max", "expected"),
+    [
+        (True, False, True),
+        (False, False, False),
+        (False, True, False),
+        (True, True, False),
+    ],
+)
+def test_is_single_wildcard_range_include_min_include_max(
+    include_min: bool, include_max: bool, expected: bool
+) -> None:
+    version_range = VersionRange(
+        Version.parse("1.2.dev0"), Version.parse("1.3"), include_min, include_max
+    )
+    assert version_range.is_single_wildcard_range is expected
+
+
+@pytest.mark.parametrize(
+    ("min", "max", "expected"),
+    [
+        # simple wildcard ranges
+        ("1.2.dev0", "1.3", True),
+        ("1.2.dev0", "1.3.dev0", True),
+        ("1.dev0", "2", True),
+        ("1.2.3.4.5.dev0", "1.2.3.4.6", True),
+        # simple non wilcard ranges
+        (None, "1.3", False),
+        ("1.2.dev0", None, False),
+        (None, None, False),
+        ("1.2a0", "1.3", False),
+        ("1.2.post0", "1.3", False),
+        ("1.2.dev0+local", "1.3", False),
+        ("1.2", "1.3", False),
+        ("1.2.dev1", "1.3", False),
+        ("1.2.dev0", "1.3.post0.dev0", False),
+        ("1.2.dev0", "1.3a0.dev0", False),
+        ("1.2.dev0", "1.3.dev0+local", False),
+        ("1.2.dev0", "1.3.dev1", False),
+        # more complicated ranges
+        ("1.dev0", "1.0.0.1", True),
+        ("1.2.dev0", "1.3.0.0", True),
+        ("1.2.dev0", "1.3.0.0.dev0", True),
+        ("1.2.0.dev0", "1.3", True),
+        ("1.2.1.dev0", "1.3.0.0", False),
+        ("1.2.dev0", "1.4", False),
+        ("1.2.dev0", "2.3", False),
+        # post releases
+        ("2.0.post1.dev0", "2.0.post2", True),
+        ("2.0.post1.dev0", "2.0.post2.dev0", True),
+        ("2.0.post1.dev1", "2.0.post2", False),
+        ("2.0.post1.dev0", "2.0.post2.dev1", False),
+        ("2.0.post1.dev0", "2.0.post3", False),
+        ("2.0.post1.dev0", "2.0.post1", False),
+    ],
+)
+def test_is_single_wildcard_range(
+    min: str | None, max: str | None, expected: bool
+) -> None:
+    version_range = VersionRange(
+        Version.parse(min) if min else None,
+        Version.parse(max) if max else None,
+        include_min=True,
+    )
+    assert version_range.is_single_wildcard_range is expected
+
+
+@pytest.mark.parametrize(
+    ("version", "expected"),
+    [
+        # simple ranges
+        ("*", "*"),
+        (">1.2", ">1.2"),
+        (">=1.2", ">=1.2"),
+        ("<1.3", "<1.3"),
+        ("<=1.3", "<=1.3"),
+        (">=1.2,<1.3", ">=1.2,<1.3"),
+        # wildcard ranges
+        ("1.*", "==1.*"),
+        ("1.0.*", "==1.0.*"),
+        ("1.2.*", "==1.2.*"),
+        ("1.2.3.4.5.*", "==1.2.3.4.5.*"),
+        ("2.0.post1.*", "==2.0.post1.*"),
+        ("2.1.post0.*", "==2.1.post0.*"),
+        (">=1.dev0,<2", "==1.*"),
+    ],
+)
+def test_str(version: str, expected: str) -> None:
+    assert str(parse_constraint(version)) == expected
+
+
+@pytest.mark.parametrize(
+    ("include_min", "include_max", "expected_empty"),
+    [
+        (True, True, False),  # [V, V] = {V}
+        (True, False, True),  # [V, V) = ∅
+        (False, True, True),  # (V, V] = ∅
+        (False, False, True),  # (V, V) = ∅
+    ],
+)
+def test_is_empty_for_coincident_bounds(
+    include_min: bool, include_max: bool, expected_empty: bool
+) -> None:
+    """A range with coincident min/max is only non-empty when both bounds
+    are inclusive (the single-point range ``[V, V]``)."""
+    v = Version.parse("1.2.3")
+    assert (
+        VersionRange(v, v, include_min=include_min, include_max=include_max).is_empty()
+        is expected_empty
+    )
+
+
+def test_is_empty_for_inverted_bounds() -> None:
+    """A range whose min is greater than its max has no members."""
+    lo = Version.parse("1.0")
+    hi = Version.parse("2.0")
+    assert VersionRange(hi, lo, include_min=True, include_max=True).is_empty()
+
+
+def test_intersect_returns_empty_constraint_not_empty_range() -> None:
+    """Operations whose result is empty due to canonicalization must
+    normalize to ``EmptyConstraint``.  ``VersionRange.__init__`` cannot
+    return a different type, so a tail-side check is required: e.g.
+    ``[V, V] ∩ [V, V)`` canonicalizes the rhs max to ``V.dev0`` and the
+    intersection is empty."""
+    v = Version.parse("1.2.3")
+    point = VersionRange(v, v, include_min=True, include_max=True)
+    half_open = VersionRange(v, v, include_min=True, include_max=False)
+    result = point.intersect(half_open)
+    assert isinstance(result, EmptyConstraint)
+
+
+def test_difference_returns_empty_constraint_not_empty_range() -> None:
+    """Subtracting a range that fully covers ``self`` yields
+    ``EmptyConstraint`` even when canonicalization is involved."""
+    v = Version.parse("2.0")
+    rng = VersionRange(Version.parse("1.0"), v, include_min=True, include_max=False)
+    result = rng.difference(rng)
+    assert isinstance(result, EmptyConstraint)
+
+
+def test_intersect_with_local_version_other_does_not_broaden_exclusive_min() -> None:
+    """Regression test: ``>0.21.0+cpu,<0.22.0 ∩ ==0.21.0+cpu`` must be
+    empty. Previously returned ``>0.21.0+cpu,<0.21.1`` because the
+    ``>=X+local ∩ public_X`` broadening fired for local ``other`` too.
+    """
+    excluded_point = Version.parse("0.21.0+cpu")
+    upper = Version.parse("0.22.0")
+
+    exclusive = VersionRange(
+        excluded_point, upper, include_min=False, include_max=False
+    )
+    assert isinstance(exclusive.intersect(excluded_point), EmptyConstraint)
+    assert isinstance(excluded_point.intersect(exclusive), EmptyConstraint)
+
+    # Inclusive-lower case still returns the literally-equal point.
+    inclusive = VersionRange(excluded_point, upper, include_min=True, include_max=False)
+    assert inclusive.intersect(excluded_point) == excluded_point
+    assert excluded_point.intersect(inclusive) == excluded_point
+
+    # Original motivating case (``>=X+local ∩ public X``) still broadens.
+    public = Version.parse("0.21.0")
+    range_ge_local = VersionRange(
+        excluded_point, Version.parse("1.0"), include_min=True, include_max=False
+    )
+    broadened_range = VersionRange(
+        excluded_point,
+        public.next_patch(),
+        include_min=True,
+        include_max=False,
+    )
+    assert range_ge_local.intersect(public) == broadened_range
+    assert public.intersect(range_ge_local) == broadened_range
+
+
+@pytest.mark.parametrize(
+    ("min_local", "other_local"),
+    [
+        # other lex-orders after min: in range → return other.
+        ("a", "b"),
+        ("cpu", "cu124"),
+        ("cpu", "cpu1"),
+        # other lex-orders before min: out of range → empty.
+        ("b", "a"),
+        ("cu124", "cpu"),
+        # literal equal: handled by self.allows(other) on line 204 for
+        # inclusive; falls through to the special case for exclusive.
+        ("cpu", "cpu"),
+    ],
+)
+@pytest.mark.parametrize("include_min", [True, False])
+def test_intersect_with_two_local_versions(
+    min_local: str, other_local: str, include_min: bool
+) -> None:
+    """Cross-local intersection: ``self.min`` and ``other`` both carry
+    local segments. ``==X+other`` matches only the literal point
+    ``X+other``, so the result is just the point if it falls in the
+    range and empty otherwise — never a broadened range."""
+    self_min = Version.parse(f"1.2.3+{min_local}")
+    other = Version.parse(f"1.2.3+{other_local}")
+    upper = Version.parse("2.0")
+
+    rng = VersionRange(self_min, upper, include_min=include_min)
+    expected = other if rng.allows(other) else EmptyConstraint()
+    assert rng.intersect(other) == expected
+    assert other.intersect(rng) == expected
+
+
+def test_intersect_punctured_range_with_excluded_point_is_empty() -> None:
+    """A punctured ``VersionUnion`` (``>=A,!=V,<B``) intersected with
+    the excluded point ``V`` must be empty.
+    """
+    punctured = parse_constraint(">=0.21.0,!=0.21.0+cpu,<0.22.0")
+    excluded_point = parse_constraint("==0.21.0+cpu")
+    assert punctured.intersect(excluded_point).is_empty()
+    assert excluded_point.intersect(punctured).is_empty()
+
+
+def test_parsed_strict_max_excludes_dev_releases_of_stable() -> None:
+    """PEP 440: ``<V`` for stable V MUST NOT allow pre-/dev-releases of V.
+    The parser canonicalizes to ``<V.dev0`` so ``allows`` reports correctly."""
+    rng = parse_constraint("<2")
+    assert not rng.allows(Version.parse("2"))
+    assert not rng.allows(Version.parse("2.dev0"))
+    assert not rng.allows(Version.parse("2a1"))
+    assert rng.allows(Version.parse("1.999"))
+
+
+def test_interior_split_preserves_raw_max_and_allows_dev() -> None:
+    """The raw (non-canonical) ``<V`` shape only arises from interior splits
+    of an arithmetic operation; in that context ``V.dev0`` correctly belongs
+    to the lower fragment because nothing has excluded it."""
+    rng = VersionRange(Version.parse("1"), Version.parse("3"))
+    result = rng.difference(Version.parse("2"))
+    assert result.allows(Version.parse("2.dev0"))
+    assert not result.allows(Version.parse("2"))
+
+
+def test_ne_allows_prereleases_per_pep440_strict_equality() -> None:
+    """PEP 440: ``!=V`` is strict equality and must allow prereleases of V
+    (since e.g. ``2.0.dev1 != 2``).  Distinct from ``<V || >V`` typed by the
+    user, where ``<V`` and ``>V`` are PEP 440 ordered comparisons that DO
+    exclude pre-/post-releases."""
+    rng = parse_constraint("!=2")
+    assert not rng.allows(Version.parse("2"))
+    assert rng.allows(Version.parse("2.dev0"))
+    assert rng.allows(Version.parse("2.post1"))
+
+
+def test_punctured_range_round_trips_through_string() -> None:
+    """Algebraic results that puncture single points must serialize so they
+    re-parse to an equivalent constraint -- otherwise lockfile round-trips
+    silently change the allowed set (see PR #645).  The renderer collapses
+    ``<V || >V`` (raw) to ``!=V`` to achieve this."""
+    rng = parse_constraint(">1").intersect(parse_constraint("!=2"))
+    assert str(rng) == ">1,!=2"
+    assert parse_constraint(str(rng)) == rng
+
+
+def test_punctured_range_handles_mixed_seams() -> None:
+    """A union with both puncture seams and gap seams partitions into
+    contiguous punctured ranges joined by ``||``."""
+    rng = (
+        parse_constraint(">=1,<10")
+        .difference(Version.parse("2"))
+        .difference(Version.parse("3"))
+    )
+    # (1 <= x < 10) - {2,3}: three contiguous pieces, both seams are punctures
+    assert str(rng) == ">=1,!=2,!=3,<10"
+    assert parse_constraint(str(rng)) == rng
