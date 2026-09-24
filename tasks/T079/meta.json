@@ -1,0 +1,37 @@
+{
+  "task_id": "T079",
+  "title": "Delgan/loguru 缺陷修复：Fix parsing of 12-hour rotation times without seconds (#1474",
+  "created_at": "2026-09-24T17:35:49",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 Delgan/loguru @ 97a50cf75f",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t079/base",
+    "sha": "71a5dc559dcd272411604ac13ba2d24d4ce8f541",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/71a5dc559dcd272411604ac13ba2d24d4ce8f541"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t079/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t079/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/Delgan/loguru base=https://github.com/Delgan/loguru/commit/97a50cf75faff7c141ffc93095ab905b4ef051b6 fix=7b30cd046a593f34696f6c574813b9727ae5c35e"
+}
