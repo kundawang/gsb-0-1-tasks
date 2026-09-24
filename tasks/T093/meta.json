@@ -1,0 +1,37 @@
+{
+  "task_id": "T093",
+  "title": "arrow-py/arrow 缺陷修复：fix: adding persian names of months and month-abbreviations ",
+  "created_at": "2026-09-24T17:38:47",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 arrow-py/arrow @ c2dfa12bde",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t093/base",
+    "sha": "7e7ac2f830bc5272ca0ccb49f1b9c3cc2dca3c49",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/7e7ac2f830bc5272ca0ccb49f1b9c3cc2dca3c49"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t093/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t093/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/arrow-py/arrow base=https://github.com/arrow-py/arrow/commit/c2dfa12bde6bf8b097ad5bb369a0c71ae58a8386 fix=016fb9eb9b3835bcd4efc69dc048a0436bd7bfec"
+}
