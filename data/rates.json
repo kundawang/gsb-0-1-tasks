@@ -1,0 +1,10 @@
+{
+  "day_first_hour": 600,
+  "day_per_hour": 400,
+  "night_per_hour": 200,
+  "free_minutes": 15,
+  "day_cap": 6000,
+  "day_start": "08:00",
+  "night_start": "20:00",
+  "currency": "CNY-cent"
+}
