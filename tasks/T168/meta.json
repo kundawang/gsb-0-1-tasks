@@ -1,0 +1,37 @@
+{
+  "task_id": "T168",
+  "title": "microsoft/playwright-python 缺陷修复：fix(sync): wait for initialize before leaving __enter__ (#31",
+  "created_at": "2026-09-24T17:47:23",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 microsoft/playwright-python @ 4af2fc65fb",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t168/base",
+    "sha": "eb580353156ca5fcc3ef5e0525cc4898c3849258",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/eb580353156ca5fcc3ef5e0525cc4898c3849258"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t168/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t168/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/microsoft/playwright-python base=https://github.com/microsoft/playwright-python/commit/4af2fc65fb05eb04904b69b6206e9d07ca2b4cbc fix=154f67ced51ada646b0fcf8574897d96c9712aa3"
+}
