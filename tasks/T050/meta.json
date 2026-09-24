@@ -1,0 +1,37 @@
+{
+  "task_id": "T050",
+  "title": "气象数据清洗（单位换算 + 3σ 剔除 + 插值）",
+  "created_at": "2026-09-24T16:26:45",
+  "task_type": "0-1代码生成",
+  "difficulty": "中等",
+  "language_framework": "JavaScript, HTML, CSS（原生 ES module，无构建）",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "无外部依赖",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t050/base",
+    "sha": "d3414f1b39f35173d5b23ca66d1319c2f782814f",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/d3414f1b39f35173d5b23ca66d1319c2f782814f"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t050/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t050/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": ""
+}
