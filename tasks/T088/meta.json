@@ -1,0 +1,37 @@
+{
+  "task_id": "T088",
+  "title": "pallets/click 缺陷修复：Fix race condition on `KeyboardInterrupt` in `Command.main()",
+  "created_at": "2026-09-24T17:38:27",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pallets/click @ b47c0529e9",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t088/base",
+    "sha": "2ea15e52c53d3b8c21101d18f4f7458573d17407",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/2ea15e52c53d3b8c21101d18f4f7458573d17407"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t088/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t088/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pallets/click base=https://github.com/pallets/click/commit/b47c0529e99129d4785fecc2cb39a8ec8b4aa5f8 fix=00f257bb8e714064bea16425007543bbc0800445"
+}
