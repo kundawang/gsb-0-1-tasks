@@ -1,0 +1,13 @@
+{
+  "width": 10,
+  "height": 20,
+  "score": {
+    "single": 100,
+    "double": 300,
+    "triple": 500,
+    "tetris": 800,
+    "tspin_single": 800,
+    "tspin_double": 1200
+  },
+  "level_up_lines": 10
+}

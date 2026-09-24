@@ -1,0 +1,35 @@
+[
+  {
+    "id": "seq-1",
+    "seed": 20260924,
+    "n": 14,
+    "moves": []
+  },
+  {
+    "id": "seq-2",
+    "seed": 20260924,
+    "n": 14,
+    "moves": [
+      {
+        "piece": "I",
+        "rotation": 0,
+        "x": 0
+      },
+      {
+        "piece": "I",
+        "rotation": 0,
+        "x": 4
+      },
+      {
+        "piece": "I",
+        "rotation": 0,
+        "x": 6
+      },
+      {
+        "piece": "O",
+        "rotation": 0,
+        "x": 2
+      }
+    ]
+  }
+]
