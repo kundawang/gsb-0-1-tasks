@@ -1,0 +1,42 @@
+{
+  "devices": [
+    {
+      "id": "fan",
+      "power_w": 750,
+      "delay_s": 0,
+      "min_on_min": 5,
+      "min_off_min": 3
+    },
+    {
+      "id": "shade",
+      "power_w": 200,
+      "delay_s": 30,
+      "min_on_min": 10,
+      "min_off_min": 5
+    },
+    {
+      "id": "humidifier",
+      "power_w": 300,
+      "delay_s": 0,
+      "min_on_min": 3,
+      "min_off_min": 5
+    },
+    {
+      "id": "heater",
+      "power_w": 2000,
+      "delay_s": 60,
+      "min_on_min": 10,
+      "min_off_min": 10
+    }
+  ],
+  "rules": {
+    "temp_fan_on": 30,
+    "temp_fan_off": 27,
+    "temp_shade_on": 33,
+    "temp_shade_off": 30,
+    "humid_on": 45,
+    "humid_off": 52,
+    "heat_on": 12,
+    "heat_off": 15
+  }
+}
