@@ -1,0 +1,37 @@
+{
+  "task_id": "T109",
+  "title": "psf/requests 缺陷修复：Fix `_encode_files` detection for `__getattr__`-based file w",
+  "created_at": "2026-09-24T17:41:06",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 psf/requests @ 661970d171",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t109/base",
+    "sha": "0d6c2f598772096a43bc8451b60b67490a08cda1",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/0d6c2f598772096a43bc8451b60b67490a08cda1"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t109/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t109/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/psf/requests base=https://github.com/psf/requests/commit/661970d171d9c3e12e4c789c4768db647d8c4da0 fix=6f205ff422bccd5e4c4fc0b64c5f3e7df5181db6"
+}
