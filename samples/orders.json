@@ -1,0 +1,10 @@
+[
+  { "order_id": "O1001", "lines": [ { "sku": "SKU-001", "qty": 2 }, { "sku": "SKU-006", "qty": 1 } ] },
+  { "order_id": "O1002", "lines": [ { "sku": "SKU-003", "qty": 1 }, { "sku": "SKU-004", "qty": 2 }, { "sku": "SKU-008", "qty": 1 } ] },
+  { "order_id": "O1003", "lines": [ { "sku": "SKU-010", "qty": 3 } ] },
+  { "order_id": "O1004", "lines": [ { "sku": "SKU-002", "qty": 1 }, { "sku": "SKU-005", "qty": 1 }, { "sku": "SKU-009", "qty": 2 } ] },
+  { "order_id": "O1005", "lines": [ { "sku": "SKU-007", "qty": 2 }, { "sku": "SKU-011", "qty": 1 }, { "sku": "SKU-012", "qty": 2 } ] },
+  { "order_id": "O1006", "lines": [ { "sku": "SKU-001", "qty": 1 }, { "sku": "SKU-012", "qty": 1 } ] },
+  { "order_id": "O1007", "lines": [ { "sku": "SKU-999", "qty": 1 }, { "sku": "SKU-004", "qty": 1 } ] },
+  { "order_id": "O1008", "lines": [ { "sku": "SKU-006", "qty": 2 }, { "sku": "SKU-007", "qty": 1 }, { "sku": "SKU-010", "qty": 1 }, { "sku": "SKU-002", "qty": 1 } ] }
+]
