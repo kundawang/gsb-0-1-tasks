@@ -1,0 +1,37 @@
+{
+  "task_id": "T115",
+  "title": "simonw/sqlite-utils 缺陷修复：Fix _decode_default_value to unescape doubled single quotes ",
+  "created_at": "2026-09-24T17:41:39",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 simonw/sqlite-utils @ a7b734946f",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t115/base",
+    "sha": "042ef6c8c52d8a6640b294e3577ceccbf5546d22",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/042ef6c8c52d8a6640b294e3577ceccbf5546d22"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t115/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t115/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/simonw/sqlite-utils base=https://github.com/simonw/sqlite-utils/commit/a7b734946f95341f52d866321c183e3532ac0aad fix=6a456830ca33eb5edaa634a9b0febe5d71bea2be"
+}
