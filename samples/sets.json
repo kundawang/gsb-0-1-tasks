@@ -1,0 +1,36 @@
+{
+  "pool_factor": {
+    "25_to_50": 1.02,
+    "50_to_25": 0.98
+  },
+  "sets": [
+    {
+      "id": "S1",
+      "distance_m": 100,
+      "seconds": 82.35,
+      "pool_m": 25,
+      "strokes": 42,
+      "stroke": "自由泳"
+    },
+    {
+      "id": "S2",
+      "distance_m": 200,
+      "seconds": 178.9,
+      "pool_m": 25,
+      "strokes": 88,
+      "stroke": "自由泳"
+    },
+    {
+      "id": "S3",
+      "distance_m": 400,
+      "seconds": 372.4,
+      "pool_m": 50,
+      "strokes": 168,
+      "stroke": "蛙泳"
+    }
+  ],
+  "thresholds": {
+    "aerobic_per_100m": 105.0,
+    "anaerobic_per_100m": 92.0
+  }
+}
