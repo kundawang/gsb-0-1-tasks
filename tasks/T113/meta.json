@@ -1,0 +1,37 @@
+{
+  "task_id": "T113",
+  "title": "simonw/sqlite-utils 缺陷修复：Fix resource leaks caused by buffered readers",
+  "created_at": "2026-09-24T17:41:31",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 simonw/sqlite-utils @ 85b1be10c8",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t113/base",
+    "sha": "4e99b689098a7c539ee2bb72e97f90834c4d592f",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/4e99b689098a7c539ee2bb72e97f90834c4d592f"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t113/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t113/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/simonw/sqlite-utils base=https://github.com/simonw/sqlite-utils/commit/85b1be10c81d9dd3567e36faf8dd411e4a8789bd fix=6bc1d33d583c54bd69fbdd2071117e2d38c354a1"
+}
