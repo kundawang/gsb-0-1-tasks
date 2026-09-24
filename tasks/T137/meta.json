@@ -1,0 +1,37 @@
+{
+  "task_id": "T137",
+  "title": "tox-dev/tox 缺陷修复：🐛 fix(config): apply overrides to sections the file lacks (#",
+  "created_at": "2026-09-24T17:43:58",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tox-dev/tox @ fff62f65ed",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t137/base",
+    "sha": "05678c8401d0a9ea11013a62be4966f75514f845",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/05678c8401d0a9ea11013a62be4966f75514f845"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t137/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t137/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tox-dev/tox base=https://github.com/tox-dev/tox/commit/fff62f65ed4bab06a31a73a32c361afc054a7b9b fix=eacd4e9374a65f9e2c0c199b8ecf035fe8769fc3"
+}
