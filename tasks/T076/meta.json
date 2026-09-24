@@ -1,0 +1,37 @@
+{
+  "task_id": "T076",
+  "title": "Delgan/loguru 缺陷修复：Fix incorrect formatting of negative timestamps (#1508)",
+  "created_at": "2026-09-24T17:35:32",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 Delgan/loguru @ 8052eff4c1",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t076/base",
+    "sha": "82081b766f89cbb611f1dc4e8148f1796d7666df",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/82081b766f89cbb611f1dc4e8148f1796d7666df"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t076/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t076/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/Delgan/loguru base=https://github.com/Delgan/loguru/commit/8052eff4c1ba86793a6f38ee890a898e902bc1ea fix=5672e7d0ad610d70c5e549939b049303edefda19"
+}
