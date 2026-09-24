@@ -1,0 +1,9 @@
+[
+  {"id": "S1", "name": "张", "shifts": ["morning", "middle", "night"], "max_per_week": 5, "prefer": ["morning"]},
+  {"id": "S2", "name": "李", "shifts": ["morning", "middle"], "max_per_week": 5, "prefer": ["middle"]},
+  {"id": "S3", "name": "王", "shifts": ["middle", "night"], "max_per_week": 4, "prefer": ["night"]},
+  {"id": "S4", "name": "赵", "shifts": ["morning", "middle", "night"], "max_per_week": 5, "prefer": []},
+  {"id": "S5", "name": "孙", "shifts": ["morning"], "max_per_week": 3, "prefer": ["morning"]},
+  {"id": "S6", "name": "周", "shifts": ["middle", "night"], "max_per_week": 4, "prefer": ["middle"]}
+]
+

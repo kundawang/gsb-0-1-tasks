@@ -1,0 +1,23 @@
+{
+  "week_start": "2026-06-01",
+  "shifts": [
+    {"code": "morning", "label": "早班", "start": "08:00", "end": "14:00"},
+    {"code": "middle", "label": "中班", "start": "14:00", "end": "20:00"},
+    {"code": "night", "label": "晚班", "start": "20:00", "end": "次日08:00"}
+  ],
+  "demand": {
+    "mon": {"morning": 3, "middle": 2, "night": 2},
+    "tue": {"morning": 3, "middle": 2, "night": 2},
+    "wed": {"morning": 2, "middle": 2, "night": 2},
+    "thu": {"morning": 3, "middle": 2, "night": 2},
+    "fri": {"morning": 3, "middle": 3, "night": 2},
+    "sat": {"morning": 4, "middle": 3, "night": 2},
+    "sun": {"morning": 3, "middle": 2, "night": 1}
+  },
+  "rules": {
+    "max_consecutive_days": 5,
+    "no_morning_after_night": true,
+    "max_one_shift_per_day": true
+  }
+}
+
