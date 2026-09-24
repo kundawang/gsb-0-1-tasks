@@ -1,0 +1,37 @@
+{
+  "task_id": "T048",
+  "title": "充电桩调度与峰谷计费（共享功率 + 分时电价）",
+  "created_at": "2026-09-24T16:26:42",
+  "task_type": "0-1代码生成",
+  "difficulty": "中等",
+  "language_framework": "JavaScript, HTML, CSS（原生 ES module，无构建）",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "无外部依赖",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t048/base",
+    "sha": "c76dae0fc0c00a03c5dca811451e01182cf010c4",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/c76dae0fc0c00a03c5dca811451e01182cf010c4"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t048/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t048/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": ""
+}
