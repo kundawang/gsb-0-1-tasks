@@ -1,0 +1,40 @@
+{
+  "soil_factors": {
+    "sand": 0.9,
+    "loam": 1.2,
+    "clay": 1.6
+  },
+  "lower": {
+    "sand": 18,
+    "loam": 25,
+    "clay": 30
+  },
+  "span": 8,
+  "max_minutes_per_run": 90,
+  "zones": [
+    {
+      "id": "Z1",
+      "area_mu": 1.2,
+      "crop": "番茄",
+      "soil": "loam",
+      "valve_flow_lpm": 40,
+      "valve_ok": true
+    },
+    {
+      "id": "Z2",
+      "area_mu": 0.8,
+      "crop": "生菜",
+      "soil": "sand",
+      "valve_flow_lpm": 25,
+      "valve_ok": true
+    },
+    {
+      "id": "Z3",
+      "area_mu": 2.0,
+      "crop": "苹果",
+      "soil": "clay",
+      "valve_flow_lpm": 60,
+      "valve_ok": false
+    }
+  ]
+}
