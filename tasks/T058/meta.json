@@ -1,0 +1,37 @@
+{
+  "task_id": "T058",
+  "title": "混凝土配比成本优化（约束满足性 + 最低成本）",
+  "created_at": "2026-09-24T16:26:58",
+  "task_type": "0-1代码生成",
+  "difficulty": "中等",
+  "language_framework": "JavaScript, HTML, CSS（原生 ES module，无构建）",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "无外部依赖",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t058/base",
+    "sha": "1e8deb84135066e38c91bcd397743618231ec376",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/1e8deb84135066e38c91bcd397743618231ec376"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t058/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t058/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": ""
+}
