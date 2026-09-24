@@ -1,0 +1,37 @@
+{
+  "task_id": "T126",
+  "title": "pallets/flask 缺陷修复：Fix `.partition(\":\")` usage on potential IPv6 addresses (#60",
+  "created_at": "2026-09-24T17:42:31",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pallets/flask @ 514fc6b3e8",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t126/base",
+    "sha": "1e64783adb09d6dce2247958fc3f45f1a1aa29f5",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/1e64783adb09d6dce2247958fc3f45f1a1aa29f5"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t126/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t126/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pallets/flask base=https://github.com/pallets/flask/commit/514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b fix=05e9c6bd630ecf4ec0ec884b1fc7901663737bc7"
+}
