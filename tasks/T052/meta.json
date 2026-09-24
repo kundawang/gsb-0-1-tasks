@@ -1,0 +1,37 @@
+{
+  "task_id": "T052",
+  "title": "农田灌溉计划（湿度阈值 + 降雨抵扣）",
+  "created_at": "2026-09-24T16:26:48",
+  "task_type": "0-1代码生成",
+  "difficulty": "中等",
+  "language_framework": "JavaScript, HTML, CSS（原生 ES module，无构建）",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "无外部依赖",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t052/base",
+    "sha": "73133278fadc908f293b16d424d6aa96311f32ea",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/73133278fadc908f293b16d424d6aa96311f32ea"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t052/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t052/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": ""
+}
