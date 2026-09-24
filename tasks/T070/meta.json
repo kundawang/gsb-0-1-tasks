@@ -1,0 +1,37 @@
+{
+  "task_id": "T070",
+  "title": "贷款试算与提前还款（等额本息/本金 + 违约金）",
+  "created_at": "2026-09-24T16:27:18",
+  "task_type": "0-1代码生成",
+  "difficulty": "中等",
+  "language_framework": "JavaScript, HTML, CSS（原生 ES module，无构建）",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "无外部依赖",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t070/base",
+    "sha": "c8e3a6bd0a5abbcc78c58eee4c4e1d1ba67a4934",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/c8e3a6bd0a5abbcc78c58eee4c4e1d1ba67a4934"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t070/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t070/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": ""
+}
