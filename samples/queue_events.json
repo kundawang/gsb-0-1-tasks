@@ -1,0 +1,47 @@
+{
+  "windows": 3,
+  "events": [
+    {
+      "t": 0,
+      "type": "take",
+      "ticket": "001",
+      "kind": "normal",
+      "est_minutes": 10
+    },
+    {
+      "t": 1,
+      "type": "take",
+      "ticket": "002",
+      "kind": "express",
+      "est_minutes": 5
+    },
+    {
+      "t": 2,
+      "type": "call",
+      "ticket": "002",
+      "window": 1
+    },
+    {
+      "t": 3,
+      "type": "arrive",
+      "ticket": "002"
+    },
+    {
+      "t": 12,
+      "type": "done",
+      "ticket": "002",
+      "window": 1
+    },
+    {
+      "t": 13,
+      "type": "call",
+      "ticket": "001",
+      "window": 2
+    },
+    {
+      "t": 40,
+      "type": "call_timeout",
+      "ticket": "001"
+    }
+  ]
+}
