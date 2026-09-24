@@ -1,0 +1,27 @@
+{
+  "items": [
+    {
+      "key": "score",
+      "label": "得分"
+    },
+    {
+      "key": "penalty",
+      "label": "罚分",
+      "negative": true
+    }
+  ],
+  "players": [
+    {
+      "name": "阿强",
+      "color": "#e74c3c"
+    },
+    {
+      "name": "小李",
+      "color": "#3498db"
+    },
+    {
+      "name": "老王",
+      "color": "#27ae60"
+    }
+  ]
+}
