@@ -1,0 +1,37 @@
+{
+  "task_id": "T152",
+  "title": "tox-dev/filelock 缺陷修复：🐛 fix(lease): reject a duration no marker can carry (#723)",
+  "created_at": "2026-09-24T17:45:24",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tox-dev/filelock @ 1d9e9e7e43",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t152/base",
+    "sha": "ea473971f5fc1a01ed6d5e30d5f4e9aae31b428b",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/ea473971f5fc1a01ed6d5e30d5f4e9aae31b428b"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t152/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t152/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tox-dev/filelock base=https://github.com/tox-dev/filelock/commit/1d9e9e7e43a1089c57d7c6f20d6a2268235a4745 fix=82f66d7b0aaa83755f8d71d0b0da88408b58ec4a"
+}
