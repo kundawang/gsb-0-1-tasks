@@ -1,0 +1,37 @@
+{
+  "task_id": "T091",
+  "title": "pallets/jinja 缺陷修复：Fix bug involving calling set on a template parameter within",
+  "created_at": "2026-09-24T17:38:40",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pallets/jinja @ fbc3a696c7",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t091/base",
+    "sha": "949022085fc03fd1be48f09fa5db2b52a5dbddce",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/949022085fc03fd1be48f09fa5db2b52a5dbddce"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t091/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t091/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pallets/jinja base=https://github.com/pallets/jinja/commit/fbc3a696c729d177340cc089531de7e2e5b6f065 fix=c8fdce1e0333f1122b244b03a48535fdd7b03d91"
+}
