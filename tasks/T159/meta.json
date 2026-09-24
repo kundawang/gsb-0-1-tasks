@@ -1,0 +1,37 @@
+{
+  "task_id": "T159",
+  "title": "python-poetry/poetry-core 缺陷修复：Fix union of public and local versions (#966)",
+  "created_at": "2026-09-24T17:46:02",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 python-poetry/poetry-core @ ba72f4396c",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t159/base",
+    "sha": "cf4ffd2c5dfc2588b8a801af5c2d34bf93772e48",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/cf4ffd2c5dfc2588b8a801af5c2d34bf93772e48"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t159/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t159/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/python-poetry/poetry-core base=https://github.com/python-poetry/poetry-core/commit/ba72f4396c68fd78257c7f978d7d2636d663ca45 fix=3e3263105301b1e117d4e01b4a2c77113cdb8fc4"
+}
