@@ -1,0 +1,37 @@
+{
+  "task_id": "T087",
+  "title": "pallets/click 缺陷修复：Fix short help abbreviation (#3865)",
+  "created_at": "2026-09-24T17:38:22",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pallets/click @ d036881798",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t087/base",
+    "sha": "1d7807e46e56fa7a347f812e220974bfeb8484ec",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/1d7807e46e56fa7a347f812e220974bfeb8484ec"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t087/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t087/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pallets/click base=https://github.com/pallets/click/commit/d036881798e34289a49b18a5c550c7cf687e5a7a fix=70689853e39c30e36eb0d83d586cc914a74db9d3"
+}
