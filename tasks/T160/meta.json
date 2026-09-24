@@ -1,0 +1,37 @@
+{
+  "task_id": "T160",
+  "title": "python-poetry/poetry-core 缺陷修复：fix: str() of a range whose upper bound is all zeros raised ",
+  "created_at": "2026-09-24T17:46:10",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 python-poetry/poetry-core @ df40e891ff",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t160/base",
+    "sha": "3aa59f2240797c52f033acef64d61b2065f5fb9f",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/3aa59f2240797c52f033acef64d61b2065f5fb9f"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t160/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t160/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/python-poetry/poetry-core base=https://github.com/python-poetry/poetry-core/commit/df40e891ff409a138df91549a16475e851c3fd3d fix=ba72f4396c68fd78257c7f978d7d2636d663ca45"
+}
