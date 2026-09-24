@@ -1,0 +1,37 @@
+{
+  "task_id": "T037",
+  "title": "迷宫生成/校验/求解（seed 确定性 + A*）",
+  "created_at": "2026-09-24T15:27:26",
+  "task_type": "0-1代码生成",
+  "difficulty": "中等",
+  "language_framework": "JavaScript, HTML, CSS（原生 ES module，无构建）",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "无外部依赖",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t037/base",
+    "sha": "dee0fc953b611ad465a8d551d5a06b2aec647eee",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/dee0fc953b611ad465a8d551d5a06b2aec647eee"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t037/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t037/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": ""
+}
