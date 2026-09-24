@@ -1,0 +1,37 @@
+{
+  "task_id": "T073",
+  "title": "pytest-dev/pluggy 缺陷修复：Fix `subset_hook_caller` getting confused by `specname`",
+  "created_at": "2026-09-24T17:35:16",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pytest-dev/pluggy @ 2e916c21f3",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t073/base",
+    "sha": "306c45a5139470b7118ad06332bcb4d2fc1735f6",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/306c45a5139470b7118ad06332bcb4d2fc1735f6"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t073/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t073/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pytest-dev/pluggy base=https://github.com/pytest-dev/pluggy/commit/2e916c21f3e5b60865d3f1f2d6f0932d61c77707 fix=3d5417a4eff449e17e5bb3e1545b63cbf0e0c768"
+}
