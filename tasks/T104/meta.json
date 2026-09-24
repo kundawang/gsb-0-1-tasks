@@ -1,0 +1,37 @@
+{
+  "task_id": "T104",
+  "title": "pypa/packaging 缺陷修复：fix: reject invalid interpreter tags (#1351)",
+  "created_at": "2026-09-24T17:40:32",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pypa/packaging @ 826426fc88",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t104/base",
+    "sha": "3769d46aa39e539194257898fec5f1dcae61939c",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/3769d46aa39e539194257898fec5f1dcae61939c"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t104/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t104/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pypa/packaging base=https://github.com/pypa/packaging/commit/826426fc88773515fab149a5f6bde85761e57fbb fix=26fa1d42ccd98010d5fcf701dd10069e761b034c"
+}
