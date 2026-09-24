@@ -1,0 +1,37 @@
+{
+  "task_id": "T114",
+  "title": "simonw/sqlite-utils 缺陷修复：Fix for sqlite-utils 4.2 crashing bug (#843)",
+  "created_at": "2026-09-24T17:41:35",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 simonw/sqlite-utils @ 1d98613f28",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t114/base",
+    "sha": "903ff679e9aa1550a49c688cd499172c92bc1fe7",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/903ff679e9aa1550a49c688cd499172c92bc1fe7"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t114/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t114/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/simonw/sqlite-utils base=https://github.com/simonw/sqlite-utils/commit/1d98613f28b8edab5fd0deb5ba65d54fb286e7ba fix=f6d73112c8368cd6eb2ac596966e8148747c7b4e"
+}
