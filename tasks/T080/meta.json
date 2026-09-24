@@ -1,0 +1,37 @@
+{
+  "task_id": "T080",
+  "title": "Delgan/loguru 缺陷修复：Fix possible internal error if \"f_lineno\" is None (#1442)",
+  "created_at": "2026-09-24T17:35:55",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 Delgan/loguru @ 3caaa73ea6",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t080/base",
+    "sha": "e5a3b4cc41a84acdf4bd655de891b88577e558ac",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/e5a3b4cc41a84acdf4bd655de891b88577e558ac"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t080/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t080/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/Delgan/loguru base=https://github.com/Delgan/loguru/commit/3caaa73ea6542751dcb5a17708033d6b15f9a72d fix=2feb8549807587da88f4d151492ab443d8c5c320"
+}
