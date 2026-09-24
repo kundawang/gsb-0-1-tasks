@@ -1,0 +1,37 @@
+{
+  "task_id": "T035",
+  "title": "工单查询语言（解析 + 求值 + 出错位置）",
+  "created_at": "2026-09-24T15:27:23",
+  "task_type": "0-1代码生成",
+  "difficulty": "中等",
+  "language_framework": "JavaScript, HTML, CSS（原生 ES module，无构建）",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "无外部依赖",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t035/base",
+    "sha": "193b02b415bb56e9b57c52232cd57553a1e3b7bc",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/193b02b415bb56e9b57c52232cd57553a1e3b7bc"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t035/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t035/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": ""
+}
