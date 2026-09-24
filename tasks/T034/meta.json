@@ -1,0 +1,37 @@
+{
+  "task_id": "T034",
+  "title": "迷你电子表格（公式引擎 + 依赖重算 + 循环引用）",
+  "created_at": "2026-09-24T15:27:21",
+  "task_type": "0-1代码生成",
+  "difficulty": "中等",
+  "language_framework": "JavaScript, HTML, CSS（原生 ES module，无构建）",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "无外部依赖",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t034/base",
+    "sha": "fd191cee33b4a29dc062d0d551ee25e8a90bbee0",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/fd191cee33b4a29dc062d0d551ee25e8a90bbee0"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t034/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t034/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": ""
+}
