@@ -1,0 +1,37 @@
+{
+  "task_id": "T138",
+  "title": "tox-dev/tox 缺陷修复：fix(config): read the user config file as UTF-8 (#4086)",
+  "created_at": "2026-09-24T17:44:03",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tox-dev/tox @ 12bf3a68f1",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t138/base",
+    "sha": "dc5b40b2d28e1b35161916780e409fdde1dddb6d",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/dc5b40b2d28e1b35161916780e409fdde1dddb6d"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t138/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t138/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tox-dev/tox base=https://github.com/tox-dev/tox/commit/12bf3a68f1200945e6da2d7576ee1cfd695038ed fix=8e1967e98f6480b0d99847c6a058463b7cce5416"
+}
