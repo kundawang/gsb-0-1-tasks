@@ -1,0 +1,8 @@
+[
+  {"order_id": "O-1001", "lines": [{"sku": "MILK-1L", "qty": 4}, {"sku": "EGG-12", "qty": 2}]},
+  {"order_id": "O-1002", "lines": [{"sku": "RICE-5K", "qty": 6}, {"sku": "OIL-2L", "qty": 3}]},
+  {"order_id": "O-1003", "lines": [{"sku": "APPLE-1K", "qty": 8}, {"sku": "BANANA-1K", "qty": 4}, {"sku": "TOMATO-500", "qty": 6}]},
+  {"order_id": "O-1004", "lines": [{"sku": "CUCUMBER-1K", "qty": 5}, {"sku": "BREAD-1", "qty": 9}]},
+  {"order_id": "O-1005", "lines": [{"sku": "WATER-6X", "qty": 10}, {"sku": "MILK-1L", "qty": 2}, {"sku": "EGG-12", "qty": 2}]}
+]
+

@@ -1,0 +1,18 @@
+{
+  "width": 12,
+  "height": 8,
+  "entry": {"x": 0, "y": 0},
+  "locations": [
+    {"id": "L01", "x": 2, "y": 1, "sku": "MILK-1L"},
+    {"id": "L02", "x": 3, "y": 1, "sku": "EGG-12"},
+    {"id": "L03", "x": 6, "y": 1, "sku": "RICE-5K"},
+    {"id": "L04", "x": 9, "y": 2, "sku": "OIL-2L"},
+    {"id": "L05", "x": 2, "y": 4, "sku": "APPLE-1K"},
+    {"id": "L06", "x": 4, "y": 5, "sku": "BANANA-1K"},
+    {"id": "L07", "x": 7, "y": 4, "sku": "TOMATO-500"},
+    {"id": "L08", "x": 10, "y": 6, "sku": "CUCUMBER-1K"},
+    {"id": "L09", "x": 5, "y": 7, "sku": "BREAD-1"},
+    {"id": "L10", "x": 1, "y": 6, "sku": "WATER-6X"}
+  ]
+}
+
