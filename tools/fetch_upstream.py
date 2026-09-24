@@ -59,12 +59,12 @@ def download_workspace(item, dest):
 
 def build_one(item, task_id, root, dry=False):
     print(f"[{item['index']:03d}] {item['repo']} @ {item['base_sha'][:10]} -> {task_id}")
-    prompt_file = os.path.join(REPO, "tasks", f"_{task_id}_prompt.tmp")
+    # 题面临时文件放系统临时目录，避免把台账仓库搞成 dirty 状态
+    prompt_file = os.path.join(tempfile.gettempdir(), f"gsb_prompt_{task_id}.txt")
     if dry:
         return
     with tempfile.TemporaryDirectory(prefix=f"up_{task_id}_") as tmp:
         ws = download_workspace(item, tmp)
-        os.makedirs(os.path.join(REPO, "tasks"), exist_ok=True)
         with open(prompt_file, "w", encoding="utf-8", newline="\n") as fh:
             fh.write(item["prompt"] + "\n")
         args = [
@@ -82,7 +82,13 @@ def build_one(item, task_id, root, dry=False):
             "--root", os.path.join(root, task_id),
             "--no-push",
         ]
-        subprocess.run(args, cwd=REPO, check=True)
+        proc = subprocess.run(args, cwd=REPO, capture_output=True, text=True,
+                              encoding="utf-8", errors="replace")
+        if proc.returncode != 0:
+            print("    task.py new 失败，输出如下：")
+            print("    " + (proc.stdout or "").strip().replace("\n", "\n    "))
+            print("    " + (proc.stderr or "").strip().replace("\n", "\n    "))
+            raise SystemExit(1)
         os.remove(prompt_file)
 
 
