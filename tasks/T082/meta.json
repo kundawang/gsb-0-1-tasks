@@ -1,0 +1,37 @@
+{
+  "task_id": "T082",
+  "title": "lark-parser/lark 缺陷修复：Fix Transformer_NonRecursive corrupting the tree on a non-la",
+  "created_at": "2026-09-24T17:36:05",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 lark-parser/lark @ e1817787d2",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t082/base",
+    "sha": "83144b5a8bd5b1e0c722d9ba2b797ba80599876e",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/83144b5a8bd5b1e0c722d9ba2b797ba80599876e"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t082/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t082/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/lark-parser/lark base=https://github.com/lark-parser/lark/commit/e1817787d2ed2a10477734b1f784cbc7eee8dfa4 fix=7d106dfd83065c9ea8e529ea365dcd2f393ff56d"
+}
