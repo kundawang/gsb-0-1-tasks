@@ -1,0 +1,38 @@
+[
+  {
+    "id": "RC-A",
+    "cement": 320,
+    "sand": 720,
+    "stone": 1080,
+    "water": 175,
+    "admixture": 4.2,
+    "fly_ash": 0,
+    "strength_mpa": 38,
+    "slump_mm": 180,
+    "unit_price_cent": 41500
+  },
+  {
+    "id": "RC-B",
+    "cement": 280,
+    "sand": 740,
+    "stone": 1090,
+    "water": 170,
+    "admixture": 4.8,
+    "fly_ash": 60,
+    "strength_mpa": 35,
+    "slump_mm": 185,
+    "unit_price_cent": 38800
+  },
+  {
+    "id": "RC-C",
+    "cement": 360,
+    "sand": 700,
+    "stone": 1060,
+    "water": 172,
+    "admixture": 5.0,
+    "fly_ash": 0,
+    "strength_mpa": 45,
+    "slump_mm": 175,
+    "unit_price_cent": 46200
+  }
+]

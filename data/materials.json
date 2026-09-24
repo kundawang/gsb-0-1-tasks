@@ -1,0 +1,26 @@
+{
+  "adjust_per_10mm": 300,
+  "fly_ash_max_replace_pct": 20,
+  "materials": {
+    "cement": {
+      "price_per_kg": 0.48,
+      "strength_factor": 1.0
+    },
+    "sand": {
+      "price_per_kg": 0.11
+    },
+    "stone": {
+      "price_per_kg": 0.09
+    },
+    "water": {
+      "price_per_kg": 0.01
+    },
+    "admixture": {
+      "price_per_kg": 2.6
+    },
+    "fly_ash": {
+      "price_per_kg": 0.22,
+      "replace_factor": 0.6
+    }
+  }
+}

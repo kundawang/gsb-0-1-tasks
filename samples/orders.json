@@ -1,0 +1,20 @@
+[
+  {
+    "order_id": "O-1",
+    "design_strength_mpa": 35,
+    "slump_mm": [
+      160,
+      200
+    ],
+    "volume_m3": 60
+  },
+  {
+    "order_id": "O-2",
+    "design_strength_mpa": 42,
+    "slump_mm": [
+      180,
+      200
+    ],
+    "volume_m3": 30
+  }
+]
