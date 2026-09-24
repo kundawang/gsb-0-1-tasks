@@ -1,0 +1,37 @@
+{
+  "task_id": "T075",
+  "title": "Delgan/loguru 缺陷修复：Fix \"@logger.catch()\" ignoring errors raised by \"athrow()\" (",
+  "created_at": "2026-09-24T17:35:26",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 Delgan/loguru @ d3c590573e",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t075/base",
+    "sha": "9f5434cd94b4439d9f40fac506bf6f2d932b605f",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/9f5434cd94b4439d9f40fac506bf6f2d932b605f"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t075/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t075/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/Delgan/loguru base=https://github.com/Delgan/loguru/commit/d3c590573edb41884feb206823a47c3a9e14aa68 fix=48acf77ac2b3296acc67069511b99cc3ca3d0c41"
+}
