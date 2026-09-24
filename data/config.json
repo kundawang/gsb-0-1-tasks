@@ -1,0 +1,6 @@
+{
+  "today": "2026-06-01",
+  "warn_days": 90,
+  "severe_days": 30,
+  "urgent_days": 7
+}

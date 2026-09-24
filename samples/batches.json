@@ -1,0 +1,42 @@
+[
+  {
+    "drug_code": "DR-01",
+    "batch_no": "B2601",
+    "expiry": "2026-06-20",
+    "qty": 30,
+    "slot": "A1",
+    "frozen": false
+  },
+  {
+    "drug_code": "DR-01",
+    "batch_no": "B2602",
+    "expiry": "2026-09-15",
+    "qty": 50,
+    "slot": "A2",
+    "frozen": false
+  },
+  {
+    "drug_code": "DR-01",
+    "batch_no": "B2512",
+    "expiry": "2026-05-28",
+    "qty": 20,
+    "slot": "A3",
+    "frozen": false
+  },
+  {
+    "drug_code": "DR-02",
+    "batch_no": "C2603",
+    "expiry": "2026-07-01",
+    "qty": 40,
+    "slot": "B1",
+    "frozen": true
+  },
+  {
+    "drug_code": "DR-02",
+    "batch_no": "C2604",
+    "expiry": "2026-12-31",
+    "qty": 25,
+    "slot": "B2",
+    "frozen": false
+  }
+]
