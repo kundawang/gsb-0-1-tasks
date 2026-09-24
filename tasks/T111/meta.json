@@ -1,0 +1,37 @@
+{
+  "task_id": "T111",
+  "title": "urllib3/urllib3 缺陷修复：Fix loading unencrypted client keys with a password in pyOpe",
+  "created_at": "2026-09-24T17:41:21",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 urllib3/urllib3 @ 43c68c8b43",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t111/base",
+    "sha": "f500f1eb48933f01d8ae4c7a4ecaf91901afaa1d",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/f500f1eb48933f01d8ae4c7a4ecaf91901afaa1d"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t111/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t111/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/urllib3/urllib3 base=https://github.com/urllib3/urllib3/commit/43c68c8b43a9dcb44ed2cf4ec91384ca0d46b37d fix=0716e31534345dc1599ea95d903c79f276239bd8"
+}
