@@ -1,0 +1,9 @@
+{
+  "sample_minutes": 5,
+  "safe_low": 2,
+  "safe_high": 8,
+  "hard_low": 0,
+  "hard_high": 20,
+  "max_single_excursion_min": 15,
+  "max_total_excursion_min": 60
+}
