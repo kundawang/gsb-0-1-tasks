@@ -1,0 +1,6 @@
+status                                    # 缺值和比较符，期望报错位置指向该字段名之后
+unknownfield:1                            # 不认识的字段名
+priority:high and                         # 右侧缺项
+(status:open and tag:bug                  # 括号没闭合
+limit:-5                                  # limit 不接受负数
+

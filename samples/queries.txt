@@ -1,0 +1,11 @@
+status:open and tag:bug
+(priority:high or priority:urgent) and not assignee:none
+title:登录 and created:>=2026-01-01
+estimate:>3 order:-estimate limit:5
+tag:auth or tag:pay
+not tag:ui and status:open
+(status:open or status:in_progress) and assignee:li
+title:"报表" and estimate:>=5 order:created
+tag:bug order:-priority limit:0
+assignee:none
+

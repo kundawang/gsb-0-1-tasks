@@ -1,0 +1,11 @@
+[
+  {"id": "T-101", "title": "登录 超时", "status": "open", "priority": "high", "tag": ["bug", "auth"], "assignee": "li", "created": "2026-01-03", "estimate": 3},
+  {"id": "T-102", "title": "报表导出很慢", "status": "open", "priority": "urgent", "tag": ["perf"], "assignee": "wang", "created": "2026-01-05", "estimate": 8},
+  {"id": "T-103", "title": "登录页样式错位", "status": "closed", "priority": "low", "tag": ["ui"], "assignee": "li", "created": "2025-12-28", "estimate": 1},
+  {"id": "T-104", "title": "支付回调丢失", "status": "open", "priority": "urgent", "tag": ["bug", "pay"], "assignee": "none", "created": "2026-02-01", "estimate": 13},
+  {"id": "T-105", "title": "补充登录日志", "status": "in_progress", "priority": "medium", "tag": ["auth"], "assignee": "zhao", "created": "2026-01-20", "estimate": 2},
+  {"id": "T-106", "title": "导出的报表缺少合计行", "status": "open", "priority": "high", "tag": ["bug", "report"], "assignee": "wang", "created": "2026-02-11", "estimate": 5},
+  {"id": "T-107", "title": "登录失败提示不明确", "status": "in_progress", "priority": "medium", "tag": ["ux", "auth"], "assignee": "zhao", "created": "2026-02-15", "estimate": 3},
+  {"id": "T-108", "title": "夜间批处理偶发失败", "status": "open", "priority": "high", "tag": ["infra"], "assignee": "sun", "created": "2026-03-02", "estimate": 8}
+]
+
