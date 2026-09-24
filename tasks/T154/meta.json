@@ -1,0 +1,37 @@
+{
+  "task_id": "T154",
+  "title": "theskumar/python-dotenv 缺陷修复：fix: strip UTF-8 BOM from .env files (#640)",
+  "created_at": "2026-09-24T17:45:31",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 theskumar/python-dotenv @ 68ea2d10dd",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t154/base",
+    "sha": "73933a8b08353a9d82495a4171de22c61d5a6f56",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/73933a8b08353a9d82495a4171de22c61d5a6f56"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t154/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t154/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/theskumar/python-dotenv base=https://github.com/theskumar/python-dotenv/commit/68ea2d10dd8e97e6dea67c32742085f27729e3fe fix=bca6644d9aedbe287b792b756b3ae3d650cd0d3a"
+}
