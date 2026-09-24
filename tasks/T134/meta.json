@@ -1,0 +1,37 @@
+{
+  "task_id": "T134",
+  "title": "PyCQA/isort 缺陷修复：fix: treat EOF on stdin as 'quit' in --interactive prompt",
+  "created_at": "2026-09-24T17:43:41",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 PyCQA/isort @ 9501e61b74",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t134/base",
+    "sha": "0651dfd675d04d28c5ce59dffe92ce60879da4a0",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/0651dfd675d04d28c5ce59dffe92ce60879da4a0"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t134/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t134/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/PyCQA/isort base=https://github.com/PyCQA/isort/commit/9501e61b74f09eac0b4cf6e63d6068abbbfdbf90 fix=536a72749a078a5875c9bd0753bbfa4ceb0c12f2"
+}
