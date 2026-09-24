@@ -1,0 +1,29 @@
+{
+  "open": "06:00",
+  "close": "22:00",
+  "slot_minutes": 30,
+  "max_slots_per_booking": 4,
+  "max_bookings_per_day": 2,
+  "machines": [
+    {
+      "id": "M1",
+      "name": "跑步机1",
+      "capacity": 2
+    },
+    {
+      "id": "M2",
+      "name": "跑步机2",
+      "capacity": 2
+    },
+    {
+      "id": "M3",
+      "name": "划船机",
+      "capacity": 1
+    },
+    {
+      "id": "M4",
+      "name": "力量架",
+      "capacity": 1
+    }
+  ]
+}
