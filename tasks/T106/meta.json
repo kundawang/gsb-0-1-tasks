@@ -1,0 +1,37 @@
+{
+  "task_id": "T106",
+  "title": "pypa/packaging 缺陷修复：fix(parser): require true end of input (#1345)",
+  "created_at": "2026-09-24T17:40:42",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pypa/packaging @ 0bfc3cea4f",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t106/base",
+    "sha": "f304e8f7d5b5446ad0103c6cd8709fc22a0cef83",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/f304e8f7d5b5446ad0103c6cd8709fc22a0cef83"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t106/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t106/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pypa/packaging base=https://github.com/pypa/packaging/commit/0bfc3cea4f9fe1b1b0c80ce06f02bd2433500c81 fix=189a76d54d64899adbca907c2a3efa5b6befdb28"
+}
