@@ -1,0 +1,32 @@
+[
+  {
+    "cart_id": "C-1",
+    "region": "normal",
+    "coupons": [],
+    "items": [
+      {"sku": "MILK-1L", "unit_price": 1200, "qty": 2, "oversize": false, "cold": true},
+      {"sku": "EGG-12", "unit_price": 1500, "qty": 1, "oversize": false, "cold": false}
+    ]
+  },
+  {
+    "cart_id": "C-2",
+    "region": "remote",
+    "coupons": ["PCT10", "MINUS20"],
+    "items": [
+      {"sku": "RICE-5K", "unit_price": 4500, "qty": 2, "oversize": true, "cold": false},
+      {"sku": "OIL-2L", "unit_price": 3200, "qty": 1, "oversize": false, "cold": false},
+      {"sku": "MILK-1L", "unit_price": 1200, "qty": 1, "oversize": false, "cold": true}
+    ]
+  },
+  {
+    "cart_id": "C-3",
+    "region": "normal",
+    "coupons": ["PCT15MILK", "MINUS5"],
+    "items": [
+      {"sku": "MILK-1L", "unit_price": 1233, "qty": 3, "oversize": false, "cold": true},
+      {"sku": "EGG-12", "unit_price": 1477, "qty": 2, "oversize": false, "cold": false},
+      {"sku": "BREAD-1", "unit_price": 899, "qty": 1, "oversize": false, "cold": false}
+    ]
+  }
+]
+

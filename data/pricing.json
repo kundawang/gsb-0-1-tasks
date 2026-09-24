@@ -1,0 +1,17 @@
+{
+  "currency": "CNY-cent",
+  "shipping": {
+    "base": 800,
+    "free_threshold": 9900,
+    "oversize_per_item": 1500,
+    "remote_surcharge": 1200,
+    "cold_surcharge": 600
+  },
+  "coupons": [
+    {"code": "PCT10", "type": "percent", "percent": 10, "scope": "cart"},
+    {"code": "PCT15MILK", "type": "percent", "percent": 15, "scope": "skus", "skus": ["MILK-1L", "EGG-12"]},
+    {"code": "MINUS20", "type": "amount", "threshold": 10000, "amount": 2000},
+    {"code": "MINUS5", "type": "amount", "threshold": 3000, "amount": 500}
+  ]
+}
+
