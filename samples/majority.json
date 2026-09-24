@@ -1,0 +1,26 @@
+{
+  "name": "3-input majority vote",
+  "devices": [
+    {"id": "a", "type": "IN", "init": 1},
+    {"id": "b", "type": "IN", "init": 0},
+    {"id": "c", "type": "IN", "init": 1},
+    {"id": "ab", "type": "AND"},
+    {"id": "bc", "type": "AND"},
+    {"id": "ac", "type": "AND"},
+    {"id": "ab_bc", "type": "OR"},
+    {"id": "out", "type": "OUT"}
+  ],
+  "links": [
+    {"from": "a", "to": "ab", "port": 0},
+    {"from": "b", "to": "ab", "port": 1},
+    {"from": "b", "to": "bc", "port": 0},
+    {"from": "c", "to": "bc", "port": 1},
+    {"from": "a", "to": "ac", "port": 0},
+    {"from": "c", "to": "ac", "port": 1},
+    {"from": "ab", "to": "ab_bc", "port": 0},
+    {"from": "bc", "to": "ab_bc", "port": 1},
+    {"from": "ab_bc", "to": "out", "port": 0},
+    {"from": "ac", "to": "out", "port": 1}
+  ]
+}
+

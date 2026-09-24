@@ -1,0 +1,24 @@
+{
+  "name": "2-bit counter (clk driven)",
+  "devices": [
+    {"id": "clk", "type": "IN", "init": 0},
+    {"id": "q0", "type": "DFF"},
+    {"id": "not_q0", "type": "NOT"},
+    {"id": "q1", "type": "DFF"},
+    {"id": "xor_q01", "type": "XOR"},
+    {"id": "o0", "type": "OUT"},
+    {"id": "o1", "type": "OUT"}
+  ],
+  "links": [
+    {"from": "not_q0", "to": "q0", "port": 0},
+    {"from": "clk", "to": "q0", "port": 1},
+    {"from": "q0", "to": "not_q0", "port": 0},
+    {"from": "xor_q01", "to": "q1", "port": 0},
+    {"from": "clk", "to": "q1", "port": 1},
+    {"from": "q0", "to": "xor_q01", "port": 0},
+    {"from": "q1", "to": "xor_q01", "port": 1},
+    {"from": "q0", "to": "o0", "port": 0},
+    {"from": "q1", "to": "o1", "port": 0}
+  ]
+}
+
