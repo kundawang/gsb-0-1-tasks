@@ -1,0 +1,37 @@
+{
+  "task_id": "T166",
+  "title": "celery/celery 缺陷修复：Fix celery multi crashing on a single node name containing a",
+  "created_at": "2026-09-24T17:47:06",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 celery/celery @ c1fd34ebc7",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t166/base",
+    "sha": "c00067d0b3e60c7dbfadcc2447663e4c09eb947c",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/c00067d0b3e60c7dbfadcc2447663e4c09eb947c"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t166/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t166/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/celery/celery base=https://github.com/celery/celery/commit/c1fd34ebc7e717b33abbfdf0fc1b6794fdbf1a0d fix=535308894040fe861a4151edceff5afdd3284d25"
+}
