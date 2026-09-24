@@ -1,0 +1,23 @@
+{
+  "skip_weekend": true,
+  "rooms": [
+    {
+      "id": "R1",
+      "name": "小会议室",
+      "capacity": 6,
+      "buffer_minutes": 10
+    },
+    {
+      "id": "R2",
+      "name": "中会议室",
+      "capacity": 12,
+      "buffer_minutes": 10
+    },
+    {
+      "id": "R3",
+      "name": "报告厅",
+      "capacity": 60,
+      "buffer_minutes": 30
+    }
+  ]
+}
