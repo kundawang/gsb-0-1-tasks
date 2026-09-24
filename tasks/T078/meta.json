@@ -1,0 +1,37 @@
+{
+  "task_id": "T078",
+  "title": "Delgan/loguru 缺陷修复：Fix first rotation of \"<weekday> at <time>\" ignoring the wee",
+  "created_at": "2026-09-24T17:35:43",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 Delgan/loguru @ 2a17be730e",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t078/base",
+    "sha": "1b84caf36960c5fd2f5b19acb5e6a435f9705e82",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/1b84caf36960c5fd2f5b19acb5e6a435f9705e82"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t078/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t078/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/Delgan/loguru base=https://github.com/Delgan/loguru/commit/2a17be730e111cf874d0bf967c4c5da15b7e4670 fix=c71a057f123dcad06a369943b513c272615c53aa"
+}
