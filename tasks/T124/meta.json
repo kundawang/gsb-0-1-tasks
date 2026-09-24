@@ -1,0 +1,37 @@
+{
+  "task_id": "T124",
+  "title": "jd/tenacity 缺陷修复：fix: reraise underlying exception when TryAgain wraps a caus",
+  "created_at": "2026-09-24T17:42:22",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 jd/tenacity @ 8779333a47",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t124/base",
+    "sha": "288ef456e4eb747380a51b25bd57990f2a7a74eb",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/288ef456e4eb747380a51b25bd57990f2a7a74eb"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t124/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t124/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/jd/tenacity base=https://github.com/jd/tenacity/commit/8779333a4759e56427b5d7ba23cacd3fe6054d61 fix=e5179bdab9939a748dc3e88ff21309e12e5361e0"
+}
