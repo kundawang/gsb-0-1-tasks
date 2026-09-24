@@ -1,0 +1,37 @@
+{
+  "task_id": "T119",
+  "title": "jd/tenacity 缺陷修复：fix: restore support for falsy wait values and callable + st",
+  "created_at": "2026-09-24T17:42:04",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 jd/tenacity @ a09999688c",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t119/base",
+    "sha": "dd1724d7042f6010070fdcd1582789c8adb9baff",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/dd1724d7042f6010070fdcd1582789c8adb9baff"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t119/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t119/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/jd/tenacity base=https://github.com/jd/tenacity/commit/a09999688c8d3bb3d4ca1716748009954cc7c4d0 fix=389aab8b2688f7a1df41c2dd7797eeb18c8baff9"
+}
