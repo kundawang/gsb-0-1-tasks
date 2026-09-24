@@ -1,0 +1,21 @@
+{
+  "age": 34,
+  "recent_5k_seconds": 1560,
+  "run_days_per_week": 4,
+  "longest_recent_km": 12,
+  "goal": "5km 破 PB",
+  "paces": {
+    "easy": [
+      1.25,
+      1.35
+    ],
+    "tempo": [
+      1.05,
+      1.1
+    ],
+    "interval": [
+      0.95,
+      1.0
+    ]
+  }
+}
