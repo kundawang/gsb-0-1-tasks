@@ -1,0 +1,37 @@
+{
+  "task_id": "T120",
+  "title": "jd/tenacity 缺陷修复：fix: annotate wait_base.__radd__ as taking the int seed from",
+  "created_at": "2026-09-24T17:42:08",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 jd/tenacity @ 4299cdf82e",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t120/base",
+    "sha": "22c0031c28a0bf42426a88c13ade1d4e0c48cb75",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/22c0031c28a0bf42426a88c13ade1d4e0c48cb75"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t120/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t120/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/jd/tenacity base=https://github.com/jd/tenacity/commit/4299cdf82e9b65bc52a85a53d6b62cf068db0723 fix=7c3c45cf57a3f10f6ee1334b137d607ead4974c1"
+}
