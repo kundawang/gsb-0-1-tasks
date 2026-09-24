@@ -1,0 +1,26 @@
+[
+  {
+    "id": "L1",
+    "principal": 500000,
+    "annual_rate_pct": 3.85,
+    "months": 240,
+    "method": "equal_installment",
+    "prepay": {
+      "after_month": 24,
+      "amount": 100000,
+      "mode": "reduce_months"
+    }
+  },
+  {
+    "id": "L2",
+    "principal": 300000,
+    "annual_rate_pct": 4.2,
+    "months": 120,
+    "method": "equal_principal",
+    "prepay": {
+      "after_month": 12,
+      "amount": 50000,
+      "mode": "reduce_payment"
+    }
+  }
+]
