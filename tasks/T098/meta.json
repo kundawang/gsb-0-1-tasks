@@ -1,0 +1,37 @@
+{
+  "task_id": "T098",
+  "title": "joke2k/faker 缺陷修复：fix(da_DK): correct BBAN length so iban() generates valid Da",
+  "created_at": "2026-09-24T17:39:59",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 joke2k/faker @ d20ef7c9b9",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t098/base",
+    "sha": "289c4720109a5e1a0580b46ef89b306ba18aceb4",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/289c4720109a5e1a0580b46ef89b306ba18aceb4"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t098/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t098/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/joke2k/faker base=https://github.com/joke2k/faker/commit/d20ef7c9b9a938bd4e6102eb3b5c572fd7716020 fix=7659c7f5134a671d282de54eaad91554696e6b34"
+}
