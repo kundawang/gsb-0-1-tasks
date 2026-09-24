@@ -1,0 +1,37 @@
+{
+  "task_id": "T164",
+  "title": "celery/celery 缺陷修复：fix(app.utils): handle multi-server URLs in sanitize_url and",
+  "created_at": "2026-09-24T17:46:44",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 celery/celery @ 0ec71f9297",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t164/base",
+    "sha": "801244ae2b591b844881ba83c0471c6f997e2226",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/801244ae2b591b844881ba83c0471c6f997e2226"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t164/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t164/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/celery/celery base=https://github.com/celery/celery/commit/0ec71f929742938cbcbe996b74cabf5b6cd54655 fix=d977c27e7fc51688929cad88255e4adfa0a2831f"
+}
