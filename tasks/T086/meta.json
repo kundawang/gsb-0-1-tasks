@@ -1,0 +1,37 @@
+{
+  "task_id": "T086",
+  "title": "lark-parser/lark 缺陷修复：Fix empty SPPF node from xearley ignore carry-over (fixes #1",
+  "created_at": "2026-09-24T17:38:16",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 lark-parser/lark @ eb015d1b5c",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t086/base",
+    "sha": "26b8a2873550da49568b4e87238a63f51398ddb1",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/26b8a2873550da49568b4e87238a63f51398ddb1"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t086/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t086/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/lark-parser/lark base=https://github.com/lark-parser/lark/commit/eb015d1b5c236b22bf3215fd4a76c891262e1bf8 fix=0aaca5975496073e33070fa0c3ea566adcf6afd8"
+}
