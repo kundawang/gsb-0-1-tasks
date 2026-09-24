@@ -1,0 +1,37 @@
+{
+  "task_id": "T129",
+  "title": "python-trio/trio 缺陷修复：Fix Path.as_uri on Python 3.14 (#3460)",
+  "created_at": "2026-09-24T17:42:47",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 python-trio/trio @ 72abfa5868",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t129/base",
+    "sha": "09559af5a1a1645a2196607bb274e013f4c3604a",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/09559af5a1a1645a2196607bb274e013f4c3604a"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t129/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t129/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/python-trio/trio base=https://github.com/python-trio/trio/commit/72abfa5868ba105ec7f630650092af4c95d74fad fix=1858c7f450d2dbae984fa6ab275a86f18088c286"
+}
