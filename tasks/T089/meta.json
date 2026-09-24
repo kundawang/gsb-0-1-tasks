@@ -1,0 +1,37 @@
+{
+  "task_id": "T089",
+  "title": "pallets/click 缺陷修复：Fix race condition on `KeyboardInterrupt` arriving in `Comma",
+  "created_at": "2026-09-24T17:38:31",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pallets/click @ 08a7bc6d2a",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t089/base",
+    "sha": "311cb251a4e9e7327871ae5e0edf2fd148809fc3",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/311cb251a4e9e7327871ae5e0edf2fd148809fc3"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t089/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t089/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pallets/click base=https://github.com/pallets/click/commit/08a7bc6d2a2af02268b09b3b5fd8079546c81c03 fix=fc518e41218b447e875fe27244ae692c269bcb77"
+}
