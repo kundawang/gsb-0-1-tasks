@@ -1,0 +1,14 @@
+[
+  {
+    "id": "H1",
+    "hand": "1m 2m 3m 4m 5m 6m 7m 8m 9m 1p 1p 2p 2p"
+  },
+  {
+    "id": "H2",
+    "hand": "1m 1m 1m 2p 2p 2p 3s 3s 3s 4s 5s 6s 7s"
+  },
+  {
+    "id": "H3",
+    "hand": "1m 1m 2m 2m 3m 3m 4p 4p 5p 5p 6s 6s 7s"
+  }
+]
