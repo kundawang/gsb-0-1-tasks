@@ -1,0 +1,1846 @@
+[
+  {
+    "index": 1,
+    "suggested_id": "T071",
+    "repo": "python-attrs/cattrs",
+    "repo_url": "https://github.com/python-attrs/cattrs",
+    "base_sha": "c8608b80b0e26960215df6581e4cfce49eb0e100",
+    "base_permalink": "https://github.com/python-attrs/cattrs/commit/c8608b80b0e26960215df6581e4cfce49eb0e100",
+    "fix_sha": "3d070824b3f3068e1ba30beec9c263eeb5435fc3",
+    "fix_date": "2026-06-18",
+    "subject": "Fix msgspec optimizations on 3.14",
+    "src_files": [
+      "src/cattrs/preconf/msgspec.py"
+    ],
+    "test_files": [
+      "tests/conftest.py",
+      "tests/preconf/test_msgspec_314_cpython.py"
+    ],
+    "prompt": "我们服务升级到 Python 3.14 之后，用 cattrs 的 msgspec 预配置（cattrs.preconf.msgspec）做 structure/unstructure\n直接报错，在 3.13 上同样的代码是好的。请定位并修掉，要求 3.14 上行为和 3.13 一致；\n没装 msgspec 时仍然给出原来那句友好的报错；补一个能在当前版本复现的测试。"
+  },
+  {
+    "index": 2,
+    "suggested_id": "T072",
+    "repo": "python-attrs/cattrs",
+    "repo_url": "https://github.com/python-attrs/cattrs",
+    "base_sha": "573915b6b450c23eaf818370ac2e339dd9aee262",
+    "base_permalink": "https://github.com/python-attrs/cattrs/commit/573915b6b450c23eaf818370ac2e339dd9aee262",
+    "fix_sha": "304e3700198311c78a5c6993c0ac6f3307a2e28a",
+    "fix_date": "2026-03-03",
+    "subject": "Fix wrong parameter name in namedtuple_dict_structure_factory (#723)",
+    "src_files": [
+      "src/cattrs/cols.py"
+    ],
+    "test_files": [
+      "tests/test_tuples.py"
+    ],
+    "prompt": "cattrs 里那个给 namedtuple 生成 dict 反序列化工厂的入口（namedtuple_dict_structure_factory），\n按文档传参调用会报参数名不对 —— 签名里的形参名和文档/调用方对不上。请把参数名对齐到文档写法，\n不要改其它行为，并补一个 namedtuple 的 round-trip 测试。"
+  },
+  {
+    "index": 3,
+    "suggested_id": "T073",
+    "repo": "pytest-dev/pluggy",
+    "repo_url": "https://github.com/pytest-dev/pluggy",
+    "base_sha": "2e916c21f3e5b60865d3f1f2d6f0932d61c77707",
+    "base_permalink": "https://github.com/pytest-dev/pluggy/commit/2e916c21f3e5b60865d3f1f2d6f0932d61c77707",
+    "fix_sha": "3d5417a4eff449e17e5bb3e1545b63cbf0e0c768",
+    "fix_date": "2026-06-30",
+    "subject": "Fix `subset_hook_caller` getting confused by `specname`",
+    "src_files": [
+      "src/pluggy/_manager.py"
+    ],
+    "test_files": [
+      "testing/test_pluginmanager.py"
+    ],
+    "prompt": "pluggy：同一个插件里有多个 hookimpl 用 specname 指定成同一个 hook 名时，subset_hook_caller 的过滤会乱套\n—— 本来只该排除指定插件的实现，结果把别的插件的实现也排掉了（或反过来多算了）。\n请修成\"按插件对象判断归属\"，specname 只影响匹配哪个 hookspec、不影响 subset 过滤；补测试覆盖这个组合。"
+  },
+  {
+    "index": 4,
+    "suggested_id": "T074",
+    "repo": "marshmallow-code/marshmallow",
+    "repo_url": "https://github.com/marshmallow-code/marshmallow",
+    "base_sha": "3207be31474530f7c0685dfbd7b4faca5b35fbf5",
+    "base_permalink": "https://github.com/marshmallow-code/marshmallow/commit/3207be31474530f7c0685dfbd7b4faca5b35fbf5",
+    "fix_sha": "902f99c4151d1f0c4c3b8e8dfbafc7b6a76aeaa6",
+    "fix_date": "2026-08-08",
+    "subject": "Fix URL validator rejecting a fragment after an empty path (#3016)",
+    "src_files": [
+      "src/marshmallow/validate.py"
+    ],
+    "test_files": [
+      "tests/test_validate.py"
+    ],
+    "prompt": "marshmallow 的 URL() 校验器把 https://example.com#frag 这种\"空路径 + fragment\"的合法 URL 判成非法，\n前端注册页被卡住。请修好让它合法；同时确认 #frag 这种相对形式按你们文档的口径处理（别放宽其它非法用例），\n并补上绝对/相对两边的用例。"
+  },
+  {
+    "index": 5,
+    "suggested_id": "T075",
+    "repo": "Delgan/loguru",
+    "repo_url": "https://github.com/Delgan/loguru",
+    "base_sha": "d3c590573edb41884feb206823a47c3a9e14aa68",
+    "base_permalink": "https://github.com/Delgan/loguru/commit/d3c590573edb41884feb206823a47c3a9e14aa68",
+    "fix_sha": "48acf77ac2b3296acc67069511b99cc3ca3d0c41",
+    "fix_date": "2026-08-30",
+    "subject": "Fix \"@logger.catch()\" ignoring errors raised by \"athrow()\" (#1510)",
+    "src_files": [
+      "loguru/_logger.py"
+    ],
+    "test_files": [
+      "tests/exceptions/output/modern/exception_formatting_async_generator_throw.txt",
+      "tests/exceptions/source/modern/decorate_async_generator.py",
+      "tests/exceptions/source/modern/exception_formatting_async_generator_throw.py"
+    ],
+    "prompt": "loguru：用 @logger.catch() 装饰的异步函数，如果异常是通过生成器的 athrow() 抛进来的，\n@catch 既没记录也没兜住，异常直接冒出去了。请修成和普通 await 抛的异常一样被处理（记录 + 返回默认值），\n同步、异步两条路径都要覆盖测试。"
+  },
+  {
+    "index": 6,
+    "suggested_id": "T076",
+    "repo": "Delgan/loguru",
+    "repo_url": "https://github.com/Delgan/loguru",
+    "base_sha": "8052eff4c1ba86793a6f38ee890a898e902bc1ea",
+    "base_permalink": "https://github.com/Delgan/loguru/commit/8052eff4c1ba86793a6f38ee890a898e902bc1ea",
+    "fix_sha": "5672e7d0ad610d70c5e549939b049303edefda19",
+    "fix_date": "2026-08-29",
+    "subject": "Fix incorrect formatting of negative timestamps (#1508)",
+    "src_files": [
+      "loguru/_datetime.py"
+    ],
+    "test_files": [
+      "tests/test_datetime.py"
+    ],
+    "prompt": "loguru 的时间格式化：记录里出现 1970 年之前的时刻时，{time:X} 和 {time:x} 出来的值不对\n（小数部分被截断的方向错了，比如 -1 微秒应该得到 -1）。请按 floor 语义修好，\n补三个边界：刚过整秒、正好整秒、整秒前 1 微秒。"
+  },
+  {
+    "index": 7,
+    "suggested_id": "T077",
+    "repo": "Delgan/loguru",
+    "repo_url": "https://github.com/Delgan/loguru",
+    "base_sha": "54c89d609fc98a63b5bf7f801119c5bc526e2016",
+    "base_permalink": "https://github.com/Delgan/loguru/commit/54c89d609fc98a63b5bf7f801119c5bc526e2016",
+    "fix_sha": "8052eff4c1ba86793a6f38ee890a898e902bc1ea",
+    "fix_date": "2026-08-29",
+    "subject": "Fix incorrect formatting of negative timezone offsets (#1507)",
+    "src_files": [
+      "loguru/_datetime.py"
+    ],
+    "test_files": [
+      "tests/test_datetime.py"
+    ],
+    "prompt": "loguru 格式化带秒的负时区偏移（Z / ZZ）算错了：像 -03:25:45 这种偏移，分和秒会被算成另一个数。\n请修好正负两个方向的偏移，补测试覆盖\"带秒\"和\"只有分钟\"两种情况。"
+  },
+  {
+    "index": 8,
+    "suggested_id": "T078",
+    "repo": "Delgan/loguru",
+    "repo_url": "https://github.com/Delgan/loguru",
+    "base_sha": "2a17be730e111cf874d0bf967c4c5da15b7e4670",
+    "base_permalink": "https://github.com/Delgan/loguru/commit/2a17be730e111cf874d0bf967c4c5da15b7e4670",
+    "fix_sha": "c71a057f123dcad06a369943b513c272615c53aa",
+    "fix_date": "2026-06-30",
+    "subject": "Fix first rotation of \"<weekday> at <time>\" ignoring the weekday",
+    "src_files": [
+      "loguru/_file_sink.py"
+    ],
+    "test_files": [
+      "tests/test_filesink_rotation.py"
+    ],
+    "prompt": "loguru 的按\"周几 + 时间\"轮转（比如 \"monday at 12:00\"）：第一次轮转时忽略了星期几，\n只要当天时刻到了就转，导致跨周判断错。请让首次判断也考虑 weekday，并补一个跨周的测试。"
+  },
+  {
+    "index": 9,
+    "suggested_id": "T079",
+    "repo": "Delgan/loguru",
+    "repo_url": "https://github.com/Delgan/loguru",
+    "base_sha": "97a50cf75faff7c141ffc93095ab905b4ef051b6",
+    "base_permalink": "https://github.com/Delgan/loguru/commit/97a50cf75faff7c141ffc93095ab905b4ef051b6",
+    "fix_sha": "7b30cd046a593f34696f6c574813b9727ae5c35e",
+    "fix_date": "2026-05-23",
+    "subject": "Fix parsing of 12-hour rotation times without seconds (#1474)",
+    "src_files": [
+      "loguru/_string_parsers.py"
+    ],
+    "test_files": [
+      "tests/test_filesink_rotation.py"
+    ],
+    "prompt": "loguru 解析 12 小时制的轮转时间（\"11pm\"、\"1:30pm\" 这种不带秒的写法）会出错。\n请把 12 小时制解析修对，am/pm、带不带分钟都要支持，边界 12am / 12pm 要有用例。"
+  },
+  {
+    "index": 10,
+    "suggested_id": "T080",
+    "repo": "Delgan/loguru",
+    "repo_url": "https://github.com/Delgan/loguru",
+    "base_sha": "3caaa73ea6542751dcb5a17708033d6b15f9a72d",
+    "base_permalink": "https://github.com/Delgan/loguru/commit/3caaa73ea6542751dcb5a17708033d6b15f9a72d",
+    "fix_sha": "2feb8549807587da88f4d151492ab443d8c5c320",
+    "fix_date": "2026-02-22",
+    "subject": "Fix possible internal error if \"f_lineno\" is None (#1442)",
+    "src_files": [
+      "loguru/_better_exceptions.py",
+      "loguru/_logger.py"
+    ],
+    "test_files": [
+      "tests/conftest.py",
+      "tests/exceptions/output/backtrace/missing_lineno_frame_objects.txt",
+      "tests/exceptions/source/backtrace/missing_lineno_frame_objects.py"
+    ],
+    "prompt": "loguru 打印异常回溯时，如果某个 frame 的 f_lineno 是 None（某些运行环境会出现），\n内部会直接抛错，日志反而打不出异常。请让这种情况降级处理：不崩、能打出可读回溯，并补测试。"
+  },
+  {
+    "index": 11,
+    "suggested_id": "T081",
+    "repo": "lark-parser/lark",
+    "repo_url": "https://github.com/lark-parser/lark",
+    "base_sha": "e7c2564859ba865618d81db1a5aa0b9a3ce5ec8e",
+    "base_permalink": "https://github.com/lark-parser/lark/commit/e7c2564859ba865618d81db1a5aa0b9a3ce5ec8e",
+    "fix_sha": "b974caecc8fcffa014afa22ee15b1fdb4a24e489",
+    "fix_date": "2026-08-27",
+    "subject": "Fix InteractiveParser.copy() sharing the lexer thread with the original (#1641)",
+    "src_files": [
+      "lark/parsers/lalr_interactive_parser.py",
+      "lark/parsers/lalr_parser_state.py"
+    ],
+    "test_files": [
+      "tests/test_parser.py"
+    ],
+    "prompt": "lark：InteractiveParser.copy() 出来的解析器和原对象共用同一个 lexer 线程状态，两个解析器一起用会互相干扰\n（一个消费了 token，另一个就乱了）。请让 copy 之后的解析器状态独立，补一个\"copy 后两边交替 feed\"的测试。"
+  },
+  {
+    "index": 12,
+    "suggested_id": "T082",
+    "repo": "lark-parser/lark",
+    "repo_url": "https://github.com/lark-parser/lark",
+    "base_sha": "e1817787d2ed2a10477734b1f784cbc7eee8dfa4",
+    "base_permalink": "https://github.com/lark-parser/lark/commit/e1817787d2ed2a10477734b1f784cbc7eee8dfa4",
+    "fix_sha": "7d106dfd83065c9ea8e529ea365dcd2f393ff56d",
+    "fix_date": "2026-07-19",
+    "subject": "Fix Transformer_NonRecursive corrupting the tree on a non-last Discard",
+    "src_files": [
+      "lark/visitors.py"
+    ],
+    "test_files": [
+      "tests/test_trees.py"
+    ],
+    "prompt": "lark 的 Transformer_NonRecursive：当 Discard 不是最后一个子节点时，整棵结果树会被搞坏。\n请修好任意位置的 Discard 处理，补一个\"Discard 在中间/开头\"的测试。"
+  },
+  {
+    "index": 13,
+    "suggested_id": "T083",
+    "repo": "lark-parser/lark",
+    "repo_url": "https://github.com/lark-parser/lark",
+    "base_sha": "240d4bcd3e207c7ed1cebd9908be41150c3ea1ab",
+    "base_permalink": "https://github.com/lark-parser/lark/commit/240d4bcd3e207c7ed1cebd9908be41150c3ea1ab",
+    "fix_sha": "7398ba0087f3147e025155f226a9bbf408abf6dc",
+    "fix_date": "2026-07-30",
+    "subject": "Fix Template.search() dropping zero-variable matches",
+    "src_files": [
+      "lark/tree_templates.py"
+    ],
+    "test_files": [
+      "tests/test_tree_templates.py"
+    ],
+    "prompt": "lark 的 Template.search()：模板里不带变量的匹配会被丢掉，只返回带变量的那些。\n请让它把零变量的匹配也搜出来，补测试。"
+  },
+  {
+    "index": 14,
+    "suggested_id": "T084",
+    "repo": "lark-parser/lark",
+    "repo_url": "https://github.com/lark-parser/lark",
+    "base_sha": "c169b26a5bec9d47e590bf4be83691bcbdfe7b6b",
+    "base_permalink": "https://github.com/lark-parser/lark/commit/c169b26a5bec9d47e590bf4be83691bcbdfe7b6b",
+    "fix_sha": "46bbc82b3a5218e3a7593bd94f62a815c97be6e1",
+    "fix_date": "2026-07-08",
+    "subject": "Fix lexer_callbacks silently dropped for keyword terminals",
+    "src_files": [
+      "lark/lexer.py"
+    ],
+    "test_files": [
+      "tests/test_grammar.py"
+    ],
+    "prompt": "lark：给终结符（关键字那种）注册的 lexer_callbacks 会被静默丢掉，回调根本不触发。\n请修好让关键字终结符也能触发回调，并补一个断言回调被调用的测试。"
+  },
+  {
+    "index": 15,
+    "suggested_id": "T085",
+    "repo": "lark-parser/lark",
+    "repo_url": "https://github.com/lark-parser/lark",
+    "base_sha": "5718472e57a08aac3728c2f26f902de56c48d64c",
+    "base_permalink": "https://github.com/lark-parser/lark/commit/5718472e57a08aac3728c2f26f902de56c48d64c",
+    "fix_sha": "c169b26a5bec9d47e590bf4be83691bcbdfe7b6b",
+    "fix_date": "2026-06-04",
+    "subject": "Merge pull request #1603 from sarathfrancis90/fix/declare-rule-name-crash",
+    "src_files": [
+      "lark/load_grammar.py"
+    ],
+    "test_files": [
+      "tests/test_grammar.py"
+    ],
+    "prompt": "lark 的语法加载（load_grammar）：语法文件里用声明规则（declare）的写法解析不过去/报错位置不对。\n请按语法文档把这块修好，补一个用 declare 的小语法测试。"
+  },
+  {
+    "index": 16,
+    "suggested_id": "T086",
+    "repo": "lark-parser/lark",
+    "repo_url": "https://github.com/lark-parser/lark",
+    "base_sha": "eb015d1b5c236b22bf3215fd4a76c891262e1bf8",
+    "base_permalink": "https://github.com/lark-parser/lark/commit/eb015d1b5c236b22bf3215fd4a76c891262e1bf8",
+    "fix_sha": "0aaca5975496073e33070fa0c3ea566adcf6afd8",
+    "fix_date": "2026-06-02",
+    "subject": "Fix empty SPPF node from xearley ignore carry-over (fixes #1598)",
+    "src_files": [
+      "lark/parsers/xearley.py"
+    ],
+    "test_files": [
+      "tests/test_parser.py"
+    ],
+    "prompt": "lark 的 xearley 解析器：在忽略 carry-over 的场景下会生成空的 SPPF 节点，后续遍历直接崩。\n请修掉这个空节点（该跳过就跳过），补一个能复现的测试。"
+  },
+  {
+    "index": 17,
+    "suggested_id": "T087",
+    "repo": "pallets/click",
+    "repo_url": "https://github.com/pallets/click",
+    "base_sha": "d036881798e34289a49b18a5c550c7cf687e5a7a",
+    "base_permalink": "https://github.com/pallets/click/commit/d036881798e34289a49b18a5c550c7cf687e5a7a",
+    "fix_sha": "70689853e39c30e36eb0d83d586cc914a74db9d3",
+    "fix_date": "2026-09-12",
+    "subject": "Fix short help abbreviation (#3865)",
+    "src_files": [
+      "src/click/utils.py"
+    ],
+    "test_files": [
+      "tests/test_utils/test_make_default_short_help.py"
+    ],
+    "prompt": "click 的短帮助（--help 里的短选项缩写）有 bug：某些短选项缩写会被判成非法值/匹配失败。\n请把短选项缩写的解析修对，保持完整选项名和原来的歧义报错行为，补测试。"
+  },
+  {
+    "index": 18,
+    "suggested_id": "T088",
+    "repo": "pallets/click",
+    "repo_url": "https://github.com/pallets/click",
+    "base_sha": "b47c0529e99129d4785fecc2cb39a8ec8b4aa5f8",
+    "base_permalink": "https://github.com/pallets/click/commit/b47c0529e99129d4785fecc2cb39a8ec8b4aa5f8",
+    "fix_sha": "00f257bb8e714064bea16425007543bbc0800445",
+    "fix_date": "2026-08-31",
+    "subject": "Fix race condition on `KeyboardInterrupt` in `Command.main()` (#3818)",
+    "src_files": [
+      "src/click/core.py"
+    ],
+    "test_files": [
+      "tests/test_abort_interrupt.py"
+    ],
+    "prompt": "click：Command.main() 里 KeyboardInterrupt 的到达时机不同会导致结果不一致（有时重复处理、有时报错信息不对）。\n请把这段竞态处理干净：中断只处理一次、退出码和提示稳定；补一个注入中断的测试。"
+  },
+  {
+    "index": 19,
+    "suggested_id": "T089",
+    "repo": "pallets/click",
+    "repo_url": "https://github.com/pallets/click",
+    "base_sha": "08a7bc6d2a2af02268b09b3b5fd8079546c81c03",
+    "base_permalink": "https://github.com/pallets/click/commit/08a7bc6d2a2af02268b09b3b5fd8079546c81c03",
+    "fix_sha": "fc518e41218b447e875fe27244ae692c269bcb77",
+    "fix_date": "2026-08-31",
+    "subject": "Fix race condition on `KeyboardInterrupt` arriving in `Command.main()`",
+    "src_files": [
+      "src/click/core.py"
+    ],
+    "test_files": [
+      "tests/test_abort_interrupt.py"
+    ],
+    "prompt": "click：KeyboardInterrupt 在命令执行的另一处到达时（比如参数解析之后、回调之前），处理结果和第一次实现不一致。\n请和 Command.main() 里的中断处理统一，保证任何时机到达都只走一条路径，补测试覆盖这个时机。"
+  },
+  {
+    "index": 20,
+    "suggested_id": "T090",
+    "repo": "pallets/click",
+    "repo_url": "https://github.com/pallets/click",
+    "base_sha": "3cbcf9b11546f4cf10b36d3e2e531733ba6fe001",
+    "base_permalink": "https://github.com/pallets/click/commit/3cbcf9b11546f4cf10b36d3e2e531733ba6fe001",
+    "fix_sha": "4295457ddc7b5ca9a733d59ca40d9651b02b9b1d",
+    "fix_date": "2026-08-29",
+    "subject": "Fix `copy`, `deepcopy` and `pickle` of `Sentinel` members (#3805)",
+    "src_files": [
+      "src/click/_utils.py"
+    ],
+    "test_files": [
+      "tests/test_utils/test_sentinel.py"
+    ],
+    "prompt": "click 的 Sentinel 哨兵对象：对实例做 copy/deepcopy/pickle 之后就不再是同一个对象了，\n于是\"是不是哨兵\"的判断失效。请让复制和序列化之后仍然是同一个哨兵（单例语义），\ncopy/deepcopy/pickle 三种都要有用例。"
+  },
+  {
+    "index": 21,
+    "suggested_id": "T091",
+    "repo": "pallets/jinja",
+    "repo_url": "https://github.com/pallets/jinja",
+    "base_sha": "fbc3a696c729d177340cc089531de7e2e5b6f065",
+    "base_permalink": "https://github.com/pallets/jinja/commit/fbc3a696c729d177340cc089531de7e2e5b6f065",
+    "fix_sha": "c8fdce1e0333f1122b244b03a48535fdd7b03d91",
+    "fix_date": "2024-12-21",
+    "subject": "Fix bug involving calling set on a template parameter within all branches of an if block (#1665)",
+    "src_files": [
+      "src/jinja2/idtracking.py"
+    ],
+    "test_files": [
+      "tests/test_regression.py"
+    ],
+    "prompt": "jinja2：模板里在 if 块内部对模板参数调用 set，有时候会报错或符号跟踪结果不对（变量没被正确标记为赋值）。\n请修好 idtracking 在这块的处理，补一个\"if 里 set 同一个参数\"的模板渲染测试。"
+  },
+  {
+    "index": 22,
+    "suggested_id": "T092",
+    "repo": "arrow-py/arrow",
+    "repo_url": "https://github.com/arrow-py/arrow",
+    "base_sha": "ea756ea779468b0c6a9f45439dc05cfd5e71ee1e",
+    "base_permalink": "https://github.com/arrow-py/arrow/commit/ea756ea779468b0c6a9f45439dc05cfd5e71ee1e",
+    "fix_sha": "05cd9b47d0db1c22b44cb739832f1b9701855313",
+    "fix_date": "2025-10-02",
+    "subject": "fix humanize month limits (#1224)",
+    "src_files": [
+      "arrow/arrow.py"
+    ],
+    "test_files": [
+      "tests/test_arrow.py"
+    ],
+    "prompt": "arrow 的 humanize：跨月份/月末的时长描述算错（比如 30 天和 1 个月、2 月的边界）。\n请按日历月语义修好边界，补 1 月底、2 月、跨年的用例。"
+  },
+  {
+    "index": 23,
+    "suggested_id": "T093",
+    "repo": "arrow-py/arrow",
+    "repo_url": "https://github.com/arrow-py/arrow",
+    "base_sha": "c2dfa12bde6bf8b097ad5bb369a0c71ae58a8386",
+    "base_permalink": "https://github.com/arrow-py/arrow/commit/c2dfa12bde6bf8b097ad5bb369a0c71ae58a8386",
+    "fix_sha": "016fb9eb9b3835bcd4efc69dc048a0436bd7bfec",
+    "fix_date": "2024-10-29",
+    "subject": "fix: adding persian names of months and month-abbreviations and day-abbreviations in Gregorian calendar (#1172)",
+    "src_files": [
+      "arrow/locales.py"
+    ],
+    "test_files": [
+      "tests/test_locales.py"
+    ],
+    "prompt": "arrow 的 locale 数据：波斯语（fa）的月份名和月份缩写缺失/不完整，格式化出来是英文或空。\n请补齐这几个 locale 字段，并用一个格式化用例锁住结果。"
+  },
+  {
+    "index": 24,
+    "suggested_id": "T094",
+    "repo": "joke2k/faker",
+    "repo_url": "https://github.com/joke2k/faker",
+    "base_sha": "59a6872a547248bb40cdd0f809089a605c68467f",
+    "base_permalink": "https://github.com/joke2k/faker/commit/59a6872a547248bb40cdd0f809089a605c68467f",
+    "fix_sha": "36485831f8f4b5af85de188c6bdd123d515bddb0",
+    "fix_date": "2026-09-14",
+    "subject": "fix(no_NO): compute Norwegian MOD11 check digit so iban() passes stdnum validation (#2415)",
+    "src_files": [
+      "faker/providers/bank/no_NO/__init__.py"
+    ],
+    "test_files": [
+      "tests/providers/test_bank.py"
+    ],
+    "prompt": "faker 的挪威（no_NO）IBAN：生成出来的号码 MOD11 校验位不对，银行侧校验不过。\n请按 MOD11 算法算校验位，保证生成的 IBAN 通过校验；原有的接口和字段名不要改，补测试。"
+  },
+  {
+    "index": 25,
+    "suggested_id": "T095",
+    "repo": "joke2k/faker",
+    "repo_url": "https://github.com/joke2k/faker",
+    "base_sha": "d80d125d5c20d0572a26d5d617dbad647beb9343",
+    "base_permalink": "https://github.com/joke2k/faker/commit/d80d125d5c20d0572a26d5d617dbad647beb9343",
+    "fix_sha": "74efb07c529e826c3aa12508b204b80b180eba1f",
+    "fix_date": "2026-08-20",
+    "subject": "fix(en_IE): generate structurally valid Irish IBANs (#2411)",
+    "src_files": [
+      "faker/providers/bank/en_IE/__init__.py"
+    ],
+    "test_files": [
+      "tests/providers/test_bank.py"
+    ],
+    "prompt": "faker 的爱尔兰（en_IE）IBAN：生成的结构不合法（长度/格式不符合爱尔兰的 BBAN 规则）。\n请修正 BBAN 格式，让 iban() 生成的结果能通过结构校验，补测试。"
+  },
+  {
+    "index": 26,
+    "suggested_id": "T096",
+    "repo": "joke2k/faker",
+    "repo_url": "https://github.com/joke2k/faker",
+    "base_sha": "8ad78a632a4116e6392e6d5743524c683a2e02a1",
+    "base_permalink": "https://github.com/joke2k/faker/commit/8ad78a632a4116e6392e6d5743524c683a2e02a1",
+    "fix_sha": "ce45ebdddd05cf26f859372622746b43f8b165e9",
+    "fix_date": "2026-07-24",
+    "subject": "fix(uk_UA): correct bban_format to 6 digits + 19 letters so iban() is valid (#2417)",
+    "src_files": [
+      "faker/providers/bank/uk_UA/__init__.py"
+    ],
+    "test_files": [
+      "tests/providers/test_bank.py"
+    ],
+    "prompt": "faker 的乌克兰（uk_UA）IBAN：BBAN 格式写错了，生成出来的号码结构和当地规则不符（应该是 6 位数字 + 19 位字母的组合）。\n请把 bban_format 修对，保证 iban() 结果通过结构校验，补测试。"
+  },
+  {
+    "index": 27,
+    "suggested_id": "T097",
+    "repo": "joke2k/faker",
+    "repo_url": "https://github.com/joke2k/faker",
+    "base_sha": "b92cf24ccc067a0ecc7bdf227cca68b946f8ed2a",
+    "base_permalink": "https://github.com/joke2k/faker/commit/b92cf24ccc067a0ecc7bdf227cca68b946f8ed2a",
+    "fix_sha": "6f8f18fd03b89535ad179745d6c6443be018807c",
+    "fix_date": "2026-07-22",
+    "subject": "fix(ru_RU): add correct bban_format so iban() is valid (#2416)",
+    "src_files": [
+      "faker/providers/bank/ru_RU/__init__.py"
+    ],
+    "test_files": [
+      "tests/providers/test_bank.py"
+    ],
+    "prompt": "faker 的俄罗斯（ru_RU）IBAN：缺 bban_format（或格式不对），生成出来的 IBAN 不合法。\n请补上正确的 BBAN 格式，让 iban() 能通过校验，补测试。"
+  },
+  {
+    "index": 28,
+    "suggested_id": "T098",
+    "repo": "joke2k/faker",
+    "repo_url": "https://github.com/joke2k/faker",
+    "base_sha": "d20ef7c9b9a938bd4e6102eb3b5c572fd7716020",
+    "base_permalink": "https://github.com/joke2k/faker/commit/d20ef7c9b9a938bd4e6102eb3b5c572fd7716020",
+    "fix_sha": "7659c7f5134a671d282de54eaad91554696e6b34",
+    "fix_date": "2026-07-22",
+    "subject": "fix(da_DK): correct BBAN length so iban() generates valid Danish IBANs (#2409)",
+    "src_files": [
+      "faker/providers/bank/da_DK/__init__.py"
+    ],
+    "test_files": [
+      "tests/providers/test_bank.py"
+    ],
+    "prompt": "faker 的丹麦（da_DK）IBAN：BBAN 长度不对，生成出来的号码校验失败。\n请按丹麦规则修正长度，让 iban() 合法，补测试。"
+  },
+  {
+    "index": 29,
+    "suggested_id": "T099",
+    "repo": "pypa/packaging",
+    "repo_url": "https://github.com/pypa/packaging",
+    "base_sha": "4840c3a6817fbd0831f7e520c9a55367472a4a08",
+    "base_permalink": "https://github.com/pypa/packaging/commit/4840c3a6817fbd0831f7e520c9a55367472a4a08",
+    "fix_sha": "55cbf1b9426f44455fa1a9e0836f1fc082cc8452",
+    "fix_date": "2026-08-18",
+    "subject": "fix(ranges): stop unbounded bounds sorting above each other (#1392)",
+    "src_files": [
+      "src/packaging/_ranges.py"
+    ],
+    "test_files": [
+      "tests/test_ranges.py"
+    ],
+    "prompt": "packaging 的版本区间比较（_ranges）：一个没有上界的区间在排序/合并时会被排到另一个区间上面，结果顺序错乱。\n请修好排序规则（无上界的区间应当排在最后），补一个直接比较这些区间的测试。"
+  },
+  {
+    "index": 30,
+    "suggested_id": "T100",
+    "repo": "pypa/packaging",
+    "repo_url": "https://github.com/pypa/packaging",
+    "base_sha": "de6580e6f077a82b2b10161fd2e80e57b8d52854",
+    "base_permalink": "https://github.com/pypa/packaging/commit/de6580e6f077a82b2b10161fd2e80e57b8d52854",
+    "fix_sha": "f14a0933259121eb9b986bc1b7924910755d535d",
+    "fix_date": "2026-08-13",
+    "subject": "fix(specifiers): scope ~= groups with (?a:...) (#1384)",
+    "src_files": [
+      "src/packaging/specifiers.py"
+    ],
+    "test_files": [
+      "tests/test_specifiers.py"
+    ],
+    "prompt": "packaging 的版本说明符（specifiers）：~= 这类分组正则在某些大小写/前缀输入下匹配范围过宽。\n请把分组作用域收紧（不区分大小写只作用在该作用的地方），保证既有的版本比较用例不回归，补测试。"
+  },
+  {
+    "index": 31,
+    "suggested_id": "T101",
+    "repo": "pypa/packaging",
+    "repo_url": "https://github.com/pypa/packaging",
+    "base_sha": "b097450461523502ada842f98274449ad74ff1ff",
+    "base_permalink": "https://github.com/pypa/packaging/commit/b097450461523502ada842f98274449ad74ff1ff",
+    "fix_sha": "4e79787a31c99348649bb0dafee2a5078d3595be",
+    "fix_date": "2026-08-08",
+    "subject": "fix(tags): preserve explicitly empty platform iterables (#1360)",
+    "src_files": [
+      "src/packaging/tags.py"
+    ],
+    "test_files": [
+      "tests/test_tags.py"
+    ],
+    "prompt": "packaging 的 tags：显式传入空的 platform 可迭代对象时，代码把它当成\"没传\"从而补了默认平台。\n请区分\"没传\"和\"传了空\"两种语义，补一个传空序列的测试。"
+  },
+  {
+    "index": 32,
+    "suggested_id": "T102",
+    "repo": "pypa/packaging",
+    "repo_url": "https://github.com/pypa/packaging",
+    "base_sha": "3db4261366eebeb802574458dd037b3e13515e2e",
+    "base_permalink": "https://github.com/pypa/packaging/commit/3db4261366eebeb802574458dd037b3e13515e2e",
+    "fix_sha": "b80e6eb0a6c0f61dcaa9b1587f3aab370263dc65",
+    "fix_date": "2026-08-05",
+    "subject": "fix(pylock): respect explicitly empty environments in select() (#1362)",
+    "src_files": [
+      "src/packaging/pylock.py"
+    ],
+    "test_files": [
+      "tests/test_pylock_select.py"
+    ],
+    "prompt": "packaging 的 pylock 选择逻辑：显式传入空 environments 时会被当成未指定，于是选出了不该选的条目。\n请尊重显式的空集合，补测试。"
+  },
+  {
+    "index": 33,
+    "suggested_id": "T103",
+    "repo": "pypa/packaging",
+    "repo_url": "https://github.com/pypa/packaging",
+    "base_sha": "413d006fadf5b9b14d78ad444201d8189bff8c64",
+    "base_permalink": "https://github.com/pypa/packaging/commit/413d006fadf5b9b14d78ad444201d8189bff8c64",
+    "fix_sha": "2d873eb6002021a8c007c933fbdab58b37a5079b",
+    "fix_date": "2026-08-01",
+    "subject": "fix(metadata): fold every line boundary when writing headers (#1356)",
+    "src_files": [
+      "src/packaging/metadata.py"
+    ],
+    "test_files": [
+      "tests/test_metadata.py"
+    ],
+    "prompt": "packaging 写出 metadata 头部时，长头部只在某个固定位置折行，导致跨行的折行不符合规范（某些行没有折）。\n请在每个行边界都做折行，并补一个长头部往返（写出后能再解析回同样内容）的测试。"
+  },
+  {
+    "index": 34,
+    "suggested_id": "T104",
+    "repo": "pypa/packaging",
+    "repo_url": "https://github.com/pypa/packaging",
+    "base_sha": "826426fc88773515fab149a5f6bde85761e57fbb",
+    "base_permalink": "https://github.com/pypa/packaging/commit/826426fc88773515fab149a5f6bde85761e57fbb",
+    "fix_sha": "26fa1d42ccd98010d5fcf701dd10069e761b034c",
+    "fix_date": "2026-07-28",
+    "subject": "fix: reject invalid interpreter tags (#1351)",
+    "src_files": [
+      "src/packaging/tags.py",
+      "src/packaging/utils.py"
+    ],
+    "test_files": [
+      "tests/test_tags.py",
+      "tests/test_utils.py"
+    ],
+    "prompt": "packaging 的 tags：非法的解释器标签（版本段不合法）现在被安静接受，应该判为无效并给出说明。\n请加上校验，同时保证合法的历史标签仍然通过，补测试。"
+  },
+  {
+    "index": 35,
+    "suggested_id": "T105",
+    "repo": "pypa/packaging",
+    "repo_url": "https://github.com/pypa/packaging",
+    "base_sha": "b62954b62d04f58a939d2856c67ebe4de32cdb5d",
+    "base_permalink": "https://github.com/pypa/packaging/commit/b62954b62d04f58a939d2856c67ebe4de32cdb5d",
+    "fix_sha": "826426fc88773515fab149a5f6bde85761e57fbb",
+    "fix_date": "2026-07-25",
+    "subject": "fix(pylock): respect an explicitly empty tag sequence in select() (#1349)",
+    "src_files": [
+      "src/packaging/pylock.py"
+    ],
+    "test_files": [
+      "tests/test_pylock_select.py"
+    ],
+    "prompt": "packaging 的 pylock：显式传入空的 tag 序列时会被忽略，导致选择结果不对。\n请让空序列被尊重，补测试。"
+  },
+  {
+    "index": 36,
+    "suggested_id": "T106",
+    "repo": "pypa/packaging",
+    "repo_url": "https://github.com/pypa/packaging",
+    "base_sha": "0bfc3cea4f9fe1b1b0c80ce06f02bd2433500c81",
+    "base_permalink": "https://github.com/pypa/packaging/commit/0bfc3cea4f9fe1b1b0c80ce06f02bd2433500c81",
+    "fix_sha": "189a76d54d64899adbca907c2a3efa5b6befdb28",
+    "fix_date": "2026-07-21",
+    "subject": "fix(parser): require true end of input (#1345)",
+    "src_files": [
+      "src/packaging/_tokenizer.py"
+    ],
+    "test_files": [
+      "tests/test_markers.py",
+      "tests/test_requirements.py"
+    ],
+    "prompt": "packaging 的 tokenizer：解析到输入结尾时没有检查\"真正到了结尾\"，多出来的尾部内容被吞掉了。\n请让解析器在结尾处严格校验（多余内容要报错），补一个\"末尾有额外字符\"的用例。"
+  },
+  {
+    "index": 37,
+    "suggested_id": "T107",
+    "repo": "tqdm/tqdm",
+    "repo_url": "https://github.com/tqdm/tqdm",
+    "base_sha": "4a7f422734a765d3df89ad7dbfec3ef1baf53b30",
+    "base_permalink": "https://github.com/tqdm/tqdm/commit/4a7f422734a765d3df89ad7dbfec3ef1baf53b30",
+    "fix_sha": "0eaee96e4fd5ccf18e5bc2a637aa19a280e54bc3",
+    "fix_date": "2023-05-12",
+    "subject": "Fix length detection in contrib.concurrent",
+    "src_files": [
+      "tqdm/contrib/concurrent.py"
+    ],
+    "test_files": [
+      "tests/tests_concurrent.py"
+    ],
+    "prompt": "tqdm 的 contrib.concurrent：进度条总长度（total）推断错了，显示的总数对不上。\n请修好长度检测，补一个传 iterable 与传 total 两种情况的测试。"
+  },
+  {
+    "index": 38,
+    "suggested_id": "T108",
+    "repo": "Textualize/rich",
+    "repo_url": "https://github.com/Textualize/rich",
+    "base_sha": "19c67b9a3479841e9133bea94607c89ee931d3fc",
+    "base_permalink": "https://github.com/Textualize/rich/commit/19c67b9a3479841e9133bea94607c89ee931d3fc",
+    "fix_sha": "7ef2d05ca8aa3cb405dab2fdf3282e69cf8089e3",
+    "fix_date": "2026-04-12",
+    "subject": "fix inline code in table cells",
+    "src_files": [
+      "rich/markdown.py"
+    ],
+    "test_files": [
+      "tests/test_markdown.py"
+    ],
+    "prompt": "rich 的 Markdown 渲染：表格单元格里的行内代码（`` `x` ``）渲染丢失/串行错乱。\n请修好表格内 inline code 的渲染，补一个渲染断言测试。"
+  },
+  {
+    "index": 39,
+    "suggested_id": "T109",
+    "repo": "psf/requests",
+    "repo_url": "https://github.com/psf/requests",
+    "base_sha": "661970d171d9c3e12e4c789c4768db647d8c4da0",
+    "base_permalink": "https://github.com/psf/requests/commit/661970d171d9c3e12e4c789c4768db647d8c4da0",
+    "fix_sha": "6f205ff422bccd5e4c4fc0b64c5f3e7df5181db6",
+    "fix_date": "2026-06-08",
+    "subject": "Fix `_encode_files` detection for `__getattr__`-based file wrappers (#7502)",
+    "src_files": [
+      "src/requests/models.py"
+    ],
+    "test_files": [
+      "tests/test_requests.py"
+    ],
+    "prompt": "requests：对用 __getattr__ 代理的文件类对象，_encode_files 识别不出它是文件，导致上传时被当成普通字段。\n请修好这种对象的检测，补一个用代理对象的测试。"
+  },
+  {
+    "index": 40,
+    "suggested_id": "T110",
+    "repo": "psf/requests",
+    "repo_url": "https://github.com/psf/requests",
+    "base_sha": "0b401c76b6e80a4eecf3c690085b2553f6e261ca",
+    "base_permalink": "https://github.com/psf/requests/commit/0b401c76b6e80a4eecf3c690085b2553f6e261ca",
+    "fix_sha": "6404f345e562d962abe6700a1c357ec1e7e18232",
+    "fix_date": "2026-05-12",
+    "subject": "Fix `prepare_body` stream detection for `__getattr__`-based file wrappers (#7433)",
+    "src_files": [
+      "src/requests/models.py"
+    ],
+    "test_files": [
+      "tests/test_requests.py"
+    ],
+    "prompt": "requests：prepare_body 判断请求体是不是\"流\"时，对 __getattr__ 代理对象判断错误（把流当成普通体）。\n请修好检测逻辑，补测试（别依赖真实网络）。"
+  },
+  {
+    "index": 41,
+    "suggested_id": "T111",
+    "repo": "urllib3/urllib3",
+    "repo_url": "https://github.com/urllib3/urllib3",
+    "base_sha": "43c68c8b43a9dcb44ed2cf4ec91384ca0d46b37d",
+    "base_permalink": "https://github.com/urllib3/urllib3/commit/43c68c8b43a9dcb44ed2cf4ec91384ca0d46b37d",
+    "fix_sha": "0716e31534345dc1599ea95d903c79f276239bd8",
+    "fix_date": "2026-09-15",
+    "subject": "Fix loading unencrypted client keys with a password in pyOpenSSL (#5255)",
+    "src_files": [
+      "src/urllib3/contrib/pyopenssl.py"
+    ],
+    "test_files": [
+      "test/with_dummyserver/test_socketlevel.py"
+    ],
+    "prompt": "urllib3 的 pyOpenSSL 后端：加载\"未加密的客户端私钥 + 传了密码\"这种组合时直接报错，而标准库后端是好的。\n请让这种情况能正常加载（忽略多余密码），补一个用临时密钥文件的测试。"
+  },
+  {
+    "index": 42,
+    "suggested_id": "T112",
+    "repo": "urllib3/urllib3",
+    "repo_url": "https://github.com/urllib3/urllib3",
+    "base_sha": "c5d9a29182a37282032c4fe714fb28a1367658b2",
+    "base_permalink": "https://github.com/urllib3/urllib3/commit/c5d9a29182a37282032c4fe714fb28a1367658b2",
+    "fix_sha": "0cb21c7b2c267df927ef8c97f28fc14c8c349d21",
+    "fix_date": "2026-09-01",
+    "subject": "Fix `emscripten(firefox)` tests (#5166)",
+    "src_files": [
+      "noxfile.py"
+    ],
+    "test_files": [
+      "test/contrib/emscripten/conftest.py"
+    ],
+    "prompt": "urllib3 在 emscripten（firefox）环境下跑测试会失败：测试辅助代码里有环境相关的行为不对。\n请修好让这套测试在该环境下通过，别影响其它平台。"
+  },
+  {
+    "index": 43,
+    "suggested_id": "T113",
+    "repo": "simonw/sqlite-utils",
+    "repo_url": "https://github.com/simonw/sqlite-utils",
+    "base_sha": "85b1be10c81d9dd3567e36faf8dd411e4a8789bd",
+    "base_permalink": "https://github.com/simonw/sqlite-utils/commit/85b1be10c81d9dd3567e36faf8dd411e4a8789bd",
+    "fix_sha": "6bc1d33d583c54bd69fbdd2071117e2d38c354a1",
+    "fix_date": "2026-09-22",
+    "subject": "Fix resource leaks caused by buffered readers",
+    "src_files": [
+      "sqlite_utils/utils.py"
+    ],
+    "test_files": [
+      "tests/test_rows_from_file.py"
+    ],
+    "prompt": "sqlite-utils：用缓冲读取器打开文件时资源没释放（Windows 上会留下句柄、文件删不掉）。\n请确保读取器/文件对象在函数返回前关闭，补一个\"删除临时文件不报错\"的测试。"
+  },
+  {
+    "index": 44,
+    "suggested_id": "T114",
+    "repo": "simonw/sqlite-utils",
+    "repo_url": "https://github.com/simonw/sqlite-utils",
+    "base_sha": "1d98613f28b8edab5fd0deb5ba65d54fb286e7ba",
+    "base_permalink": "https://github.com/simonw/sqlite-utils/commit/1d98613f28b8edab5fd0deb5ba65d54fb286e7ba",
+    "fix_sha": "f6d73112c8368cd6eb2ac596966e8148747c7b4e",
+    "fix_date": "2026-08-13",
+    "subject": "Fix for sqlite-utils 4.2 crashing bug (#843)",
+    "src_files": [
+      "sqlite_utils/db.py"
+    ],
+    "test_files": [
+      ".github/workflows/test.yml"
+    ],
+    "prompt": "sqlite-utils 4.2 有个崩溃：某个常见调用会直接抛异常（不是返回错误结果）。\n请定位并修掉这个崩溃，补一个能复现的测试。"
+  },
+  {
+    "index": 45,
+    "suggested_id": "T115",
+    "repo": "simonw/sqlite-utils",
+    "repo_url": "https://github.com/simonw/sqlite-utils",
+    "base_sha": "a7b734946f95341f52d866321c183e3532ac0aad",
+    "base_permalink": "https://github.com/simonw/sqlite-utils/commit/a7b734946f95341f52d866321c183e3532ac0aad",
+    "fix_sha": "6a456830ca33eb5edaa634a9b0febe5d71bea2be",
+    "fix_date": "2026-07-26",
+    "subject": "Fix _decode_default_value to unescape doubled single quotes in string defaults (#811)",
+    "src_files": [
+      "sqlite_utils/db.py"
+    ],
+    "test_files": [
+      "tests/test_introspect.py"
+    ],
+    "prompt": "sqlite-utils：_decode_default_value 处理建表语句里的默认值时，把成对的单引号反转义错了，\n读到默认值会和实际不符。请修好转义解析，补测试。"
+  },
+  {
+    "index": 46,
+    "suggested_id": "T116",
+    "repo": "agronholm/anyio",
+    "repo_url": "https://github.com/agronholm/anyio",
+    "base_sha": "e52d5fd179829feeafb4e194abd529e85c8f2494",
+    "base_permalink": "https://github.com/agronholm/anyio/commit/e52d5fd179829feeafb4e194abd529e85c8f2494",
+    "fix_sha": "a87a823ccc0ffc98a9d21e6f2d55127a2a49ef6d",
+    "fix_date": "2026-09-13",
+    "subject": "Fix SocketStream.send() writing to a paused transport after a cancelled send (#1299)",
+    "src_files": [
+      "src/anyio/_backends/_asyncio.py"
+    ],
+    "test_files": [
+      "tests/test_sockets.py"
+    ],
+    "prompt": "anyio 的 asyncio 后端：SocketStream.send() 在一次被取消的发送之后，会往已经暂停的 transport 继续写，\n导致数据错乱/告警。请修好取消后的状态处理，补一个模拟暂停 transport 的测试。"
+  },
+  {
+    "index": 47,
+    "suggested_id": "T117",
+    "repo": "pydantic/pydantic",
+    "repo_url": "https://github.com/pydantic/pydantic",
+    "base_sha": "e2683e14d3c449cc74cde3efc94bf19f4ee9d95f",
+    "base_permalink": "https://github.com/pydantic/pydantic/commit/e2683e14d3c449cc74cde3efc94bf19f4ee9d95f",
+    "fix_sha": "831893ed0411d45c20aacae88e067c9c33a89501",
+    "fix_date": "2026-09-09",
+    "subject": "Fix race conditions in freethreaded build (#13785)",
+    "src_files": [
+      "pydantic/_internal/_decorators.py",
+      "pydantic/_internal/_namespace_utils.py",
+      "pydantic/main.py"
+    ],
+    "test_files": [
+      "tests/conftest.py",
+      "tests/test_freethreaded.py"
+    ],
+    "prompt": "pydantic 在 free-threaded（无 GIL）构建下初始化模型有竞态，偶尔报错或结果不稳定。\n请把装饰器缓存这块的并发访问处理干净，保证多线程同时建模型不崩，补一个并发测试。"
+  },
+  {
+    "index": 48,
+    "suggested_id": "T118",
+    "repo": "jd/tenacity",
+    "repo_url": "https://github.com/jd/tenacity",
+    "base_sha": "389aab8b2688f7a1df41c2dd7797eeb18c8baff9",
+    "base_permalink": "https://github.com/jd/tenacity/commit/389aab8b2688f7a1df41c2dd7797eeb18c8baff9",
+    "fix_sha": "949dcfa6c0a4f0109dbbd019ff58208a580d185b",
+    "fix_date": "2026-08-06",
+    "subject": "fix: read the tornado global live instead of an import-time snapshot (#696)",
+    "src_files": [
+      "tenacity/__init__.py"
+    ],
+    "test_files": [
+      "tests/test_tornado.py"
+    ],
+    "prompt": "tenacity：tornado 相关的全局配置在 import 时就被快照了，之后改配置不生效。\n请改成运行时读取当前全局值，补一个\"改配置后重试行为跟着变\"的测试。"
+  },
+  {
+    "index": 49,
+    "suggested_id": "T119",
+    "repo": "jd/tenacity",
+    "repo_url": "https://github.com/jd/tenacity",
+    "base_sha": "a09999688c8d3bb3d4ca1716748009954cc7c4d0",
+    "base_permalink": "https://github.com/jd/tenacity/commit/a09999688c8d3bb3d4ca1716748009954cc7c4d0",
+    "fix_sha": "389aab8b2688f7a1df41c2dd7797eeb18c8baff9",
+    "fix_date": "2026-08-06",
+    "subject": "fix: restore support for falsy wait values and callable + strategy (#694)",
+    "src_files": [
+      "tenacity/__init__.py",
+      "tenacity/asyncio/__init__.py",
+      "tenacity/wait.py"
+    ],
+    "test_files": [
+      "tests/test_asyncio.py",
+      "tests/test_tenacity.py"
+    ],
+    "prompt": "tenacity：wait 相关参数传\"假值\"（0、False、空字符串）或可调用对象时行为退化/报错（回归）。\n请恢复对这些值的支持，补测试覆盖 0 与 callable 两类。"
+  },
+  {
+    "index": 50,
+    "suggested_id": "T120",
+    "repo": "jd/tenacity",
+    "repo_url": "https://github.com/jd/tenacity",
+    "base_sha": "4299cdf82e9b65bc52a85a53d6b62cf068db0723",
+    "base_permalink": "https://github.com/jd/tenacity/commit/4299cdf82e9b65bc52a85a53d6b62cf068db0723",
+    "fix_sha": "7c3c45cf57a3f10f6ee1334b137d607ead4974c1",
+    "fix_date": "2026-08-05",
+    "subject": "fix: annotate wait_base.__radd__ as taking the int seed from sum() (#677)",
+    "src_files": [
+      "tenacity/wait.py"
+    ],
+    "test_files": [
+      "tests/test_tenacity.py"
+    ],
+    "prompt": "tenacity：wait 对象和整数做加法（wait + 1）时类型/运行行为不对。\n请修好这个运算（返回可用的 wait），补一个直接相加的用例。"
+  },
+  {
+    "index": 51,
+    "suggested_id": "T121",
+    "repo": "jd/tenacity",
+    "repo_url": "https://github.com/jd/tenacity",
+    "base_sha": "c650fb45204635f07910948d5fc59a8c551ffdda",
+    "base_permalink": "https://github.com/jd/tenacity/commit/c650fb45204635f07910948d5fc59a8c551ffdda",
+    "fix_sha": "b3c5a9f9212187aaf96353378daa9a9ebd800742",
+    "fix_date": "2026-07-29",
+    "subject": "fix: stop hanging on cyclic exception __cause__ chains (#660)",
+    "src_files": [
+      "tenacity/retry.py"
+    ],
+    "test_files": [
+      "tests/test_tenacity.py"
+    ],
+    "prompt": "tenacity：重试对象打印/构造消息时会顺着异常的 __cause__ 链一路走下去，遇到循环的 cause 链就直接卡死。\n请加上循环保护，补一个自引用 cause 的测试。"
+  },
+  {
+    "index": 52,
+    "suggested_id": "T122",
+    "repo": "jd/tenacity",
+    "repo_url": "https://github.com/jd/tenacity",
+    "base_sha": "40fad186bae14796567ea6786d8701bdd9d79312",
+    "base_permalink": "https://github.com/jd/tenacity/commit/40fad186bae14796567ea6786d8701bdd9d79312",
+    "fix_sha": "c650fb45204635f07910948d5fc59a8c551ffdda",
+    "fix_date": "2026-07-15",
+    "subject": "Fix exponential wait threshold underflow (#656)",
+    "src_files": [
+      "tenacity/wait.py"
+    ],
+    "test_files": [
+      "tests/test_tenacity.py"
+    ],
+    "prompt": "tenacity：指数退避的乘数很小、重试次数较多时，等待时间下溢成 0（应该保持一个最小等待）。\n请修好阈值处理，补一个乘数极小、重试多次的测试。"
+  },
+  {
+    "index": 53,
+    "suggested_id": "T123",
+    "repo": "jd/tenacity",
+    "repo_url": "https://github.com/jd/tenacity",
+    "base_sha": "a49e9d6dd4e4611238dc277263d1975e1cada21e",
+    "base_permalink": "https://github.com/jd/tenacity/commit/a49e9d6dd4e4611238dc277263d1975e1cada21e",
+    "fix_sha": "868c60b80cd84273bf15a8b3f5c2026776728e5f",
+    "fix_date": "2026-06-25",
+    "subject": "fix: respect enabled=False in iterator protocols (__iter__ / __aiter__) (#643)",
+    "src_files": [
+      "tenacity/__init__.py",
+      "tenacity/asyncio/__init__.py"
+    ],
+    "test_files": [
+      "tests/test_asyncio.py",
+      "tests/test_tenacity.py"
+    ],
+    "prompt": "tenacity：装饰后的函数在 enabled=False 时，迭代协议（__iter__ / __next__）仍然会执行重试逻辑。\n请让关闭状态对这些协议也生效，补测试。"
+  },
+  {
+    "index": 54,
+    "suggested_id": "T124",
+    "repo": "jd/tenacity",
+    "repo_url": "https://github.com/jd/tenacity",
+    "base_sha": "8779333a4759e56427b5d7ba23cacd3fe6054d61",
+    "base_permalink": "https://github.com/jd/tenacity/commit/8779333a4759e56427b5d7ba23cacd3fe6054d61",
+    "fix_sha": "e5179bdab9939a748dc3e88ff21309e12e5361e0",
+    "fix_date": "2026-05-22",
+    "subject": "fix: reraise underlying exception when TryAgain wraps a cause (#640)",
+    "src_files": [
+      "tenacity/__init__.py"
+    ],
+    "test_files": [
+      "tests/test_asyncio.py",
+      "tests/test_tenacity.py"
+    ],
+    "prompt": "tenacity：TryAgain 包裹了另一个异常时，抛出来的是 TryAgain 而不是它包住的底层异常。\n请改成重抛底层异常（保留上下文），补测试。"
+  },
+  {
+    "index": 55,
+    "suggested_id": "T125",
+    "repo": "jd/tenacity",
+    "repo_url": "https://github.com/jd/tenacity",
+    "base_sha": "cb320c4d80d8af7e8953dbf40224172a06b9b977",
+    "base_permalink": "https://github.com/jd/tenacity/commit/cb320c4d80d8af7e8953dbf40224172a06b9b977",
+    "fix_sha": "4c1b7bc7817f967538ed33a7fe114cece26364a5",
+    "fix_date": "2026-02-25",
+    "subject": "fix: sync func.retry.statistics with copy's statistics (#614)",
+    "src_files": [
+      "tenacity/__init__.py",
+      "tenacity/asyncio/__init__.py"
+    ],
+    "test_files": [
+      "tests/test_asyncio.py",
+      "tests/test_tenacity.py"
+    ],
+    "prompt": "tenacity：对已包装的 retry 做 copy 之后，统计信息（statistics）和原对象不联动，数据对不上。\n请让 copy 与原对象的统计保持同步，补测试。"
+  },
+  {
+    "index": 56,
+    "suggested_id": "T126",
+    "repo": "pallets/flask",
+    "repo_url": "https://github.com/pallets/flask",
+    "base_sha": "514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b",
+    "base_permalink": "https://github.com/pallets/flask/commit/514fc6b3e8402e4c646d5284e97a4f0ab50a7c4b",
+    "fix_sha": "05e9c6bd630ecf4ec0ec884b1fc7901663737bc7",
+    "fix_date": "2026-08-11",
+    "subject": "Fix `.partition(\":\")` usage on potential IPv6 addresses (#6096)",
+    "src_files": [
+      "src/flask/app.py"
+    ],
+    "test_files": [
+      "src/flask/testing.py",
+      "tests/test_basic.py",
+      "tests/test_testing.py"
+    ],
+    "prompt": "flask：解析 Host/Server name 时用 partition(\":\") 处理地址，遇到 IPv6（带多个冒号）就截错。\n请改成按 IPv6 规则解析（带方括号的写法），补 host 解析的测试。"
+  },
+  {
+    "index": 57,
+    "suggested_id": "T127",
+    "repo": "pallets/flask",
+    "repo_url": "https://github.com/pallets/flask",
+    "base_sha": "de8429ffda8cfb54db175529e2bae72a24e1fa7e",
+    "base_permalink": "https://github.com/pallets/flask/commit/de8429ffda8cfb54db175529e2bae72a24e1fa7e",
+    "fix_sha": "7203feabf723edae0286ae5dc64fec8ac4c91735",
+    "fix_date": "2026-07-14",
+    "subject": "Fix IPv6 server name parsing",
+    "src_files": [
+      "src/flask/app.py"
+    ],
+    "test_files": [
+      "tests/test_basic.py"
+    ],
+    "prompt": "flask：IPv6 的 server name 解析结果不对（端口/方括号处理错误），影响 url_for 生成的地址。\n请修好解析并补测试，保持 IPv4 与普通域名的行为不变。"
+  },
+  {
+    "index": 58,
+    "suggested_id": "T128",
+    "repo": "python-attrs/attrs",
+    "repo_url": "https://github.com/python-attrs/attrs",
+    "base_sha": "6851ab593cd25f3c14393e9355d57d22bec2a074",
+    "base_permalink": "https://github.com/python-attrs/attrs/commit/6851ab593cd25f3c14393e9355d57d22bec2a074",
+    "fix_sha": "97f8d175656bc03c373a1c9038048a4d312c307c",
+    "fix_date": "2026-07-31",
+    "subject": "Fix ClassVar forward reference detection (#1593)",
+    "src_files": [
+      "src/attr/_make.py"
+    ],
+    "test_files": [
+      "tests/test_annotations.py"
+    ],
+    "prompt": "attrs：把 ClassVar 判定为\"前向引用的普通字段\"了，导致用字符串前向引用声明 ClassVar 的类被错误处理。\n请修好 ClassVar 的前向引用检测，补一个用字符串前向引用 ClassVar 的测试。"
+  },
+  {
+    "index": 59,
+    "suggested_id": "T129",
+    "repo": "python-trio/trio",
+    "repo_url": "https://github.com/python-trio/trio",
+    "base_sha": "72abfa5868ba105ec7f630650092af4c95d74fad",
+    "base_permalink": "https://github.com/python-trio/trio/commit/72abfa5868ba105ec7f630650092af4c95d74fad",
+    "fix_sha": "1858c7f450d2dbae984fa6ab275a86f18088c286",
+    "fix_date": "2026-07-29",
+    "subject": "Fix Path.as_uri on Python 3.14 (#3460)",
+    "src_files": [
+      "src/trio/_path.py"
+    ],
+    "test_files": [
+      "src/trio/_tests/test_path.py"
+    ],
+    "prompt": "trio：Path.as_uri() 在 Python 3.14 上返回的结果不对（相对路径/转义处理变了）。\n请在新版本上修好，保持 3.13 行为一致，补测试。"
+  },
+  {
+    "index": 60,
+    "suggested_id": "T130",
+    "repo": "pytest-dev/pytest",
+    "repo_url": "https://github.com/pytest-dev/pytest",
+    "base_sha": "99ab2acccff15f757260a1e1fbb0d2a47fc01041",
+    "base_permalink": "https://github.com/pytest-dev/pytest/commit/99ab2acccff15f757260a1e1fbb0d2a47fc01041",
+    "fix_sha": "09d0020ff205d1166b9b541efccf19333ca69c3a",
+    "fix_date": "2026-09-17",
+    "subject": "fixtures: fix lineno off-by-one in --fixtures/--fixtures-per-test and a couple of error messages",
+    "src_files": [
+      "src/_pytest/compat.py"
+    ],
+    "test_files": [
+      "testing/python/fixtures.py",
+      "testing/python/show_fixtures_per_test.py"
+    ],
+    "prompt": "pytest：--fixtures / --fixtures-per-test 打印的行号差一行（off-by-one），点进去定位到错误位置。\n请修好行号计算，补测试。"
+  },
+  {
+    "index": 61,
+    "suggested_id": "T131",
+    "repo": "pytest-dev/pytest",
+    "repo_url": "https://github.com/pytest-dev/pytest",
+    "base_sha": "bb33e5c1feb7223829b9ffe43cf0b4df2bf8df50",
+    "base_permalink": "https://github.com/pytest-dev/pytest/commit/bb33e5c1feb7223829b9ffe43cf0b4df2bf8df50",
+    "fix_sha": "3261273a1f5ec51d75f5744bab41ca243d84942a",
+    "fix_date": "2026-09-15",
+    "subject": "fix: use _imp._fix_co_filename to fix the filename in the bytecode and use a pure python implementation as fallback",
+    "src_files": [
+      "src/_pytest/assertion/rewrite.py"
+    ],
+    "test_files": [
+      "testing/test_assertrewrite.py"
+    ],
+    "prompt": "pytest 的断言重写：生成的字节码里文件名不对（回溯里显示错误文件），需要用官方的方式修正 code 的文件名。\n请修好，并保证断言输出与回溯信息仍然正确，补测试。"
+  },
+  {
+    "index": 62,
+    "suggested_id": "T132",
+    "repo": "pytest-dev/pytest",
+    "repo_url": "https://github.com/pytest-dev/pytest",
+    "base_sha": "53bc06b9933eb50b40cd904aa50bcd1b6cf2a49c",
+    "base_permalink": "https://github.com/pytest-dev/pytest/commit/53bc06b9933eb50b40cd904aa50bcd1b6cf2a49c",
+    "fix_sha": "3d0f2cf7f48bce129471672ba25cce4c1bff31be",
+    "fix_date": "2026-09-08",
+    "subject": "fix: bytecode cache invalidation for moved test files (#14552)",
+    "src_files": [
+      "src/_pytest/assertion/rewrite.py"
+    ],
+    "test_files": [
+      "testing/test_assertrewrite.py"
+    ],
+    "prompt": "pytest：测试文件被移动/改名之后，字节码缓存没有失效，仍加载旧代码。\n请修好缓存失效判断，补一个\"移动文件后重新收集\"的测试。"
+  },
+  {
+    "index": 63,
+    "suggested_id": "T133",
+    "repo": "psf/black",
+    "repo_url": "https://github.com/psf/black",
+    "base_sha": "62bcae6485c3d5adc9c0acdcf500c8ed0f547694",
+    "base_permalink": "https://github.com/psf/black/commit/62bcae6485c3d5adc9c0acdcf500c8ed0f547694",
+    "fix_sha": "6aaae16d2fbb9bc321a7f52ca1882e63fe6f6e3a",
+    "fix_date": "2026-09-22",
+    "subject": "Fix unparseable output for `# fmt: skip` on compound header bracket (#5402) (#5405)",
+    "src_files": [
+      "src/black/linegen.py"
+    ],
+    "test_files": [
+      "tests/data/cases/fmtskip_header_bracket_5402.py"
+    ],
+    "prompt": "black：`# fmt: skip` 加在复合语句头部（比如 if/for 的头部）时，格式化出来的代码无法解析。\n请修好，补一个含复合头部 skip 注释的用例。"
+  },
+  {
+    "index": 64,
+    "suggested_id": "T134",
+    "repo": "PyCQA/isort",
+    "repo_url": "https://github.com/PyCQA/isort",
+    "base_sha": "9501e61b74f09eac0b4cf6e63d6068abbbfdbf90",
+    "base_permalink": "https://github.com/PyCQA/isort/commit/9501e61b74f09eac0b4cf6e63d6068abbbfdbf90",
+    "fix_sha": "536a72749a078a5875c9bd0753bbfa4ceb0c12f2",
+    "fix_date": "2026-09-07",
+    "subject": "fix: treat EOF on stdin as 'quit' in --interactive prompt",
+    "src_files": [
+      "isort/format.py"
+    ],
+    "test_files": [
+      "tests/unit/test_format.py"
+    ],
+    "prompt": "isort 的交互模式：stdin 读到 EOF 时应当等价于 quit，现在会抛异常/卡住。\n请修好，补一个用管道输入触发的测试。"
+  },
+  {
+    "index": 65,
+    "suggested_id": "T135",
+    "repo": "PyCQA/isort",
+    "repo_url": "https://github.com/PyCQA/isort",
+    "base_sha": "b92b11d43d212aabc06f4859087bd654b086c2cc",
+    "base_permalink": "https://github.com/PyCQA/isort/commit/b92b11d43d212aabc06f4859087bd654b086c2cc",
+    "fix_sha": "9501e61b74f09eac0b4cf6e63d6068abbbfdbf90",
+    "fix_date": "2026-08-02",
+    "subject": "fix(literal): preserve reexport trailing comma layout",
+    "src_files": [
+      "isort/literal.py"
+    ],
+    "test_files": [
+      "tests/unit/test_literal.py",
+      "tests/unit/test_regressions.py"
+    ],
+    "prompt": "isort：literal 风格下重导入行的尾逗号布局被改坏（和期望输出的格式不一致）。\n请修好，补一个 literal 风格的格式化用例。"
+  },
+  {
+    "index": 66,
+    "suggested_id": "T136",
+    "repo": "PyCQA/isort",
+    "repo_url": "https://github.com/PyCQA/isort",
+    "base_sha": "d5f40fa0553aa4bba71fcd73cf42933ae14d5116",
+    "base_permalink": "https://github.com/PyCQA/isort/commit/d5f40fa0553aa4bba71fcd73cf42933ae14d5116",
+    "fix_sha": "65bfa8017efcfab0f590b43b30e46a9352eacf98",
+    "fix_date": "2026-08-10",
+    "subject": "Fix word-wrapping of 'from ... import *' into invalid Python (#2267)",
+    "src_files": [
+      "isort/wrap.py"
+    ],
+    "test_files": [
+      "tests/unit/test_wrap.py"
+    ],
+    "prompt": "isort：把 `from ... import *` 换行时生成了非法的 Python（星号后面不该再跟东西）。\n请修好换行逻辑，保证输出能通过编译，补测试。"
+  },
+  {
+    "index": 67,
+    "suggested_id": "T137",
+    "repo": "tox-dev/tox",
+    "repo_url": "https://github.com/tox-dev/tox",
+    "base_sha": "fff62f65ed4bab06a31a73a32c361afc054a7b9b",
+    "base_permalink": "https://github.com/tox-dev/tox/commit/fff62f65ed4bab06a31a73a32c361afc054a7b9b",
+    "fix_sha": "eacd4e9374a65f9e2c0c199b8ecf035fe8769fc3",
+    "fix_date": "2026-09-24",
+    "subject": "🐛 fix(config): apply overrides to sections the file lacks (#4089)",
+    "src_files": [
+      "src/tox/config/loader/ini/__init__.py",
+      "src/tox/config/source/ini.py",
+      "src/tox/config/source/toml_pyproject.py"
+    ],
+    "test_files": [
+      "tests/config/source/test_toml_tox.py",
+      "tests/config/test_main.py"
+    ],
+    "prompt": "tox 的 ini 配置加载：命令行覆盖项作用在\"文件里没有的 section\"上时会被丢掉。\n请让覆盖对不存在的 section 也生效，补测试。"
+  },
+  {
+    "index": 68,
+    "suggested_id": "T138",
+    "repo": "tox-dev/tox",
+    "repo_url": "https://github.com/tox-dev/tox",
+    "base_sha": "12bf3a68f1200945e6da2d7576ee1cfd695038ed",
+    "base_permalink": "https://github.com/tox-dev/tox/commit/12bf3a68f1200945e6da2d7576ee1cfd695038ed",
+    "fix_sha": "8e1967e98f6480b0d99847c6a058463b7cce5416",
+    "fix_date": "2026-09-22",
+    "subject": "fix(config): read the user config file as UTF-8 (#4086)",
+    "src_files": [
+      "src/tox/config/cli/ini.py"
+    ],
+    "test_files": [
+      "tests/config/cli/test_cli_ini.py"
+    ],
+    "prompt": "tox：读取用户级配置文件时没有按 UTF-8 解码，中文/非 ASCII 内容会报错。\n请统一按 UTF-8 读取，补一个含非 ASCII 的配置用例。"
+  },
+  {
+    "index": 69,
+    "suggested_id": "T139",
+    "repo": "tox-dev/tox",
+    "repo_url": "https://github.com/tox-dev/tox",
+    "base_sha": "b2894bda5f390dc19f34c74ebec0726de7c9bb54",
+    "base_permalink": "https://github.com/tox-dev/tox/commit/b2894bda5f390dc19f34c74ebec0726de7c9bb54",
+    "fix_sha": "62a37e5e846e4baa3b1137c68ebdb224f41e17ad",
+    "fix_date": "2026-09-19",
+    "subject": "🐛 fix(run): keep package env interrupt logs in parallel (#4079)",
+    "src_files": [
+      "src/tox/tox_env/runner.py"
+    ],
+    "test_files": [
+      "tests/session/cmd/test_parallel.py"
+    ],
+    "prompt": "tox：并行执行时某个环境被中断，日志会被其它环境的输出冲掉/丢失。\n请保证中断日志能保留下来，补测试。"
+  },
+  {
+    "index": 70,
+    "suggested_id": "T140",
+    "repo": "tox-dev/tox",
+    "repo_url": "https://github.com/tox-dev/tox",
+    "base_sha": "2f96e32e30ad646bc30006b23ba7dafcd0b2fb1c",
+    "base_permalink": "https://github.com/tox-dev/tox/commit/2f96e32e30ad646bc30006b23ba7dafcd0b2fb1c",
+    "fix_sha": "472ed02ccbd240bccad5a2746f82bbc37fe5cf7c",
+    "fix_date": "2026-09-19",
+    "subject": "fix(config): clear markers overridden by unconditional set_env values (#4077)",
+    "src_files": [
+      "src/tox/config/set_env.py"
+    ],
+    "test_files": [
+      "tests/config/test_set_env.py"
+    ],
+    "prompt": "tox 的 set_env：无条件设置的变量会残留覆盖标记，导致之后的配置（比如条件设置）读到的值不对。\n请清理这些标记，补测试。"
+  },
+  {
+    "index": 71,
+    "suggested_id": "T141",
+    "repo": "tox-dev/tox",
+    "repo_url": "https://github.com/tox-dev/tox",
+    "base_sha": "e521d6e9c71f74993f9e8f60854b7e24a3eebbb9",
+    "base_permalink": "https://github.com/tox-dev/tox/commit/e521d6e9c71f74993f9e8f60854b7e24a3eebbb9",
+    "fix_sha": "176c68f3f065155e3db5a6c333b8182a31fd50ce",
+    "fix_date": "2026-09-19",
+    "subject": "🐛 fix(config): honor an empty TOX_FACTOR override (#4074)",
+    "src_files": [
+      "src/tox/config/loader/replacer.py"
+    ],
+    "test_files": [
+      "tests/config/source/test_toml_env_base.py"
+    ],
+    "prompt": "tox：TOX_FACTOR 被显式设成空值时，覆盖不生效（被当成未设置）。\n请尊重显式空值，补测试。"
+  },
+  {
+    "index": 72,
+    "suggested_id": "T142",
+    "repo": "tox-dev/tox",
+    "repo_url": "https://github.com/tox-dev/tox",
+    "base_sha": "a5a7ce622566ba4f018fb5d243483baca91a499a",
+    "base_permalink": "https://github.com/tox-dev/tox/commit/a5a7ce622566ba4f018fb5d243483baca91a499a",
+    "fix_sha": "c504e482a33a358048d983b45c8ed2687dc13cc2",
+    "fix_date": "2026-09-17",
+    "subject": "fix(config): let empty factor fallbacks override TOML group defaults (#4072)",
+    "src_files": [
+      "src/tox/config/loader/replacer.py"
+    ],
+    "test_files": [
+      "tests/config/source/test_toml_env_base.py"
+    ],
+    "prompt": "tox：factor 的空回退（fallback）覆盖不了 TOML 里的分组默认值。\n请修好优先级，补测试。"
+  },
+  {
+    "index": 73,
+    "suggested_id": "T143",
+    "repo": "tox-dev/tox",
+    "repo_url": "https://github.com/tox-dev/tox",
+    "base_sha": "b429bcc200aeed2c1d76e6cfd77f4bbaeff8e938",
+    "base_permalink": "https://github.com/tox-dev/tox/commit/b429bcc200aeed2c1d76e6cfd77f4bbaeff8e938",
+    "fix_sha": "363297865f6ba247e9b8d494d19952cbf4588c27",
+    "fix_date": "2026-09-16",
+    "subject": "fix(config): accept empty set_env lists (#4065)",
+    "src_files": [
+      "src/tox/config/set_env.py"
+    ],
+    "test_files": [
+      "tests/config/test_set_env.py"
+    ],
+    "prompt": "tox：配置里写空的 set_env 列表会报错/被忽略，应该按\"空列表\"语义接受。\n请修好，补测试。"
+  },
+  {
+    "index": 74,
+    "suggested_id": "T144",
+    "repo": "tox-dev/tox",
+    "repo_url": "https://github.com/tox-dev/tox",
+    "base_sha": "0975be867406942e674ed58a2426950796d632ea",
+    "base_permalink": "https://github.com/tox-dev/tox/commit/0975be867406942e674ed58a2426950796d632ea",
+    "fix_sha": "b429bcc200aeed2c1d76e6cfd77f4bbaeff8e938",
+    "fix_date": "2026-09-15",
+    "subject": "fix(config): reject boolean TOML range bounds (#4066)",
+    "src_files": [
+      "src/tox/config/loader/toml/_product.py"
+    ],
+    "test_files": [
+      "tests/config/loader/test_toml_product.py"
+    ],
+    "prompt": "tox：TOML 配置里 range 边界写成布尔值（true/false）被当成合法数字，应该拒绝并报错。\n请加上校验，补测试。"
+  },
+  {
+    "index": 75,
+    "suggested_id": "T145",
+    "repo": "tox-dev/filelock",
+    "repo_url": "https://github.com/tox-dev/filelock",
+    "base_sha": "2d4530f621dc5fed042fb8e73e5f2bacadb37fbd",
+    "base_permalink": "https://github.com/tox-dev/filelock/commit/2d4530f621dc5fed042fb8e73e5f2bacadb37fbd",
+    "fix_sha": "fd10e07710dd560eb14b18573ca65d6a2af0b8df",
+    "fix_date": "2026-09-23",
+    "subject": "🐛 fix(api): skip the fork audit hook on CPython <3.12 (#747)",
+    "src_files": [
+      "src/filelock/_api.py",
+      "tasks/capabilities.py"
+    ],
+    "test_files": [
+      "tests/test_fork_coordination.py"
+    ],
+    "prompt": "filelock：在 CPython < 3.12 上注册 fork 审计钩子会失败/告警。\n请按版本条件跳过这个钩子，保证 3.11 及以下不报错，补测试。"
+  },
+  {
+    "index": 76,
+    "suggested_id": "T146",
+    "repo": "tox-dev/filelock",
+    "repo_url": "https://github.com/tox-dev/filelock",
+    "base_sha": "b26beda0d5d0cc0721554f342bc3e6da8df46f30",
+    "base_permalink": "https://github.com/tox-dev/filelock/commit/b26beda0d5d0cc0721554f342bc3e6da8df46f30",
+    "fix_sha": "fe0e99d00f3a98f1df1e7b0d5fa9c4ce79023803",
+    "fix_date": "2026-09-23",
+    "subject": "🐛 fix(api): serialize concurrent transitions on shared locks (#745)",
+    "src_files": [
+      "src/filelock/_api.py",
+      "src/filelock/_strict.py"
+    ],
+    "test_files": [
+      "tests/test_filelock.py"
+    ],
+    "prompt": "filelock：多个线程/进程在同一把共享锁上做状态切换时没有串行化，偶尔出现状态错乱（谁持锁算不清）。\n请把这组切换串行化，补一个并发切换的测试。"
+  },
+  {
+    "index": 77,
+    "suggested_id": "T147",
+    "repo": "tox-dev/filelock",
+    "repo_url": "https://github.com/tox-dev/filelock",
+    "base_sha": "7e574366455fdf792dbfc8cc71e5e3c11f31d130",
+    "base_permalink": "https://github.com/tox-dev/filelock/commit/7e574366455fdf792dbfc8cc71e5e3c11f31d130",
+    "fix_sha": "6ee6db68b1511f81eb67491344616423779efea0",
+    "fix_date": "2026-09-19",
+    "subject": "fix: reject invalid poll_interval before sleep (#739)",
+    "src_files": [
+      "src/filelock/_api.py",
+      "src/filelock/asyncio.py"
+    ],
+    "test_files": [
+      "tests/test_async_filelock.py",
+      "tests/test_filelock.py"
+    ],
+    "prompt": "filelock：poll_interval 传了非法值（负数/0/非数字）时不会报错，而是直接进去 sleep，表现成卡住。\n请先校验再等待，非法值给出明确异常，补测试。"
+  },
+  {
+    "index": 78,
+    "suggested_id": "T148",
+    "repo": "tox-dev/filelock",
+    "repo_url": "https://github.com/tox-dev/filelock",
+    "base_sha": "f2f7b8696426c518b6828ea10e755c0ba2a4ffe2",
+    "base_permalink": "https://github.com/tox-dev/filelock/commit/f2f7b8696426c518b6828ea10e755c0ba2a4ffe2",
+    "fix_sha": "7b7b7a8b9b10acf826cca246441297468039b0c1",
+    "fix_date": "2026-09-08",
+    "subject": "Fix SoftReadWriteLock state lock timeout (#726)",
+    "src_files": [
+      "src/filelock/_soft_rw/_sync.py"
+    ],
+    "test_files": [
+      "tests/soft_rw/test_soft_rw_sync.py"
+    ],
+    "prompt": "filelock 的 SoftReadWriteLock：内部状态锁的超时设置没有生效，等锁会一直等下去。\n请让超时生效并在超时时给出可读错误，补测试。"
+  },
+  {
+    "index": 79,
+    "suggested_id": "T149",
+    "repo": "tox-dev/filelock",
+    "repo_url": "https://github.com/tox-dev/filelock",
+    "base_sha": "e947a694fb0da6676c4861c8bfef3650e5656153",
+    "base_permalink": "https://github.com/tox-dev/filelock/commit/e947a694fb0da6676c4861c8bfef3650e5656153",
+    "fix_sha": "f2f7b8696426c518b6828ea10e755c0ba2a4ffe2",
+    "fix_date": "2026-09-08",
+    "subject": "fix: respect ACL write access when the owner write bit is absent (#728)",
+    "src_files": [
+      "src/filelock/_util.py"
+    ],
+    "test_files": [
+      "tests/test_util.py"
+    ],
+    "prompt": "filelock：当目录 owner 的写位被去掉、但 ACL 允许写时，代码误判为不可写。\n请改成同时看 ACL 写权限，补一个模拟 ACL 的测试（没条件就跳过并说明）。"
+  },
+  {
+    "index": 80,
+    "suggested_id": "T150",
+    "repo": "tox-dev/filelock",
+    "repo_url": "https://github.com/tox-dev/filelock",
+    "base_sha": "ae9cb5b2d66d6a79edd76b292fa7320c11468812",
+    "base_permalink": "https://github.com/tox-dev/filelock/commit/ae9cb5b2d66d6a79edd76b292fa7320c11468812",
+    "fix_sha": "da3ae2bca0035fb9e5269257e6f393360866cf88",
+    "fix_date": "2026-09-08",
+    "subject": "fix: preserve exception notes when copying and pickling (#729)",
+    "src_files": [
+      "src/filelock/_error.py"
+    ],
+    "test_files": [
+      "tests/test_error.py"
+    ],
+    "prompt": "filelock 的异常类型：对异常做复制/序列化（copy/pickle）之后，附加的 notes 信息丢了。\n请让 notes 跟着一起保留，补测试。"
+  },
+  {
+    "index": 81,
+    "suggested_id": "T151",
+    "repo": "tox-dev/filelock",
+    "repo_url": "https://github.com/tox-dev/filelock",
+    "base_sha": "d00f9bbd709fbe92a99a38cb1e32b6690813e5a8",
+    "base_permalink": "https://github.com/tox-dev/filelock/commit/d00f9bbd709fbe92a99a38cb1e32b6690813e5a8",
+    "fix_sha": "ae9cb5b2d66d6a79edd76b292fa7320c11468812",
+    "fix_date": "2026-09-08",
+    "subject": "🐛 fix(soft-rw): reject non-finite timing options (#724)",
+    "src_files": [
+      "src/filelock/_soft_rw/_sync.py"
+    ],
+    "test_files": [
+      "tests/soft_rw/test_soft_rw_intervals.py"
+    ],
+    "prompt": "filelock 的 soft-rw：计时参数传了非有限值（inf/nan）被接受，之后行为不可预期。\n请拒绝这类值并给出明确异常，补测试。"
+  },
+  {
+    "index": 82,
+    "suggested_id": "T152",
+    "repo": "tox-dev/filelock",
+    "repo_url": "https://github.com/tox-dev/filelock",
+    "base_sha": "1d9e9e7e43a1089c57d7c6f20d6a2268235a4745",
+    "base_permalink": "https://github.com/tox-dev/filelock/commit/1d9e9e7e43a1089c57d7c6f20d6a2268235a4745",
+    "fix_sha": "82f66d7b0aaa83755f8d71d0b0da88408b58ec4a",
+    "fix_date": "2026-09-01",
+    "subject": "🐛 fix(lease): reject a duration no marker can carry (#723)",
+    "src_files": [
+      "src/filelock/_lease.py"
+    ],
+    "test_files": [
+      "tests/test_soft_lease.py"
+    ],
+    "prompt": "filelock 的 lease：请求的租约时长超出了标记能表达的范围，代码没拦，写出了错的标记。\n请加校验并给出可读错误，补边界测试。"
+  },
+  {
+    "index": 83,
+    "suggested_id": "T153",
+    "repo": "theskumar/python-dotenv",
+    "repo_url": "https://github.com/theskumar/python-dotenv",
+    "base_sha": "751f8c148222e58aa173c83c4e5e6cfccb2cc124",
+    "base_permalink": "https://github.com/theskumar/python-dotenv/commit/751f8c148222e58aa173c83c4e5e6cfccb2cc124",
+    "fix_sha": "f7b18d9c72d1abcc2ad4023424b84f5bee30d266",
+    "fix_date": "2026-08-16",
+    "subject": "fix: round-trip backslashes through set_key (#680)",
+    "src_files": [
+      "src/dotenv/main.py",
+      "src/dotenv/parser.py"
+    ],
+    "test_files": [
+      "tests/test_main.py",
+      "tests/test_parser.py"
+    ],
+    "prompt": "python-dotenv 的 set_key：值里带反斜杠时写出去再读回来内容变了（转义没有正确往返）。\n请修好转义，保证 set_key 之后 get 回来的值和原始值一致，补测试。"
+  },
+  {
+    "index": 84,
+    "suggested_id": "T154",
+    "repo": "theskumar/python-dotenv",
+    "repo_url": "https://github.com/theskumar/python-dotenv",
+    "base_sha": "68ea2d10dd8e97e6dea67c32742085f27729e3fe",
+    "base_permalink": "https://github.com/theskumar/python-dotenv/commit/68ea2d10dd8e97e6dea67c32742085f27729e3fe",
+    "fix_sha": "bca6644d9aedbe287b792b756b3ae3d650cd0d3a",
+    "fix_date": "2026-04-19",
+    "subject": "fix: strip UTF-8 BOM from .env files (#640)",
+    "src_files": [
+      "src/dotenv/parser.py"
+    ],
+    "test_files": [
+      "tests/test_parser.py"
+    ],
+    "prompt": "python-dotenv：.env 文件开头有 UTF-8 BOM 时，第一个变量名会被污染，读不到。\n请剥离 BOM，补一个带 BOM 的解析测试。"
+  },
+  {
+    "index": 85,
+    "suggested_id": "T155",
+    "repo": "theskumar/python-dotenv",
+    "repo_url": "https://github.com/theskumar/python-dotenv",
+    "base_sha": "dc71adbd8105188602907f6653d3c58d113de554",
+    "base_permalink": "https://github.com/theskumar/python-dotenv/commit/dc71adbd8105188602907f6653d3c58d113de554",
+    "fix_sha": "da0c82054f1ec1e03d57356d49b0b9ad09eb4209",
+    "fix_date": "2026-03-02",
+    "subject": "fix: print friendly error for missing command in `dotenv run`  (#606)",
+    "src_files": [
+      "src/dotenv/cli.py"
+    ],
+    "test_files": [
+      "tests/test_cli.py"
+    ],
+    "prompt": "python-dotenv 的 CLI：`dotenv run` 指定了一个不存在的命令时，报错信息很难看（裸异常）。\n请给出友好的错误提示和合理的退出码，补测试。"
+  },
+  {
+    "index": 86,
+    "suggested_id": "T156",
+    "repo": "python-poetry/poetry-core",
+    "repo_url": "https://github.com/python-poetry/poetry-core",
+    "base_sha": "4d21bfcd0c9ddd95ca2fd531d43bd3f2bcc2f170",
+    "base_permalink": "https://github.com/python-poetry/poetry-core/commit/4d21bfcd0c9ddd95ca2fd531d43bd3f2bcc2f170",
+    "fix_sha": "43d08bf2e7953fdb8845ad81470357e4d4b495ce",
+    "fix_date": "2026-09-18",
+    "subject": "fix: format_python_constraint IndexError on unions outside PYTHON_VERSION (#971)",
+    "src_files": [
+      "src/poetry/core/version/helpers.py"
+    ],
+    "test_files": [
+      "tests/masonry/test_metadata.py",
+      "tests/version/test_helpers.py"
+    ],
+    "prompt": "poetry-core：format_python_constraint 处理 PYTHON 范围之外的版本并集时抛 IndexError 而不是返回合理结果。\n请修好这个崩溃，补测试。"
+  },
+  {
+    "index": 87,
+    "suggested_id": "T157",
+    "repo": "python-poetry/poetry-core",
+    "repo_url": "https://github.com/python-poetry/poetry-core",
+    "base_sha": "b32327442904e600d7647aca15124314388f1631",
+    "base_permalink": "https://github.com/python-poetry/poetry-core/commit/b32327442904e600d7647aca15124314388f1631",
+    "fix_sha": "4d21bfcd0c9ddd95ca2fd531d43bd3f2bcc2f170",
+    "fix_date": "2026-09-18",
+    "subject": "Fix ~= upper bound for releases with more than three segments (#973)",
+    "src_files": [
+      "src/poetry/core/constraints/version/parser.py"
+    ],
+    "test_files": [
+      "tests/constraints/version/test_parse_constraint.py"
+    ],
+    "prompt": "poetry-core：~= 的上界计算对\"多于三段\"的版本（比如 1.2.3.4）算错，得到的约束范围不包含它该包含的版本。\n请修好上界推导，补测试。"
+  },
+  {
+    "index": 88,
+    "suggested_id": "T158",
+    "repo": "python-poetry/poetry-core",
+    "repo_url": "https://github.com/python-poetry/poetry-core",
+    "base_sha": "b9663e42c808543377ae523611c4cfad68016f30",
+    "base_permalink": "https://github.com/python-poetry/poetry-core/commit/b9663e42c808543377ae523611c4cfad68016f30",
+    "fix_sha": "b32327442904e600d7647aca15124314388f1631",
+    "fix_date": "2026-09-18",
+    "subject": "Fix generic marker values containing spaces (#972)",
+    "src_files": [
+      "src/poetry/core/constraints/generic/parser.py"
+    ],
+    "test_files": [
+      "tests/constraints/generic/test_main.py",
+      "tests/version/test_markers.py"
+    ],
+    "prompt": "poetry-core：带空格的 marker 值解析错了（值里合法空格被当成语法错误/被截断）。\n请修好解析，补一个含空格值的 marker 测试。"
+  },
+  {
+    "index": 89,
+    "suggested_id": "T159",
+    "repo": "python-poetry/poetry-core",
+    "repo_url": "https://github.com/python-poetry/poetry-core",
+    "base_sha": "ba72f4396c68fd78257c7f978d7d2636d663ca45",
+    "base_permalink": "https://github.com/python-poetry/poetry-core/commit/ba72f4396c68fd78257c7f978d7d2636d663ca45",
+    "fix_sha": "3e3263105301b1e117d4e01b4a2c77113cdb8fc4",
+    "fix_date": "2026-09-04",
+    "subject": "Fix union of public and local versions (#966)",
+    "src_files": [
+      "src/poetry/core/constraints/version/version.py"
+    ],
+    "test_files": [
+      "tests/constraints/version/test_version.py"
+    ],
+    "prompt": "poetry-core：public 版本和 local 版本求并集时结果不对（local 变体被丢掉/合并错误）。\n请修好并集语义，补测试。"
+  },
+  {
+    "index": 90,
+    "suggested_id": "T160",
+    "repo": "python-poetry/poetry-core",
+    "repo_url": "https://github.com/python-poetry/poetry-core",
+    "base_sha": "df40e891ff409a138df91549a16475e851c3fd3d",
+    "base_permalink": "https://github.com/python-poetry/poetry-core/commit/df40e891ff409a138df91549a16475e851c3fd3d",
+    "fix_sha": "ba72f4396c68fd78257c7f978d7d2636d663ca45",
+    "fix_date": "2026-09-04",
+    "subject": "fix: str() of a range whose upper bound is all zeros raised IndexError (#964)",
+    "src_files": [
+      "src/poetry/core/constraints/version/version_constraint.py"
+    ],
+    "test_files": [
+      "tests/constraints/version/test_version_range.py"
+    ],
+    "prompt": "poetry-core：上界是全零版本的区间在 str() 时抛 IndexError（应该正常打印）。\n请修好，补测试。"
+  },
+  {
+    "index": 91,
+    "suggested_id": "T161",
+    "repo": "python-poetry/poetry-core",
+    "repo_url": "https://github.com/python-poetry/poetry-core",
+    "base_sha": "926903773dc7785f29bc3bf37b1fe85dd93bd106",
+    "base_permalink": "https://github.com/python-poetry/poetry-core/commit/926903773dc7785f29bc3bf37b1fe85dd93bd106",
+    "fix_sha": "96d9f71575c373143e69444aabab30eb6122a497",
+    "fix_date": "2026-08-14",
+    "subject": "fix: correct allows_all containment check for \"!=\" vs \"not in\" (#955)",
+    "src_files": [
+      "src/poetry/core/constraints/generic/constraint.py"
+    ],
+    "test_files": [
+      "tests/constraints/generic/test_constraint.py",
+      "tests/version/test_markers.py"
+    ],
+    "prompt": "poetry-core：allows_all 在 \"!=\" 与 \"not in\" 这类约束的组合上判断错了（包含了不该包含的版本）。\n请修好包含判定，补测试。"
+  },
+  {
+    "index": 92,
+    "suggested_id": "T162",
+    "repo": "python-poetry/poetry-core",
+    "repo_url": "https://github.com/python-poetry/poetry-core",
+    "base_sha": "19dfc92be324d14b471e028204329e3f052d2fb6",
+    "base_permalink": "https://github.com/python-poetry/poetry-core/commit/19dfc92be324d14b471e028204329e3f052d2fb6",
+    "fix_sha": "d2041c123b36a19fff7c983b2b620f14c581879f",
+    "fix_date": "2026-06-11",
+    "subject": "Fix union(range, public_version) to fill local-variant punctures (#950)",
+    "src_files": [
+      "src/poetry/core/constraints/version/version.py",
+      "src/poetry/core/constraints/version/version_range.py"
+    ],
+    "test_files": [
+      "tests/constraints/version/test_version_range.py"
+    ],
+    "prompt": "poetry-core：range 与 public 版本求并集时，local 变体的补全不对。\n请修好，补测试。"
+  },
+  {
+    "index": 93,
+    "suggested_id": "T163",
+    "repo": "python-poetry/poetry-core",
+    "repo_url": "https://github.com/python-poetry/poetry-core",
+    "base_sha": "a1cebaca12deb17a5e23ae9a137fcf28908eb462",
+    "base_permalink": "https://github.com/python-poetry/poetry-core/commit/a1cebaca12deb17a5e23ae9a137fcf28908eb462",
+    "fix_sha": "8dc85210209e607f8a0bc891bcc09247a20594c6",
+    "fix_date": "2026-05-03",
+    "subject": "Fix VersionRange.is_empty for coincident-bound non-inclusive ranges (#939)",
+    "src_files": [
+      "src/poetry/core/constraints/version/version_range.py"
+    ],
+    "test_files": [
+      "tests/constraints/version/test_version_range.py"
+    ],
+    "prompt": "poetry-core：VersionRange.is_empty 对\"上下界重合且都是开区间\"的判断错（把空区间判成非空）。\n请修好，补边界测试。"
+  },
+  {
+    "index": 94,
+    "suggested_id": "T164",
+    "repo": "celery/celery",
+    "repo_url": "https://github.com/celery/celery",
+    "base_sha": "0ec71f929742938cbcbe996b74cabf5b6cd54655",
+    "base_permalink": "https://github.com/celery/celery/commit/0ec71f929742938cbcbe996b74cabf5b6cd54655",
+    "fix_sha": "d977c27e7fc51688929cad88255e4adfa0a2831f",
+    "fix_date": "2026-09-21",
+    "subject": "fix(app.utils): handle multi-server URLs in sanitize_url and bugreport (#8014) (#10607)",
+    "src_files": [
+      "celery/app/utils.py"
+    ],
+    "test_files": [
+      "t/integration/test_inspect.py",
+      "t/smoke/tests/test_control.py",
+      "t/unit/app/test_utils.py"
+    ],
+    "prompt": "celery：sanitize_url 处理\"多服务器 URL\"（分号分隔多个地址）时会把其中一部分当成密码打码掉，日志里的地址不可读。\n请修好解析与打码，补测试。"
+  },
+  {
+    "index": 95,
+    "suggested_id": "T165",
+    "repo": "celery/celery",
+    "repo_url": "https://github.com/celery/celery",
+    "base_sha": "05e0ea4233c89d26465c1330c285f93859ff1b7e",
+    "base_permalink": "https://github.com/celery/celery/commit/05e0ea4233c89d26465c1330c285f93859ff1b7e",
+    "fix_sha": "5cf61408bd1aa7b9af27d125cc1a39dfde489b65",
+    "fix_date": "2026-09-19",
+    "subject": "fix(backends.database): store stamping metadata with extended results (#8887) (#10605)",
+    "src_files": [
+      "celery/backends/database/__init__.py",
+      "celery/backends/database/models.py"
+    ],
+    "test_files": [
+      "t/unit/backends/test_database.py"
+    ],
+    "prompt": "celery 的 database 后端：保存 stamping 元数据时，扩展信息（extended metadata）会丢失/写不进去。\n请修好写入，补测试。"
+  },
+  {
+    "index": 96,
+    "suggested_id": "T166",
+    "repo": "celery/celery",
+    "repo_url": "https://github.com/celery/celery",
+    "base_sha": "c1fd34ebc7e717b33abbfdf0fc1b6794fdbf1a0d",
+    "base_permalink": "https://github.com/celery/celery/commit/c1fd34ebc7e717b33abbfdf0fc1b6794fdbf1a0d",
+    "fix_sha": "535308894040fe861a4151edceff5afdd3284d25",
+    "fix_date": "2026-09-16",
+    "subject": "Fix celery multi crashing on a single node name containing a dash (#10643)",
+    "src_files": [
+      "celery/apps/multi.py"
+    ],
+    "test_files": [
+      "t/unit/apps/test_multi.py"
+    ],
+    "prompt": "celery multi：节点名里包含特定字符时启动会崩。\n请修好节点名解析，补测试。"
+  },
+  {
+    "index": 97,
+    "suggested_id": "T167",
+    "repo": "microsoft/playwright-python",
+    "repo_url": "https://github.com/microsoft/playwright-python",
+    "base_sha": "4e174edb7959a2c34ecdbb9dbfb0a83ad79fbca3",
+    "base_permalink": "https://github.com/microsoft/playwright-python/commit/4e174edb7959a2c34ecdbb9dbfb0a83ad79fbca3",
+    "fix_sha": "ece7531c056c778c4635d6754f81e4df64913e24",
+    "fix_date": "2026-09-23",
+    "subject": "fix(video): return pathlib.Path from Video.path() (#3197)",
+    "src_files": [
+      "playwright/_impl/_video.py"
+    ],
+    "test_files": [
+      "tests/async/test_video.py",
+      "tests/sync/test_video.py"
+    ],
+    "prompt": "playwright-python：Video.path() 返回的是字符串而不是 pathlib.Path，和类型标注/文档不一致，调用方拿 `.name` 之类属性会失败。\n请改回 Path（保持字符串化行为不变），补测试。"
+  },
+  {
+    "index": 98,
+    "suggested_id": "T168",
+    "repo": "microsoft/playwright-python",
+    "repo_url": "https://github.com/microsoft/playwright-python",
+    "base_sha": "4af2fc65fb05eb04904b69b6206e9d07ca2b4cbc",
+    "base_permalink": "https://github.com/microsoft/playwright-python/commit/4af2fc65fb05eb04904b69b6206e9d07ca2b4cbc",
+    "fix_sha": "154f67ced51ada646b0fcf8574897d96c9712aa3",
+    "fix_date": "2026-08-06",
+    "subject": "fix(sync): wait for initialize before leaving __enter__ (#3168)",
+    "src_files": [
+      "playwright/_impl/_connection.py",
+      "playwright/sync_api/_context_manager.py"
+    ],
+    "test_files": [
+      "tests/sync/test_context_manager.py"
+    ],
+    "prompt": "playwright-python 的同步 API：`with sync_playwright() as p:` 在初始化还没完成时就被退出，偶发报错/泄漏。\n请让 __enter__ 等到初始化完成，补测试。"
+  },
+  {
+    "index": 99,
+    "suggested_id": "T169",
+    "repo": "microsoft/playwright-python",
+    "repo_url": "https://github.com/microsoft/playwright-python",
+    "base_sha": "eab2bca195df8709bd32fc11129c268cf8963cd2",
+    "base_permalink": "https://github.com/microsoft/playwright-python/commit/eab2bca195df8709bd32fc11129c268cf8963cd2",
+    "fix_sha": "4d2e058f43f05448ad29b19e82919be5b86e8349",
+    "fix_date": "2026-08-05",
+    "subject": "fix(connection): register protocol callback only after successful send (#3167)",
+    "src_files": [
+      "playwright/_impl/_connection.py"
+    ],
+    "test_files": [
+      "tests/async/test_asyncio.py",
+      "tests/sync/test_sync.py"
+    ],
+    "prompt": "playwright-python 的连接层：协议回调注册得太早（连接还没就绪），导致早期消息丢失。\n请改成注册成功之后再注册回调，补测试。"
+  },
+  {
+    "index": 100,
+    "suggested_id": "T170",
+    "repo": "microsoft/playwright-python",
+    "repo_url": "https://github.com/microsoft/playwright-python",
+    "base_sha": "62edef4e4024cc6d459667b08331843df4d0785e",
+    "base_permalink": "https://github.com/microsoft/playwright-python/commit/62edef4e4024cc6d459667b08331843df4d0785e",
+    "fix_sha": "c3eff763a75f55d02e2539e8e224416a18c71114",
+    "fix_date": "2026-07-22",
+    "subject": "fix: show not_ prefix in call log when negative assertions fail (#3033)",
+    "src_files": [
+      "playwright/_impl/_assertions.py"
+    ],
+    "test_files": [
+      "tests/async/test_assertions.py"
+    ],
+    "prompt": "playwright-python：负向断言失败时，调用日志里没有显示 not_ 前缀，看日志分不清是哪个断言失败。\n请修好日志前缀，补测试。"
+  }
+]
