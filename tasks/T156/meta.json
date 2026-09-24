@@ -1,0 +1,37 @@
+{
+  "task_id": "T156",
+  "title": "python-poetry/poetry-core 缺陷修复：fix: format_python_constraint IndexError on unions outside P",
+  "created_at": "2026-09-24T17:45:40",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 python-poetry/poetry-core @ 4d21bfcd0c",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t156/base",
+    "sha": "570793b2710babb9c8ee497f91224b23477c9799",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/570793b2710babb9c8ee497f91224b23477c9799"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t156/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t156/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/python-poetry/poetry-core base=https://github.com/python-poetry/poetry-core/commit/4d21bfcd0c9ddd95ca2fd531d43bd3f2bcc2f170 fix=43d08bf2e7953fdb8845ad81470357e4d4b495ce"
+}
