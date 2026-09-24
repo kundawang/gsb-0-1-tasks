@@ -1,0 +1,37 @@
+{
+  "task_id": "T053",
+  "title": "温室环境联动控制（滞回 + 最小运行/间隔）",
+  "created_at": "2026-09-24T16:26:50",
+  "task_type": "0-1代码生成",
+  "difficulty": "中等",
+  "language_framework": "JavaScript, HTML, CSS（原生 ES module，无构建）",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "无外部依赖",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t053/base",
+    "sha": "4b88d7577b1919b6c26b611f2b2c0d2c9a0d17e0",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/4b88d7577b1919b6c26b611f2b2c0d2c9a0d17e0"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t053/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t053/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": ""
+}
