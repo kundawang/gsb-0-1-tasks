@@ -1,0 +1,37 @@
+{
+  "task_id": "T170",
+  "title": "microsoft/playwright-python 缺陷修复：fix: show not_ prefix in call log when negative assertions f",
+  "created_at": "2026-09-24T17:47:38",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 microsoft/playwright-python @ 62edef4e40",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t170/base",
+    "sha": "db8495a7398f71a916dd1103304c20255266beb6",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/db8495a7398f71a916dd1103304c20255266beb6"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t170/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t170/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/microsoft/playwright-python base=https://github.com/microsoft/playwright-python/commit/62edef4e4024cc6d459667b08331843df4d0785e fix=c3eff763a75f55d02e2539e8e224416a18c71114"
+}
