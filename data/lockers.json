@@ -1,0 +1,29 @@
+{
+  "retention_hours": 48,
+  "lockers": [
+    {
+      "id": "G01",
+      "size": "small"
+    },
+    {
+      "id": "G02",
+      "size": "small"
+    },
+    {
+      "id": "G03",
+      "size": "medium"
+    },
+    {
+      "id": "G04",
+      "size": "medium"
+    },
+    {
+      "id": "G05",
+      "size": "large"
+    },
+    {
+      "id": "G06",
+      "size": "large"
+    }
+  ]
+}

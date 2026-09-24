@@ -1,0 +1,35 @@
+[
+  {
+    "t": 0,
+    "type": "reserve",
+    "book_id": "B-1001",
+    "size": "small",
+    "user": "u1"
+  },
+  {
+    "t": 5,
+    "type": "reserve",
+    "book_id": "B-1002",
+    "size": "medium",
+    "user": "u2"
+  },
+  {
+    "t": 10,
+    "type": "pickup",
+    "book_id": "B-1001",
+    "user": "u1"
+  },
+  {
+    "t": 60,
+    "type": "takeout",
+    "book_id": "B-1001",
+    "user": "u1"
+  },
+  {
+    "t": 70,
+    "type": "reserve",
+    "book_id": "B-1003",
+    "size": "large",
+    "user": "u3"
+  }
+]
