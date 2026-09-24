@@ -1,0 +1,55 @@
+[
+  {
+    "id": "C1",
+    "name": "火球",
+    "type": "spell",
+    "trigger": "on_play",
+    "effects": [
+      {
+        "kind": "damage",
+        "target": "enemy_hero",
+        "value": 3
+      }
+    ]
+  },
+  {
+    "id": "C2",
+    "name": "狂战士",
+    "type": "minion",
+    "trigger": "on_damage",
+    "effects": [
+      {
+        "kind": "buff",
+        "target": "self",
+        "attack": 1,
+        "health": 0
+      }
+    ],
+    "health": 4,
+    "attack": 2
+  },
+  {
+    "id": "C3",
+    "name": "亡语骷髅",
+    "type": "minion",
+    "trigger": "on_death",
+    "effects": [
+      {
+        "kind": "summon",
+        "target": "self_side",
+        "value": "C4"
+      }
+    ],
+    "health": 1,
+    "attack": 1
+  },
+  {
+    "id": "C4",
+    "name": "骷髅",
+    "type": "minion",
+    "trigger": "none",
+    "effects": [],
+    "health": 1,
+    "attack": 1
+  }
+]

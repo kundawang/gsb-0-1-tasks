@@ -1,0 +1,27 @@
+{
+  "players": [
+    {
+      "id": "P1",
+      "hp": 30
+    },
+    {
+      "id": "P2",
+      "hp": 30
+    }
+  ],
+  "events": [
+    {
+      "t": 0,
+      "type": "play",
+      "player": "P1",
+      "card": "C2"
+    },
+    {
+      "t": 1,
+      "type": "play",
+      "player": "P1",
+      "card": "C1",
+      "target": "P2"
+    }
+  ]
+}
