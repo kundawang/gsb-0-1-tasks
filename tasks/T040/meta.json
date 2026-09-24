@@ -1,0 +1,37 @@
+{
+  "task_id": "T040",
+  "title": "三路文本合并（diff3 规则 + 冲突清单）",
+  "created_at": "2026-09-24T15:27:30",
+  "task_type": "0-1代码生成",
+  "difficulty": "中等",
+  "language_framework": "JavaScript, HTML, CSS（原生 ES module，无构建）",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "无外部依赖",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t040/base",
+    "sha": "696e6562c94a4ed9383f0da062c750753db8b28d",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/696e6562c94a4ed9383f0da062c750753db8b28d"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t040/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t040/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": ""
+}
