@@ -1,0 +1,37 @@
+{
+  "task_id": "T148",
+  "title": "tox-dev/filelock 缺陷修复：Fix SoftReadWriteLock state lock timeout (#726)",
+  "created_at": "2026-09-24T17:45:06",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tox-dev/filelock @ f2f7b86964",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t148/base",
+    "sha": "eb8bcac7534d550147631f77e2d9fcbaad0a7093",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/eb8bcac7534d550147631f77e2d9fcbaad0a7093"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t148/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t148/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tox-dev/filelock base=https://github.com/tox-dev/filelock/commit/f2f7b8696426c518b6828ea10e755c0ba2a4ffe2 fix=7b7b7a8b9b10acf826cca246441297468039b0c1"
+}
