@@ -1,0 +1,37 @@
+{
+  "task_id": "T140",
+  "title": "tox-dev/tox 缺陷修复：fix(config): clear markers overridden by unconditional set_e",
+  "created_at": "2026-09-24T17:44:15",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tox-dev/tox @ 2f96e32e30",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t140/base",
+    "sha": "5b0ead5fefc6d73f7d8f7f366223508c2ff767b5",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/5b0ead5fefc6d73f7d8f7f366223508c2ff767b5"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t140/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t140/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tox-dev/tox base=https://github.com/tox-dev/tox/commit/2f96e32e30ad646bc30006b23ba7dafcd0b2fb1c fix=472ed02ccbd240bccad5a2746f82bbc37fe5cf7c"
+}
