@@ -106,13 +106,23 @@ def main():
             print(f"{it['index']:>3}  {it['suggested_id']}  {it['repo']:<32} {it['base_sha'][:10]}  {it['subject'][:56]}")
         return 0
 
+    failed = []
     for idx in parse_range(args.range):
         item = next((x for x in items if x["index"] == idx), None)
         if not item:
             print(f"!! 没有序号 {idx}")
             continue
         task_id = args.id or item["suggested_id"]
-        build_one(item, task_id, args.root)
+        try:
+            build_one(item, task_id, args.root)
+        except SystemExit:
+            print(f"    !! 第 {idx} 题（{task_id}）失败，跳过继续")
+            failed.append(idx)
+        except Exception as exc:  # 网络/解压等偶发问题
+            print(f"    !! 第 {idx} 题（{task_id}）异常：{type(exc).__name__}: {exc}")
+            failed.append(idx)
+    if failed:
+        print(f"\n失败的序号：{failed}（可重跑：fetch_upstream.py {','.join(str(x) for x in failed)}）")
     print("\n提示：拉完用 `t list` 看状态；桌面对应题目目录里已有 打开A窗口.cmd / 打开B窗口.cmd。")
     return 0
 
