@@ -1,0 +1,37 @@
+{
+  "task_id": "T085",
+  "title": "lark-parser/lark 缺陷修复：Merge pull request #1603 from sarathfrancis90/fix/declare-ru",
+  "created_at": "2026-09-24T17:38:11",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 lark-parser/lark @ 5718472e57",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t085/base",
+    "sha": "c69d0c3e7d791934928afc7084f144ef750691cc",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/c69d0c3e7d791934928afc7084f144ef750691cc"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t085/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t085/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/lark-parser/lark base=https://github.com/lark-parser/lark/commit/5718472e57a08aac3728c2f26f902de56c48d64c fix=c169b26a5bec9d47e590bf4be83691bcbdfe7b6b"
+}
