@@ -1,0 +1,58 @@
+name: Update Licenses
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 1 * *" # run once a month
+
+# we create the token we need later on
+permissions: {}
+
+jobs:
+  update-licenses:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.10"
+
+      - name: Bootstrap poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python - -y
+
+      - name: Update PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Configure poetry
+        run: poetry config virtualenvs.in-project true
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Update licenses list
+        run: |
+          poetry run python src/poetry/core/spdx/helpers.py
+          poetry run pre-commit run --all-files || :
+
+      - name: Generate token
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3 # v3.1.1
+        id: app-token
+        with:
+          app-id: ${{ secrets.POETRY_TOKEN_APP_ID }}
+          private-key: ${{ secrets.POETRY_TOKEN_APP_KEY }}
+
+      - name: Create PR if necessary
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          commit-message: "Automated licenses list update"
+          author: "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+          branch: "license-autoupdate"
+          title: "Automated licenses list update"
+          body: "Full log: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
