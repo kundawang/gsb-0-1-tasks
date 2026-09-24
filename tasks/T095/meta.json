@@ -1,0 +1,37 @@
+{
+  "task_id": "T095",
+  "title": "joke2k/faker 缺陷修复：fix(en_IE): generate structurally valid Irish IBANs (#2411)",
+  "created_at": "2026-09-24T17:39:14",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 joke2k/faker @ d80d125d5c",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t095/base",
+    "sha": "f0bde55067ee6d4e01ed3f1a13648f83edcf2e63",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/f0bde55067ee6d4e01ed3f1a13648f83edcf2e63"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t095/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t095/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/joke2k/faker base=https://github.com/joke2k/faker/commit/d80d125d5c20d0572a26d5d617dbad647beb9343 fix=74efb07c529e826c3aa12508b204b80b180eba1f"
+}
