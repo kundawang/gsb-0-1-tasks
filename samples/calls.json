@@ -1,0 +1,14 @@
+{
+  "name": "morning peak",
+  "calls": [
+    {"tick": 0, "from": 1, "to": 9, "count": 3},
+    {"tick": 2, "from": 1, "to": 7, "count": 2},
+    {"tick": 5, "from": 6, "to": 1, "count": 1},
+    {"tick": 7, "from": 4, "to": 12, "count": 4},
+    {"tick": 9, "from": 1, "to": 10, "count": 2},
+    {"tick": 12, "from": 8, "to": 2, "count": 3},
+    {"tick": 15, "from": 2, "to": 11, "count": 1},
+    {"tick": 18, "from": 11, "to": 1, "count": 2}
+  ]
+}
+

@@ -1,0 +1,9 @@
+{
+  "floors": 12,
+  "elevators": 3,
+  "capacity": 8,
+  "start_positions": [1, 1, 6],
+  "door_ticks": 1,
+  "max_ticks": 5000
+}
+
