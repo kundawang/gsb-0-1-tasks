@@ -1,0 +1,37 @@
+{
+  "task_id": "T127",
+  "title": "pallets/flask 缺陷修复：Fix IPv6 server name parsing",
+  "created_at": "2026-09-24T17:42:36",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pallets/flask @ de8429ffda",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t127/base",
+    "sha": "6c12d853300b1c1485a7d206d1e89b831371e75d",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/6c12d853300b1c1485a7d206d1e89b831371e75d"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t127/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t127/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pallets/flask base=https://github.com/pallets/flask/commit/de8429ffda8cfb54db175529e2bae72a24e1fa7e fix=7203feabf723edae0286ae5dc64fec8ac4c91735"
+}
