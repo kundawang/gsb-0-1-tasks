@@ -1,0 +1,37 @@
+{
+  "task_id": "T167",
+  "title": "microsoft/playwright-python 缺陷修复：fix(video): return pathlib.Path from Video.path() (#3197)",
+  "created_at": "2026-09-24T17:47:16",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 microsoft/playwright-python @ 4e174edb79",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t167/base",
+    "sha": "8c813dffb2702cc25c7ecbcbbfba40ba05f0d8aa",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/8c813dffb2702cc25c7ecbcbbfba40ba05f0d8aa"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t167/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t167/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/microsoft/playwright-python base=https://github.com/microsoft/playwright-python/commit/4e174edb7959a2c34ecdbb9dbfb0a83ad79fbca3 fix=ece7531c056c778c4635d6754f81e4df64913e24"
+}
