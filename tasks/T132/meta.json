@@ -1,0 +1,37 @@
+{
+  "task_id": "T132",
+  "title": "pytest-dev/pytest 缺陷修复：fix: bytecode cache invalidation for moved test files (#1455",
+  "created_at": "2026-09-24T17:43:18",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pytest-dev/pytest @ 53bc06b993",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t132/base",
+    "sha": "e691726027abff8863f4f3acbd5ce228a2dbe878",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/e691726027abff8863f4f3acbd5ce228a2dbe878"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t132/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t132/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pytest-dev/pytest base=https://github.com/pytest-dev/pytest/commit/53bc06b9933eb50b40cd904aa50bcd1b6cf2a49c fix=3d0f2cf7f48bce129471672ba25cce4c1bff31be"
+}
