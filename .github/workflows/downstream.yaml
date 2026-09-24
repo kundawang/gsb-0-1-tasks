@@ -1,0 +1,81 @@
+name: Poetry Downstream Tests
+
+on:
+  workflow_dispatch:
+  pull_request: {}
+  push:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  tests:
+    name: ${{ matrix.ref }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ref: ["main"]
+      fail-fast: false
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+          path: poetry-core
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+          path: poetry
+          repository: python-poetry/poetry
+          ref: ${{ matrix.ref }}
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.10"
+
+      - name: Get full python version
+        id: full-python-version
+        run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
+
+      - name: Set up Poetry
+        run: |
+          pip install poetry
+          poetry config virtualenvs.in-project true
+
+      - name: Set up cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        id: cache
+        with:
+          path: ./poetry/.venv
+          key: venv-${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Ensure cache is healthy
+        if: steps.cache.outputs.cache-hit == 'true'
+        working-directory: ./poetry
+        run: timeout 10s poetry run pip --version >/dev/null 2>&1 || rm -rf .venv
+
+      - name: Switch downstream to development poetry-core
+        working-directory: ./poetry
+        run: |
+          # remove poetry-core from main group to avoid version conflicts
+          # with a potential entry in the test group
+          poetry remove poetry-core
+          # add to test group to overwrite a potential entry in that group
+          poetry add --lock --group test ../poetry-core
+
+      - name: Install downstream dependencies
+        working-directory: ./poetry
+        run: |
+          # force update of directory dependency in cached venv
+          # (even if directory dependency with same version is already installed)
+          poetry run pip uninstall -y poetry-core
+          poetry install
+
+      # TODO: mark run as success even when this fails and add comment to PR instead
+      - name: Run downstream test suite
+        working-directory: ./poetry
+        run: poetry run pytest
