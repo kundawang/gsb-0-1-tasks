@@ -1,0 +1,37 @@
+{
+  "task_id": "T161",
+  "title": "python-poetry/poetry-core 缺陷修复：fix: correct allows_all containment check for \"!=\" vs \"not i",
+  "created_at": "2026-09-24T17:46:18",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 python-poetry/poetry-core @ 926903773d",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t161/base",
+    "sha": "d8f8f6c626698ba5f69cc3e163c5f395cbb17be2",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/d8f8f6c626698ba5f69cc3e163c5f395cbb17be2"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t161/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t161/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/python-poetry/poetry-core base=https://github.com/python-poetry/poetry-core/commit/926903773dc7785f29bc3bf37b1fe85dd93bd106 fix=96d9f71575c373143e69444aabab30eb6122a497"
+}
