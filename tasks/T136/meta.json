@@ -1,0 +1,37 @@
+{
+  "task_id": "T136",
+  "title": "PyCQA/isort 缺陷修复：Fix word-wrapping of 'from ... import *' into invalid Python",
+  "created_at": "2026-09-24T17:43:52",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 PyCQA/isort @ d5f40fa055",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t136/base",
+    "sha": "d95dcda85d05ce956259b1dcc4f1d68cc6f3d3d6",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/d95dcda85d05ce956259b1dcc4f1d68cc6f3d3d6"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t136/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t136/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/PyCQA/isort base=https://github.com/PyCQA/isort/commit/d5f40fa0553aa4bba71fcd73cf42933ae14d5116 fix=65bfa8017efcfab0f590b43b30e46a9352eacf98"
+}
