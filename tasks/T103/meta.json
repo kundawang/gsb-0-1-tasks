@@ -1,0 +1,37 @@
+{
+  "task_id": "T103",
+  "title": "pypa/packaging 缺陷修复：fix(metadata): fold every line boundary when writing headers",
+  "created_at": "2026-09-24T17:40:28",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pypa/packaging @ 413d006fad",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t103/base",
+    "sha": "30f65094177650183bc0e1fcdf9a640401f93f99",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/30f65094177650183bc0e1fcdf9a640401f93f99"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t103/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t103/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pypa/packaging base=https://github.com/pypa/packaging/commit/413d006fadf5b9b14d78ad444201d8189bff8c64 fix=2d873eb6002021a8c007c933fbdab58b37a5079b"
+}
