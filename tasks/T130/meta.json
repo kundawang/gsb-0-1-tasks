@@ -1,0 +1,37 @@
+{
+  "task_id": "T130",
+  "title": "pytest-dev/pytest 缺陷修复：fixtures: fix lineno off-by-one in --fixtures/--fixtures-per",
+  "created_at": "2026-09-24T17:42:57",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pytest-dev/pytest @ 99ab2acccf",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t130/base",
+    "sha": "c8e108d0f09b5e5e826309f06e43564941919bb9",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/c8e108d0f09b5e5e826309f06e43564941919bb9"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t130/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t130/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pytest-dev/pytest base=https://github.com/pytest-dev/pytest/commit/99ab2acccff15f757260a1e1fbb0d2a47fc01041 fix=09d0020ff205d1166b9b541efccf19333ca69c3a"
+}
