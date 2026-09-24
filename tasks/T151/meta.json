@@ -1,0 +1,37 @@
+{
+  "task_id": "T151",
+  "title": "tox-dev/filelock 缺陷修复：🐛 fix(soft-rw): reject non-finite timing options (#724)",
+  "created_at": "2026-09-24T17:45:19",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tox-dev/filelock @ d00f9bbd70",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t151/base",
+    "sha": "65f7a10838fdeedcee36be22d37423d5b9e95bed",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/65f7a10838fdeedcee36be22d37423d5b9e95bed"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t151/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t151/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tox-dev/filelock base=https://github.com/tox-dev/filelock/commit/d00f9bbd709fbe92a99a38cb1e32b6690813e5a8 fix=ae9cb5b2d66d6a79edd76b292fa7320c11468812"
+}
