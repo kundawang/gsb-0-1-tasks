@@ -1,0 +1,37 @@
+exclude: |
+          (?x)(
+              ^tests/.*/fixtures/.*
+              | ^src/poetry/core/_vendor
+          )
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-toml
+        exclude: tests/fixtures/project_duplicate_dependency/pyproject.toml
+      - id: check-yaml
+      - id: pretty-format-json
+        args:
+          - --autofix
+          - --no-ensure-ascii
+          - --no-sort-keys
+      - id: check-ast
+      - id: debug-statements
+      - id: check-docstring-first
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.4
+    hooks:
+      - id: ruff-check
+      - id: ruff-format
+
+  - repo: https://github.com/woodruffw/zizmor-pre-commit
+    rev: v1.29.0
+    hooks:
+      - id: zizmor

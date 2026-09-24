@@ -1,0 +1,96 @@
+name: Tests
+
+on:
+  pull_request: {}
+  push:
+
+env:
+  PYTHONWARNDEFAULTENCODING: 'true'
+
+permissions: {}
+
+jobs:
+  tests:
+    name: ${{ matrix.os }} / ${{ matrix.python-version }}
+    runs-on: "${{ matrix.os }}-latest"
+    strategy:
+      matrix:
+        os:
+          - Ubuntu
+          - MacOS
+          - Windows
+        python-version:
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
+        include:
+          - os: Ubuntu
+            python-version: pypy-3.11
+      fail-fast: false
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          allow-prereleases: true
+
+      - name: Get full Python version
+        id: full-python-version
+        run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
+
+      - name: Bootstrap poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python - -y
+
+      - name: Update PATH
+        if: ${{ matrix.os != 'Windows' }}
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Update Path for Windows
+        if: ${{ matrix.os == 'Windows' }}
+        run: echo "$APPDATA\Python\Scripts" >> $GITHUB_PATH
+
+      - name: Configure poetry
+        run: poetry config virtualenvs.in-project true
+
+      - name: Set up cache
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        id: cache
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ startsWith(matrix.python-version, 'pypy') && 'pypy-' || '' }}${{ steps.full-python-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Ensure cache is healthy
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: |
+          # `timeout` is not available on macOS, so we define a custom function.
+          [ "$(command -v timeout)" ] || function timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
+          # Using `timeout` is a safeguard against the Poetry command hanging for some reason.
+          timeout 10s poetry run pip --version || rm -rf .venv
+
+      - name: Check lock file
+        run: poetry check --lock
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Run tests
+        run: poetry run python -m pytest -p no:sugar -q tests/
+
+      - name: Run integration tests
+        run: poetry run python -m pytest -p no:sugar --integration -q tests/integration
+
+      - name: Run mypy
+        # mypy 1.19 introduces a dependency on librt, which does not support PyPy
+        # It is recommended to run mypy only on CPython, see https://github.com/mypyc/librt/issues/16
+        if: ${{ !startsWith(matrix.python-version, 'pypy') }}
+        run: poetry run mypy
