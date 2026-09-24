@@ -1,0 +1,19 @@
+{
+  "ranges": {
+    "humidity": [
+      0,
+      100
+    ],
+    "pressure_hpa": [
+      850,
+      1100
+    ],
+    "wind_ms": [
+      0,
+      60
+    ]
+  },
+  "sigma_window_hours": 3,
+  "sigma_k": 3,
+  "max_interpolate_points": 3
+}
