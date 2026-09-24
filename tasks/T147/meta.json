@@ -1,0 +1,37 @@
+{
+  "task_id": "T147",
+  "title": "tox-dev/filelock 缺陷修复：fix: reject invalid poll_interval before sleep (#739)",
+  "created_at": "2026-09-24T17:45:01",
+  "task_type": "缺陷修复",
+  "difficulty": "中等",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tox-dev/filelock @ 7e57436645",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t147/base",
+    "sha": "7dfac3eae5bb9e0181f19e9f3e8a23806192786d",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/7dfac3eae5bb9e0181f19e9f3e8a23806192786d"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t147/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t147/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tox-dev/filelock base=https://github.com/tox-dev/filelock/commit/7e574366455fdf792dbfc8cc71e5e3c11f31d130 fix=6ee6db68b1511f81eb67491344616423779efea0"
+}
