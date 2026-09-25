@@ -1,0 +1,132 @@
+name: 🚀 Release
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: "🚀 Release (semver bump)?"
+        required: true
+        default: "no"
+        type: choice
+        options: ["no", patch, minor, major]
+  push:
+    branches: ["main"]
+  pull_request:
+
+concurrency:
+  group: >-
+    ${{ github.workflow }}-${{ github.ref }}${{
+      github.event.inputs.release && github.event.inputs.release != 'no' && '-release' || ''
+    }}
+  cancel-in-progress: ${{ github.event.inputs.release == 'no' || github.event.inputs.release == null }}
+
+permissions:
+  contents: read
+
+env:
+  dists-artifact-name: python-package-distributions
+
+jobs:
+  build:
+    name: 📦 build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      changelog: ${{ steps.v.outputs.changelog }}
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: 📦 Setup uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          enable-cache: true
+          cache-dependency-glob: "tasks/changelog.py"
+      - name: 📝 Generate changelog
+        id: v
+        run: >-
+          uv run tasks/changelog.py "$RELEASE_TYPE" "$EVENT_NUMBER" "$BASE_SHA"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TYPE:
+            ${{ github.event.inputs.release == 'no' || github.event.inputs.release == null && 'patch' ||
+            github.event.inputs.release }}
+          EVENT_NUMBER: ${{ github.event.number }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      - name: 🏷️ Create temporary tag for hatch-vcs
+        if: github.event.inputs.release != 'no' && github.event.inputs.release != null
+        run: git tag "$STEPS_V_OUTPUTS_VERSION"
+        env:
+          STEPS_V_OUTPUTS_VERSION: ${{ steps.v.outputs.version }}
+      - name: 📦 Build package
+        run: uv build --python 3.14 --python-preference only-managed --sdist --wheel . --out-dir dist
+      - name: 📤 Store the distribution packages
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ${{ env.dists-artifact-name }}
+          path: dist/*
+
+  release:
+    name: 🚀 release
+    needs: [build]
+    if: github.event.inputs.release != 'no' && github.event.inputs.release != null && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    environment:
+      name: release
+      url: https://pypi.org/project/filelock/${{ needs.build.outputs.version }}
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          token: ${{ secrets.RELEASE_TOKEN }} # zizmor: ignore[artipacked]
+      - name: 📤 Commit changelog and tag
+        env:
+          CHANGELOG: ${{ needs.build.outputs.changelog }}
+          VERSION: ${{ needs.build.outputs.version }}
+        run: |
+          if git ls-remote --tags origin "refs/tags/$VERSION" | grep -q .; then
+            echo "Tag $VERSION already exists, skipping changelog commit"
+            exit 0
+          fi
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+          header="$VERSION ($(date -u +%Y-%m-%d))"
+          separator=$(printf '%0.s*' $(seq 1 $((${#header} + 1))))
+          {
+            head -4 docs/changelog.rst
+            printf '%s\n %s\n%s\n\n' "$separator" "$header" "$separator"
+            printf '%s\n\n' "$CHANGELOG"
+            tail -n +5 docs/changelog.rst
+          } > docs/changelog.tmp
+          mv docs/changelog.tmp docs/changelog.rst
+          git add docs/changelog.rst
+          git commit -m "Release $VERSION"
+          git tag "$VERSION"
+          git push origin "$VERSION"
+          git push origin main
+      - name: ⬇️ Download all the dists
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: ${{ env.dists-artifact-name }}
+          path: dist/
+      - name: 🚀 Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
+        with:
+          skip-existing: true
+      - name: 📢 Create GitHub release
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          VERSION: ${{ needs.build.outputs.version }}
+        run: |
+          if gh release view "$VERSION" > /dev/null 2>&1; then
+            echo "Release $VERSION already exists, skipping"
+          else
+            gh release create "$VERSION" --title="$VERSION" --verify-tag --generate-notes
+          fi
