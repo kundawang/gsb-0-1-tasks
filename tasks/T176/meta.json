@@ -1,0 +1,37 @@
+{
+  "task_id": "T176",
+  "title": "tox-dev/filelock 缺陷修复：🐛 fix(async): make cancellation atomic (#652)",
+  "created_at": "2026-09-25T10:31:32",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tox-dev/filelock @ 6633781d21",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t176/base",
+    "sha": "c2058a9ecb3f8b968976daac4d7da4d8ffd08247",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/c2058a9ecb3f8b968976daac4d7da4d8ffd08247"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t176/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t176/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tox-dev/filelock base=https://github.com/tox-dev/filelock/commit/6633781d21c7ccad3cc4b05256db9c23bd0facb1 fix=3b1511281a775118f79ad29edbf82989c8c9e106"
+}
