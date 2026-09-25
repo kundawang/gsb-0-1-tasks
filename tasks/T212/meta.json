@@ -1,0 +1,37 @@
+{
+  "task_id": "T212",
+  "title": "pydantic/pydantic 缺陷修复：Fixing `__iter__` returning private `cached_property` info (",
+  "created_at": "2026-09-25T15:13:19",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pydantic/pydantic @ f120e7c928",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t212/base",
+    "sha": "f559bbc7e305e7ba360109b55bb4aab26ee74ac7",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/f559bbc7e305e7ba360109b55bb4aab26ee74ac7"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t212/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t212/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pydantic/pydantic base=https://github.com/pydantic/pydantic/commit/f120e7c92871c39a469bb93422de3db71824676e fix=1546db3cae0179ac7ced4ec16dd723a61609c566"
+}
