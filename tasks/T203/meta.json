@@ -1,0 +1,37 @@
+{
+  "task_id": "T203",
+  "title": "tox-dev/tox 缺陷修复：🐛 fix(session): fix package env failure cascade and state co",
+  "created_at": "2026-09-25T15:11:44",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tox-dev/tox @ bedbcbe0b6",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t203/base",
+    "sha": "71df2b068edd2cd4269e3886fa4beb91fddc848e",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/71df2b068edd2cd4269e3886fa4beb91fddc848e"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t203/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t203/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tox-dev/tox base=https://github.com/tox-dev/tox/commit/bedbcbe0b63a467960f3bedb1e52986366b08afb fix=122bdb60a37cde6c17082630c48bef2561e64aaf"
+}
