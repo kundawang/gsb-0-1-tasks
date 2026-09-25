@@ -1,0 +1,37 @@
+{
+  "task_id": "T173",
+  "title": "agronholm/anyio 缺陷修复：Fixed `run_process()` and `open_process().__aexit__` leaking",
+  "created_at": "2026-09-25T10:31:23",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 agronholm/anyio @ 3f14df89fe",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t173/base",
+    "sha": "1025896325086fd8c716e082f2c5870206f46e28",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/1025896325086fd8c716e082f2c5870206f46e28"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t173/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t173/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/agronholm/anyio base=https://github.com/agronholm/anyio/commit/3f14df89fe4c6d5edebae345a95d04c30334bba2 fix=1e60219d95bb6a3c1ddf0618634f8ee3eb566037"
+}
