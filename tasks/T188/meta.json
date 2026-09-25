@@ -1,0 +1,37 @@
+{
+  "task_id": "T188",
+  "title": "Delgan/loguru 缺陷修复：Fix possible deadlock with \"complete()\" and async sink (#906",
+  "created_at": "2026-09-25T10:33:04",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 Delgan/loguru @ 2c585a1c18",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t188/base",
+    "sha": "0d09f903052401c493b43fff8851d50845e9a7bb",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/0d09f903052401c493b43fff8851d50845e9a7bb"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t188/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t188/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/Delgan/loguru base=https://github.com/Delgan/loguru/commit/2c585a1c186b4dadd05faa4c21363c9479e151b4 fix=8c2044efdf0eae08745b6591a0be7cb80e9a51ff"
+}
