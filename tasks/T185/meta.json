@@ -1,0 +1,37 @@
+{
+  "task_id": "T185",
+  "title": "pydantic/pydantic 缺陷修复：Use WeakValueDictionary to fix generic memory leak (#6681)",
+  "created_at": "2026-09-25T10:32:35",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pydantic/pydantic @ 197bf18bf3",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t185/base",
+    "sha": "c5156195469f78255e4eab899a3aeb04d332a32d",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/c5156195469f78255e4eab899a3aeb04d332a32d"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t185/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t185/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pydantic/pydantic base=https://github.com/pydantic/pydantic/commit/197bf18bf34105bc2f5001e0e23a3098519452d0 fix=f5e3aa950ffbf2d2ab14d90392d23a980da39ba1"
+}
