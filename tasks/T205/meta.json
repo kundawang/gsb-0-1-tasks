@@ -1,0 +1,37 @@
+{
+  "task_id": "T205",
+  "title": "tox-dev/tox 缺陷修复：🐛 fix(cli): honor tox c -o, clean devenv ALL error, correct ",
+  "created_at": "2026-09-25T15:11:58",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tox-dev/tox @ fa6ec2bb6b",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t205/base",
+    "sha": "4ceaebae77a8799e911538722882314027e1bda1",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/4ceaebae77a8799e911538722882314027e1bda1"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t205/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t205/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tox-dev/tox base=https://github.com/tox-dev/tox/commit/fa6ec2bb6b5e013a3b4865ddd85564929beaca9b fix=09dad3d69d7a376f6432306deab84ddd15191849"
+}
