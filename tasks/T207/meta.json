@@ -1,0 +1,37 @@
+{
+  "task_id": "T207",
+  "title": "pytest-dev/pytest 缺陷修复：change implementation so the check happens in pytest_fixture",
+  "created_at": "2026-09-25T15:12:23",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pytest-dev/pytest @ 7256c0c226",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t207/base",
+    "sha": "eacfcbf7d95fef677a24dac58c8de590ba46f605",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/eacfcbf7d95fef677a24dac58c8de590ba46f605"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t207/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t207/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pytest-dev/pytest base=https://github.com/pytest-dev/pytest/commit/7256c0c226b0eea2453cc532e6786366aa2400c5 fix=c98ef2bdcaf4f0478c77c38534bce788e6581967"
+}
