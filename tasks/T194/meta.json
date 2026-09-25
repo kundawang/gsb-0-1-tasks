@@ -1,0 +1,37 @@
+{
+  "task_id": "T194",
+  "title": "celery/kombu 缺陷修复：Fix for SQS transport deadlock (#2479)",
+  "created_at": "2026-09-25T15:10:39",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 celery/kombu @ e3207800e5",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t194/base",
+    "sha": "360d57ffcffd4f9da61d2762c8694de65276ebfd",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/360d57ffcffd4f9da61d2762c8694de65276ebfd"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t194/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t194/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/celery/kombu base=https://github.com/celery/kombu/commit/e3207800e57a4604afeaace6952cc822ac55e9d5 fix=6cc2228f3b75a6db3ddce3276f8d7fd194494e70"
+}
