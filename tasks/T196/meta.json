@@ -1,0 +1,37 @@
+{
+  "task_id": "T196",
+  "title": "celery/kombu 缺陷修复：Use the correct protocol for SQS requests (#1807)",
+  "created_at": "2026-09-25T15:10:53",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 celery/kombu @ 75650c511b",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t196/base",
+    "sha": "058a3796a90f8d9b4a0b12ee2fbff37428f69be3",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/058a3796a90f8d9b4a0b12ee2fbff37428f69be3"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t196/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t196/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/celery/kombu base=https://github.com/celery/kombu/commit/75650c511b7491f47263818ce36ba52f76a8fd1f fix=6121539379bcb5ad5d14db6f3a4d52c0513c9a3e"
+}
