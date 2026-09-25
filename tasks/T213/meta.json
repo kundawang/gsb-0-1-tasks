@@ -1,0 +1,37 @@
+{
+  "task_id": "T213",
+  "title": "pydantic/pydantic 缺陷修复：Fix error when using type aliases referencing other type ali",
+  "created_at": "2026-09-25T15:13:27",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pydantic/pydantic @ 96876ef7c8",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t213/base",
+    "sha": "b846a7a9594f23cd82eb42234f72544809985f4e",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/b846a7a9594f23cd82eb42234f72544809985f4e"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t213/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t213/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pydantic/pydantic base=https://github.com/pydantic/pydantic/commit/96876ef7c81999b0cdb8a1edf7599e754e14a78c fix=ff4a325cb1a1d4e00584366d086c652463c1ea35"
+}
