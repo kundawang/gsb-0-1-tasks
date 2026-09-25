@@ -1,0 +1,37 @@
+{
+  "task_id": "T177",
+  "title": "tox-dev/filelock 缺陷修复：🔒 fix(soft): harden stale-lock breaking and self-heal malfor",
+  "created_at": "2026-09-25T10:31:34",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tox-dev/filelock @ 150ba66c0a",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t177/base",
+    "sha": "5426408429f2e7d8af9c9fb857592606f9010e35",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/5426408429f2e7d8af9c9fb857592606f9010e35"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t177/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t177/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tox-dev/filelock base=https://github.com/tox-dev/filelock/commit/150ba66c0a69406b436e1664b2f2543928785974 fix=d244c6dc3aed46a9476b6e87b2ee5c1399c160e4"
+}
