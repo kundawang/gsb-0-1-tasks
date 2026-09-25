@@ -1,0 +1,37 @@
+{
+  "task_id": "T187",
+  "title": "pytest-dev/pytest 缺陷修复：Fix: assertrepr_compare respects dict insertion order (#1405",
+  "created_at": "2026-09-25T10:32:56",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pytest-dev/pytest @ 2f09ddc84e",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t187/base",
+    "sha": "db98187d9320b50043ffcc4f3b1c457b8f3b1430",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/db98187d9320b50043ffcc4f3b1c457b8f3b1430"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t187/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t187/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pytest-dev/pytest base=https://github.com/pytest-dev/pytest/commit/2f09ddc84ea6a7ccd56f19b0b998c8d2c51a4652 fix=966edc9d517cd092104028796b684fb1119a7c73"
+}
