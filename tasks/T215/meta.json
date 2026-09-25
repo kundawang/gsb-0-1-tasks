@@ -1,0 +1,37 @@
+{
+  "task_id": "T215",
+  "title": "jd/tenacity 缺陷修复：fix: Avoid overwriting local contexts with retry decorator (",
+  "created_at": "2026-09-25T15:13:46",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 jd/tenacity @ ee6a8f7a76",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t215/base",
+    "sha": "7fe6757a46eef596010d3b110a7390992a99cbcf",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/7fe6757a46eef596010d3b110a7390992a99cbcf"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t215/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t215/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/jd/tenacity base=https://github.com/jd/tenacity/commit/ee6a8f7a76654d712fd44604d3b6d4f9af6b2249 fix=a15fa645326ef776dbef81ee13e3833cd14bdced"
+}
