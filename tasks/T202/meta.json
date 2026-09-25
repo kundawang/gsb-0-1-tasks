@@ -1,0 +1,37 @@
+{
+  "task_id": "T202",
+  "title": "tox-dev/filelock 缺陷修复：🐛 fix: retry transient denials on open and claim read (#705)",
+  "created_at": "2026-09-25T15:11:38",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tox-dev/filelock @ 4aa742ca09",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t202/base",
+    "sha": "a5b5818b6bbcd40115486e27075daf8a34f977e3",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/a5b5818b6bbcd40115486e27075daf8a34f977e3"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t202/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t202/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tox-dev/filelock base=https://github.com/tox-dev/filelock/commit/4aa742ca0992135fe21df290c8e9023f6981bb6f fix=13b82a64adf51e768d65180abe05c4934cdca934"
+}
