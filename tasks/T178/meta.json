@@ -1,0 +1,37 @@
+{
+  "task_id": "T178",
+  "title": "tox-dev/filelock 缺陷修复：🐛 fix(api): detect same-thread self-deadlock (#481)",
+  "created_at": "2026-09-25T10:31:37",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tox-dev/filelock @ 57251e9f31",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t178/base",
+    "sha": "28d39d8435fe967b2d90bced4d0cd778566af467",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/28d39d8435fe967b2d90bced4d0cd778566af467"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t178/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t178/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tox-dev/filelock base=https://github.com/tox-dev/filelock/commit/57251e9f311caa9098325f21e498fa6f7a1d983e fix=fa6a27b84043e9611f551673364185a9b5d2d49f"
+}
