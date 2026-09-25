@@ -57,7 +57,7 @@ def download_workspace(item, dest):
     return src
 
 
-def build_one(item, task_id, root, dry=False):
+def build_one(item, task_id, root, dry=False, difficulty="中等"):
     print(f"[{item['index']:03d}] {item['repo']} @ {item['base_sha'][:10]} -> {task_id}")
     # 题面临时文件放系统临时目录，避免把台账仓库搞成 dirty 状态
     prompt_file = os.path.join(tempfile.gettempdir(), f"gsb_prompt_{task_id}.txt")
@@ -73,7 +73,7 @@ def build_one(item, task_id, root, dry=False):
             "--prompt-file", prompt_file,
             "--title", f"{item['repo']} 缺陷修复：{item['subject'][:60]}",
             "--task-type", "缺陷修复",
-            "--difficulty", "中等",
+            "--difficulty", difficulty,
             "--lang", "Python",
             "--harness", "Codex CLI",
             "--os", "Windows",
@@ -97,6 +97,7 @@ def main():
     ap.add_argument("range", nargs="?", help="题单序号，如 1 或 1-10")
     ap.add_argument("--id", help="指定题号（默认 T071 起递增）")
     ap.add_argument("--root", default=DEFAULT_ROOT)
+    ap.add_argument("--difficulty", default="中等", help="任务难度（默认 中等）")
     ap.add_argument("--list", action="store_true")
     args = ap.parse_args()
 
@@ -114,7 +115,7 @@ def main():
             continue
         task_id = args.id or item["suggested_id"]
         try:
-            build_one(item, task_id, args.root)
+            build_one(item, task_id, args.root, difficulty=args.difficulty)
         except SystemExit:
             print(f"    !! 第 {idx} 题（{task_id}）失败，跳过继续")
             failed.append(idx)

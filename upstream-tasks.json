@@ -1842,5 +1842,427 @@
       "tests/async/test_assertions.py"
     ],
     "prompt": "playwright-python：负向断言失败时，调用日志里没有显示 not_ 前缀，看日志分不清是哪个断言失败。\n请修好日志前缀，补测试。"
+  },
+  {
+    "index": 101,
+    "suggested_id": "T171",
+    "repo": "agronholm/anyio",
+    "repo_url": "https://github.com/agronholm/anyio",
+    "base_sha": "7f35ce79e3eb9db2a2731619b48fe289d8dd872f",
+    "base_permalink": "https://github.com/agronholm/anyio/commit/7f35ce79e3eb9db2a2731619b48fe289d8dd872f",
+    "fix_sha": "01a37c603d55605e0d6f21b7d43828f4738c7a3d",
+    "fix_date": "2024-09-21",
+    "subject": "Fixed TaskGroup and CancelScope exit issues on asyncio (#774)",
+    "src_files": [
+      ".github/workflows/test.yml",
+      "pyproject.toml",
+      "src/anyio/_backends/_asyncio.py",
+      "src/anyio/_backends/_trio.py",
+      "src/anyio/_core/_fileio.py",
+      "src/anyio/_core/_signals.py",
+      "src/anyio/_core/_streams.py",
+      "src/anyio/_core/_subprocesses.py",
+      "src/anyio/abc/_eventloop.py",
+      "src/anyio/abc/_sockets.py",
+      "src/anyio/from_thread.py",
+      "src/anyio/pytest_plugin.py",
+      "src/anyio/streams/tls.py"
+    ],
+    "test_files": [
+      "tests/streams/test_stapled.py",
+      "tests/streams/test_tls.py",
+      "tests/test_from_thread.py",
+      "tests/test_signals.py",
+      "tests/test_sockets.py",
+      "tests/test_subprocesses.py",
+      "tests/test_taskgroups.py",
+      "tests/test_typedattr.py"
+    ],
+    "prompt": "我们内部库用的是 anyio，测试同时跑 asyncio 和 trio 两个后端。最近发现 asyncio 后端上取消相关的行为跟 trio 对不上，具体这几个：\n反复进出嵌套的 cancel scope 之后取消计数就对不上了，后面再判断取消状态得到的结果是错的；\n子任务失败引发的取消处理完之后，外层的取消状态没恢复干净；\n空的 TaskGroup 在 asyncio 上不产生检查点（trio 上会老老实实让出一次）；\n最难受的是有个取消异常从它所属的 scope 外面冒出来了——我们只是想取消一个子任务，结果把调用方的 await 整个打断，日志里看像我们自己崩了。\n\n请把 asyncio 后端这几处的语义对齐成和 trio 一致，两个后端都要能跑通。补测试把嵌套 scope、空 task group、子任务失败之后 uncancel 这几条钉住。对外的 API 不要动。"
+  },
+  {
+    "index": 102,
+    "suggested_id": "T172",
+    "repo": "agronholm/anyio",
+    "repo_url": "https://github.com/agronholm/anyio",
+    "base_sha": "9f5f14b3eb57f6965fc2c16879df93263bb020ea",
+    "base_permalink": "https://github.com/agronholm/anyio/commit/9f5f14b3eb57f6965fc2c16879df93263bb020ea",
+    "fix_sha": "e7f750b96f5416d8ae932e15d726b5d03de80b67",
+    "fix_date": "2024-05-27",
+    "subject": "Fixed memory object stream sometimes dropping sent items (#735)",
+    "src_files": [
+      "src/anyio/_backends/_asyncio.py",
+      "src/anyio/_backends/_trio.py",
+      "src/anyio/_core/_testing.py",
+      "src/anyio/abc/_eventloop.py",
+      "src/anyio/streams/memory.py"
+    ],
+    "test_files": [
+      "tests/streams/test_memory.py",
+      "tests/test_debugging.py"
+    ],
+    "prompt": "anyio 的 memory object stream 我们拿来当进程内的消息队列，压测的时候偶发丢消息：发送方 send() 正常返回，接收方那边却什么都没收到，也没报错，查了好久才定位到是接收方被取消的那个时刻。\n\n按理儿讲，往一个已经有取消在挂着的接收方发消息，这条消息就不该算送达——要么发不进去，要么老老实实等。现在它是\"发出去了但没人收\"，消息就凭空没了。\n\n请把这段修好。补两个用例：接收方在缓冲读取的过程中被取消、以及往已经被原生取消的接收方发消息。"
+  },
+  {
+    "index": 103,
+    "suggested_id": "T173",
+    "repo": "agronholm/anyio",
+    "repo_url": "https://github.com/agronholm/anyio",
+    "base_sha": "3f14df89fe4c6d5edebae345a95d04c30334bba2",
+    "base_permalink": "https://github.com/agronholm/anyio/commit/3f14df89fe4c6d5edebae345a95d04c30334bba2",
+    "fix_sha": "1e60219d95bb6a3c1ddf0618634f8ee3eb566037",
+    "fix_date": "2024-01-25",
+    "subject": "Fixed `run_process()` and `open_process().__aexit__` leaking an orphan process when cancelled (#672)",
+    "src_files": [
+      "src/anyio/_backends/_asyncio.py",
+      "src/anyio/_backends/_trio.py",
+      "src/anyio/_core/_subprocesses.py"
+    ],
+    "test_files": [
+      "tests/test_subprocesses.py",
+      "tests/test_taskgroups.py"
+    ],
+    "prompt": "anyio 里用 `async with await open_process(...)` 管子进程（run_process 同理），如果退出 with 块的过程中这个任务被取消了，子进程不会被收掉，直接变成孤儿进程挂在系统里继续跑，标准输入输出那几个流也没关。我们是长跑的服务，这么漏几次机器上就一堆僵尸进程。\n\n请让取消的时候也能把进程和它的流收干净。补两个测试：退出时被取消不能留下孤儿进程、退出时被取消要关掉标准流。其它平台的行为别动，公开接口也别改。"
+  },
+  {
+    "index": 104,
+    "suggested_id": "T174",
+    "repo": "agronholm/anyio",
+    "repo_url": "https://github.com/agronholm/anyio",
+    "base_sha": "0614b4fcb0b1230c557a2940fa15d1ab7bee55b0",
+    "base_permalink": "https://github.com/agronholm/anyio/commit/0614b4fcb0b1230c557a2940fa15d1ab7bee55b0",
+    "fix_sha": "163f10cbde2a3bb22b29d58bb3754f9a088a8a71",
+    "fix_date": "2024-10-13",
+    "subject": "Fixed cyclic garbage that keeps traceback frames alive in task group exceptions (#806)",
+    "src_files": [
+      "src/anyio/_backends/_asyncio.py",
+      "src/anyio/_backends/_trio.py"
+    ],
+    "test_files": [
+      "tests/test_taskgroups.py"
+    ],
+    "prompt": "anyio 的 TaskGroup 抛异常的时候会形成引用环：异常对象和回溯帧互相引用，GC 收不掉，服务跑久了内存一直往上涨。用 task group 包一堆会抛异常的子任务、反复跑，能明显看到对象下不来。\n\n请把这块的引用环断掉（回溯里该留的信息还是要留）。补几个用 weakref / gc 断言的测试：直接抛出的、嵌套 ExceptionGroup、跟父任务相关的、以及取消相关的路径都要覆盖。"
+  },
+  {
+    "index": 105,
+    "suggested_id": "T175",
+    "repo": "agronholm/anyio",
+    "repo_url": "https://github.com/agronholm/anyio",
+    "base_sha": "b05fe6d160a640355c201363cab286a7d2581da8",
+    "base_permalink": "https://github.com/agronholm/anyio/commit/b05fe6d160a640355c201363cab286a7d2581da8",
+    "fix_sha": "9727dc504681e2986b5bc285de9571fb467539af",
+    "fix_date": "2026-08-30",
+    "subject": "Fixed start inconsistencies between trio and asyncio (#1198)",
+    "src_files": [
+      "src/anyio/_backends/_asyncio.py",
+      "src/anyio/_core/_tasks.py"
+    ],
+    "test_files": [
+      "tests/test_taskgroups.py"
+    ],
+    "prompt": "anyio 的 TaskGroup.start() 在 asyncio 和 trio 两个后端上行为不一致：\ntrio 那边 started(value) 传的值会正常交回到 start() 的调用方，取消要到下一次检查点才生效；\nasyncio 这边如果 start() 还在等的时候外层被取消了，CancelledError 会从 start() 里直接被扔给调用方，值也没交回去。\n\n我们要两个后端语义一样，请按 trio 的行为把 asyncio 这边对齐（started 传的值必须能交回到调用方手上），补一个对应的测试。公开 API 保持不变。"
+  },
+  {
+    "index": 106,
+    "suggested_id": "T176",
+    "repo": "tox-dev/filelock",
+    "repo_url": "https://github.com/tox-dev/filelock",
+    "base_sha": "6633781d21c7ccad3cc4b05256db9c23bd0facb1",
+    "base_permalink": "https://github.com/tox-dev/filelock/commit/6633781d21c7ccad3cc4b05256db9c23bd0facb1",
+    "fix_sha": "3b1511281a775118f79ad29edbf82989c8c9e106",
+    "fix_date": "2026-07-14",
+    "subject": "🐛 fix(async): make cancellation atomic (#652)",
+    "src_files": [
+      "pyproject.toml",
+      "src/filelock/_api.py",
+      "src/filelock/_async.py",
+      "src/filelock/_async_read_write.py",
+      "src/filelock/_read_write.py",
+      "src/filelock/_soft.py",
+      "src/filelock/_soft_rw/_async.py",
+      "src/filelock/_soft_rw/_sync.py",
+      "src/filelock/_unix.py",
+      "src/filelock/_windows.py",
+      "src/filelock/asyncio.py"
+    ],
+    "test_files": [
+      "tests/async_filelock_cancellation_helpers.py",
+      "tests/fork_helpers.py",
+      "tests/read_write_helpers.py",
+      "tests/test_async_filelock.py",
+      "tests/test_async_filelock_acquire_cancellation.py",
+      "tests/test_async_filelock_release_cancellation.py",
+      "tests/test_async_filelock_runner_shutdown.py",
+      "tests/test_async_filelock_transition_admission.py",
+      "tests/test_async_read_write.py",
+      "tests/test_async_read_write_cancellation.py",
+      "tests/test_filelock.py",
+      "tests/test_fork_backends.py",
+      "tests/test_fork_coordination.py",
+      "tests/test_fork_ownership.py",
+      "tests/test_fork_registries.py",
+      "tests/test_read_write.py",
+      "tests/test_unix_fallback.py"
+    ],
+    "prompt": "filelock 的异步那套（asyncio 模式的 FileLock，还有共享/读写那几类）在取消上有洞。\n底层的拿锁操作是丢到执行器里跑的，await 的调用方被取消之后执行器里的操作还在继续，最后结果就是：取消掉的那个调用把已经拿到的锁给放了，或者锁停在一个没人持有的状态，后面进来的调用方看到的状态就是乱的。我们并发 acquire/release 再随机插取消，能稳定复现\"锁被释放了，但没有任何一方认为自己是持有者\"。\n\n请让取消变成原子的：调用方取消了，要么这次获取整个回滚干净、要么就正常持有，绝不能把别人刚拿到的描述符一起释放掉；同一把锁上的获取/释放过渡要串行化。\n补测试覆盖：执行器还没起来就被取消、取消之后 rollback 又失败、重复取消、取消过程中别人在排队释放这些情况。对外接口保持不变，同步那套行为也别改坏。"
+  },
+  {
+    "index": 107,
+    "suggested_id": "T177",
+    "repo": "tox-dev/filelock",
+    "repo_url": "https://github.com/tox-dev/filelock",
+    "base_sha": "150ba66c0a69406b436e1664b2f2543928785974",
+    "base_permalink": "https://github.com/tox-dev/filelock/commit/150ba66c0a69406b436e1664b2f2543928785974",
+    "fix_sha": "d244c6dc3aed46a9476b6e87b2ee5c1399c160e4",
+    "fix_date": "2026-06-05",
+    "subject": "🔒 fix(soft): harden stale-lock breaking and self-heal malformed locks (#551)",
+    "src_files": [
+      "src/filelock/_api.py",
+      "src/filelock/_async_read_write.py",
+      "src/filelock/_read_write.py",
+      "src/filelock/_soft.py",
+      "src/filelock/_soft_rw/_sync.py",
+      "src/filelock/_util.py"
+    ],
+    "test_files": [
+      "tests/test_async_read_write.py",
+      "tests/test_lock_expiry.py",
+      "tests/test_soft_stale.py",
+      "tests/test_util.py"
+    ],
+    "prompt": "filelock 的 soft 锁靠 mtime 判断过期，这条路径能被人绕过：把被持有的锁文件换成一个指向很久以前文件的软链，等锁的人按软链目标的 mtime 一看\"这锁过期了\"，就把还活着的锁给破掉了，结果两个进程同时拿到锁。\n另外锁文件内容被写坏（标记残缺）的时候应该能自愈，而不是一直卡在那里。\n\n请把破锁这条路径收紧，并且能修好坏掉的锁文件。补测试：破锁时目标消失要中止、源文件不存在要报错、文件 mtime 被改过就不能破、确实没被改动的才允许破。公开接口别改。"
+  },
+  {
+    "index": 108,
+    "suggested_id": "T178",
+    "repo": "tox-dev/filelock",
+    "repo_url": "https://github.com/tox-dev/filelock",
+    "base_sha": "57251e9f311caa9098325f21e498fa6f7a1d983e",
+    "base_permalink": "https://github.com/tox-dev/filelock/commit/57251e9f311caa9098325f21e498fa6f7a1d983e",
+    "fix_sha": "fa6a27b84043e9611f551673364185a9b5d2d49f",
+    "fix_date": "2026-02-13",
+    "subject": "🐛 fix(api): detect same-thread self-deadlock (#481)",
+    "src_files": [
+      "src/filelock/_api.py",
+      "src/filelock/_soft.py"
+    ],
+    "test_files": [
+      "tests/test_self_deadlock.py"
+    ],
+    "prompt": "同一个线程里对同一个路径建了两个 FileLock 实例，两个都用阻塞模式 acquire，程序就那么卡死了——自己等自己，永远等不到。\n这种情况应该直接报错告诉我们死锁了，而不是干等。注意别误伤：非阻塞模式和带 timeout 的还是要报超时、不能被当成死锁；不同线程、不同路径不能误报；同一个实例重复进入（reentrant）还得是正常行为。\n补测试把这些都钉住。"
+  },
+  {
+    "index": 109,
+    "suggested_id": "T179",
+    "repo": "aio-libs/aiohttp",
+    "repo_url": "https://github.com/aio-libs/aiohttp",
+    "base_sha": "82ce525b3b3d11e1c9dbbe5ebc8aa0042a2cc7b8",
+    "base_permalink": "https://github.com/aio-libs/aiohttp/commit/82ce525b3b3d11e1c9dbbe5ebc8aa0042a2cc7b8",
+    "fix_sha": "6cffcfd749734551c0c824658f3a5c9250e9a165",
+    "fix_date": "2025-10-28",
+    "subject": "Fix WebSocket compressed sends to be cancellation safe (#11726)",
+    "src_files": [
+      "aiohttp/_websocket/writer.py",
+      "aiohttp/compression_utils.py"
+    ],
+    "test_files": [
+      "tests/conftest.py",
+      "tests/test_websocket_writer.py"
+    ],
+    "prompt": "aiohttp 的 WebSocket 开了 permessage-deflate 之后，send_str 的过程中如果被取消，压缩器的状态就坏了：之后再在同一个连接上发消息，对端解出来是乱码；连续发多条的时候更明显。\n压缩是流式的，发到一半被打断确实麻烦，但对外表现不能坏掉压缩上下文。请让压缩发送在取消下是安全的：要么整条发出去、要么就当没发过，压缩状态不能被写坏。\n补测试：单次发送过程中取消、连续多次发送过程中取消。"
+  },
+  {
+    "index": 110,
+    "suggested_id": "T180",
+    "repo": "aio-libs/aiohttp",
+    "repo_url": "https://github.com/aio-libs/aiohttp",
+    "base_sha": "ef06656568de70520be7c4a555f7ea896d43194b",
+    "base_permalink": "https://github.com/aio-libs/aiohttp/commit/ef06656568de70520be7c4a555f7ea896d43194b",
+    "fix_sha": "38dd9b8557f35bdfc1376e5833fb8e235c9d49ba",
+    "fix_date": "2024-04-04",
+    "subject": "Fix AsyncResolver to match ThreadedResolver behavior (#8270) (#8295)",
+    "src_files": [
+      "aiohttp/abc.py",
+      "aiohttp/connector.py",
+      "aiohttp/resolver.py",
+      "docs/conf.py",
+      "examples/fake_server.py",
+      "requirements/runtime-deps.in",
+      "setup.cfg"
+    ],
+    "test_files": [
+      "tests/test_resolver.py"
+    ],
+    "prompt": "aiohttp 的 AsyncResolver 和 ThreadedResolver 结果对不上，切过去之后一堆毛病：\ngetaddrinfo 返回多条记录的时候只用了第一条；\n主机名查不到的时候不是返回空结果，而是直接抛异常；\nIPv6 的 link-local 地址（带 % 那种）处理不对；\nhosts 文件里没有的条目行为也不一样。\n\n请把 AsyncResolver 对齐成 ThreadedResolver 的语义，IPv4/IPv6、正查、负查都要一致。补测试覆盖多结果、查不到、link-local v6 这几种。"
+  },
+  {
+    "index": 111,
+    "suggested_id": "T181",
+    "repo": "aio-libs/aiohttp",
+    "repo_url": "https://github.com/aio-libs/aiohttp",
+    "base_sha": "5fa85842951ad68b2cba0bbc511dad1eca90cd3a",
+    "base_permalink": "https://github.com/aio-libs/aiohttp/commit/5fa85842951ad68b2cba0bbc511dad1eca90cd3a",
+    "fix_sha": "5e54037933fa8422be5fa8a2002d118ed2d4e5e0",
+    "fix_date": "2026-08-25",
+    "subject": "Fix memory consumption on empty/small messages (#13393)",
+    "src_files": [
+      "aiohttp/_websocket/reader_c.pxd",
+      "aiohttp/_websocket/reader_py.py",
+      "aiohttp/client.py",
+      "aiohttp/client_ws.py",
+      "aiohttp/web_ws.py"
+    ],
+    "test_files": [
+      "tests/test_client_ws_functional.py",
+      "tests/test_web_websocket_functional.py",
+      "tests/test_websocket_parser.py"
+    ],
+    "prompt": "aiohttp 的 WebSocket 读端在我们这种\"每帧很小、帧数特别多\"的场景下内存一直涨：\n空消息和小消息不走背压，读端跟不上（stalled）的时候缓冲只增不减，连接断了这些挂着的缓冲也不释放，读端对象一直被引用着回收不了。\n\n请让空/小消息也走背压和高水位，挂住的读取器在 drain 之后要把引用放掉，别一直留着帧对象。补测试：空消息背压、高水位以上的突发数据、stalled reader 在 drain 和断连之后的释放。现有行为别改坏。"
+  },
+  {
+    "index": 112,
+    "suggested_id": "T182",
+    "repo": "celery/celery",
+    "repo_url": "https://github.com/celery/celery",
+    "base_sha": "a277d3d673fe7ab4b794b50ce3bc86d7ca7742d7",
+    "base_permalink": "https://github.com/celery/celery/commit/a277d3d673fe7ab4b794b50ce3bc86d7ca7742d7",
+    "fix_sha": "a7d9c79688d3b5dd527fe2b2228b3041a6a602ac",
+    "fix_date": "2026-09-03",
+    "subject": "[Bug] chord hangs when a member is revoked through app.control.revoke (#10527)",
+    "src_files": [
+      "celery/worker/control.py",
+      "celery/worker/request.py"
+    ],
+    "test_files": [
+      "t/smoke/tests/test_control.py",
+      "t/unit/worker/test_control.py",
+      "t/unit/worker/test_request.py"
+    ],
+    "prompt": "celery 里我们用 chord，其中某个成员任务被 app.control.revoke 撤销之后，整个 chord 永远不结束——一直在等那个已经被撤掉的成员。\n看着问题出在 worker 的 control revoke 这条路径上：它只在 backend 里把任务标成 REVOKED，没有把 worker 这边的 Request 一起传下去，chord 的记账就被跳过了，所以它一直等不到回调。\n请修好这条路径，让撤销成员之后 chord 能正常收尾。补测试：撤销被预留的成员之后 chord 能完成、重复撤销不能重复记账、找不到的任务 id 行为跟以前一样。"
+  },
+  {
+    "index": 113,
+    "suggested_id": "T183",
+    "repo": "celery/celery",
+    "repo_url": "https://github.com/celery/celery",
+    "base_sha": "fc947644289c50940c09a3d8db501d336da85404",
+    "base_permalink": "https://github.com/celery/celery/commit/fc947644289c50940c09a3d8db501d336da85404",
+    "fix_sha": "ab711a0b2de8fcc5aa8ec6701cdcb0530d6daebb",
+    "fix_date": "2025-12-05",
+    "subject": "Fix: Broker heartbeats not sent during graceful shutdown (#9986)",
+    "src_files": [
+      "celery/concurrency/prefork.py",
+      "celery/worker/components.py",
+      "celery/worker/consumer/consumer.py",
+      "celery/worker/loops.py"
+    ],
+    "test_files": [
+      "t/integration/test_prefork_shutdown.py",
+      "t/unit/concurrency/test_prefork.py",
+      "t/unit/worker/test_consumer.py"
+    ],
+    "prompt": "celery worker 优雅退出（冷关闭、等长任务跑完）的这段时间里不再往 broker 发心跳了，broker 那边按心跳超时把连接掐掉，结果长任务跑完的结果根本发不回去，日志里一堆连接断开的报错。\n请让排空（drain）的这段时间心跳照发。补测试覆盖：关闭时定时器还能触发、没有 hub 的情况下不要炸、以及带长任务退出的场景。"
+  },
+  {
+    "index": 114,
+    "suggested_id": "T184",
+    "repo": "celery/celery",
+    "repo_url": "https://github.com/celery/celery",
+    "base_sha": "066092edc2f9e34716025a9fb67462477d2309fb",
+    "base_permalink": "https://github.com/celery/celery/commit/066092edc2f9e34716025a9fb67462477d2309fb",
+    "fix_sha": "1a39f8ca68a3a4c89a6d471f100cfe0b2a22e65c",
+    "fix_date": "2026-04-06",
+    "subject": "fix(base): add timeout to broker pool acquisition to prevent indefinite blocking (#10174)",
+    "src_files": [
+      "celery/app/base.py",
+      "celery/app/defaults.py"
+    ],
+    "test_files": [
+      "t/integration/test_tasks.py",
+      "t/unit/app/test_app.py"
+    ],
+    "prompt": "celery 的 broker 连接池打满之后，pool.acquire(block=True) 会一直阻塞，没有超时。\n我们并发 apply_async（在 Django 的信号里发的）的时候，延时能从 100ms 滚雪球到 40 秒以上，全卡在等连接上。\n请给池获取加一个可配置的超时（给个合理的默认值），超时之后抛明确的错误，别让调用方无限等下去。补测试：池打满要抛、池没打满正常、超时设成 None 的时候保持原来的阻塞行为。"
+  },
+  {
+    "index": 115,
+    "suggested_id": "T185",
+    "repo": "pydantic/pydantic",
+    "repo_url": "https://github.com/pydantic/pydantic",
+    "base_sha": "197bf18bf34105bc2f5001e0e23a3098519452d0",
+    "base_permalink": "https://github.com/pydantic/pydantic/commit/197bf18bf34105bc2f5001e0e23a3098519452d0",
+    "fix_sha": "f5e3aa950ffbf2d2ab14d90392d23a980da39ba1",
+    "fix_date": "2023-07-25",
+    "subject": "Use WeakValueDictionary to fix generic memory leak (#6681)",
+    "src_files": [
+      "pydantic/_internal/_model_construction.py",
+      "pydantic/main.py"
+    ],
+    "test_files": [
+      "tests/test_generics.py"
+    ],
+    "prompt": "pydantic 里参数化的泛型模型（Model[int] 这种）用完不会被回收，一直挂在缓存里，服务跑久了内存只涨不降。我们那边还带循环引用，GC 也收不掉。\n请把这块的缓存换成不会阻止回收的引用方式（弱引用之类）。补一个测试：造一个带循环引用的泛型模型，删掉外部引用之后能被 gc 收掉，用 weakref 断言。模型类和实例的正常语义别动。"
+  },
+  {
+    "index": 116,
+    "suggested_id": "T186",
+    "repo": "pytest-dev/pytest",
+    "repo_url": "https://github.com/pytest-dev/pytest",
+    "base_sha": "f017df443a589494b0a47488b1616db7c12dc8cd",
+    "base_permalink": "https://github.com/pytest-dev/pytest/commit/f017df443a589494b0a47488b1616db7c12dc8cd",
+    "fix_sha": "12b9bd580198edf88a795b692cbd6a1a05fe408a",
+    "fix_date": "2024-01-03",
+    "subject": "Fix teardown error reporting when `--maxfail=1` (#11721)",
+    "src_files": [
+      "AUTHORS",
+      "src/_pytest/main.py",
+      "src/_pytest/runner.py"
+    ],
+    "test_files": [
+      "testing/test_runner.py",
+      "testing/test_session.py"
+    ],
+    "prompt": "pytest 加 --maxfail=1 的时候，如果 teardown 阶段又出错，这个错误会被吞掉、或者报的位置不对。\n看着是早先那次失败把 maxfail 的状态置上了，teardown 的失败就没法正确上报；session 级的 teardown 失败/停止两种情况也不对。\n请修好这块的状态处理，让 teardown 的错误该报就报。补测试覆盖：session teardown 失败、session teardown 停止、以及 shouldfail / shouldstop 的状态是不是该\"粘住\"。"
+  },
+  {
+    "index": 117,
+    "suggested_id": "T187",
+    "repo": "pytest-dev/pytest",
+    "repo_url": "https://github.com/pytest-dev/pytest",
+    "base_sha": "2f09ddc84ea6a7ccd56f19b0b998c8d2c51a4652",
+    "base_permalink": "https://github.com/pytest-dev/pytest/commit/2f09ddc84ea6a7ccd56f19b0b998c8d2c51a4652",
+    "fix_sha": "966edc9d517cd092104028796b684fb1119a7c73",
+    "fix_date": "2026-02-14",
+    "subject": "Fix: assertrepr_compare respects dict insertion order (#14050)",
+    "src_files": [
+      "src/_pytest/_io/pprint.py",
+      "src/_pytest/_io/saferepr.py",
+      "src/_pytest/pytester_assertions.py"
+    ],
+    "test_files": [
+      "testing/io/test_saferepr.py",
+      "testing/test_assertion.py"
+    ],
+    "prompt": "pytest 的断言 diff 在比较 dict 的时候会把 key 排序，导致\"只是插入顺序不同\"的失败看起来两边一模一样，根本找不到差别；dict 被截断（truncate）的时候顺序也该按插入顺序来。\n请改成保留插入顺序。补测试：多出来的项要保持插入顺序、截断之后的顺序、以及空 dict 的显示。"
+  },
+  {
+    "index": 118,
+    "suggested_id": "T188",
+    "repo": "Delgan/loguru",
+    "repo_url": "https://github.com/Delgan/loguru",
+    "base_sha": "2c585a1c186b4dadd05faa4c21363c9479e151b4",
+    "base_permalink": "https://github.com/Delgan/loguru/commit/2c585a1c186b4dadd05faa4c21363c9479e151b4",
+    "fix_sha": "8c2044efdf0eae08745b6591a0be7cb80e9a51ff",
+    "fix_date": "2023-09-03",
+    "subject": "Fix possible deadlock with \"complete()\" and async sink (#906)",
+    "src_files": [
+      "loguru/_file_sink.py",
+      "loguru/_handler.py",
+      "loguru/_logger.py",
+      "loguru/_simple_sinks.py"
+    ],
+    "test_files": [
+      "tests/test_coroutine_sink.py"
+    ],
+    "prompt": "loguru 用 logger.complete() 等日志落盘，如果 sink 是我们自己写的（写文件、或者 sink 内部还要跟子进程/别的线程打交道），偶发死锁：complete() 和 sink 的 write 撞在一起就卡住不动。\n加上 logger.contextualize() 之后更容易复现，多进程场景下也出过。\n请把这几个锁的获取顺序理清楚，别让 complete 和写互相等死。补测试：complete 和 sink write 并发、complete 和 contextualize 并发、以及多进程的场景。"
   }
 ]
