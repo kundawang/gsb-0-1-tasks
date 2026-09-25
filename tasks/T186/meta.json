@@ -1,0 +1,37 @@
+{
+  "task_id": "T186",
+  "title": "pytest-dev/pytest 缺陷修复：Fix teardown error reporting when `--maxfail=1` (#11721)",
+  "created_at": "2026-09-25T10:32:46",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pytest-dev/pytest @ f017df443a",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t186/base",
+    "sha": "155355e131d6315f99b859df8f1246309f0bd3de",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/155355e131d6315f99b859df8f1246309f0bd3de"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t186/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t186/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pytest-dev/pytest base=https://github.com/pytest-dev/pytest/commit/f017df443a589494b0a47488b1616db7c12dc8cd fix=12b9bd580198edf88a795b692cbd6a1a05fe408a"
+}
