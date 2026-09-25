@@ -1,0 +1,37 @@
+{
+  "task_id": "T218",
+  "title": "python-trio/trio 缺陷修复：Add message with debugging info to Cancelled (#3256)",
+  "created_at": "2026-09-25T15:14:02",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 python-trio/trio @ bb63c53681",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t218/base",
+    "sha": "71be0726c35ec311f0a0627fe91b9a3fff0c5967",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/71be0726c35ec311f0a0627fe91b9a3fff0c5967"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t218/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t218/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/python-trio/trio base=https://github.com/python-trio/trio/commit/bb63c53681cd27569ecef99201ba38517d8527b0 fix=23b2d318622a1fb3513de574bd3a259cf4b0fdec"
+}
