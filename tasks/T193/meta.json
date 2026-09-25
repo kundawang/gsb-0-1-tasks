@@ -1,0 +1,37 @@
+{
+  "task_id": "T193",
+  "title": "celery/celery 缺陷修复：Fix/10096 worker fails to reconnect after redis failover (#1",
+  "created_at": "2026-09-25T15:10:28",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 celery/celery @ b0fdb91ccf",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t193/base",
+    "sha": "c5ca8abb1d85a921aee3e3872b0db0700285c6d8",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/c5ca8abb1d85a921aee3e3872b0db0700285c6d8"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t193/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t193/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/celery/celery base=https://github.com/celery/celery/commit/b0fdb91ccf992348448345163e53ea6d0686453e fix=2b3c6fa38c6c470c52480e3a94baa13f9ee1be8a"
+}
