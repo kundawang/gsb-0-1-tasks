@@ -1,0 +1,37 @@
+{
+  "task_id": "T192",
+  "title": "celery/celery 缺陷修复：fix: (#8786) time out when chord header fails with group bod",
+  "created_at": "2026-09-25T15:10:17",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 celery/celery @ 6d8bfd1d1d",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t192/base",
+    "sha": "1113bee15c7627a7dd10284c3ec1bf019c48d58b",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/1113bee15c7627a7dd10284c3ec1bf019c48d58b"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t192/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t192/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/celery/celery base=https://github.com/celery/celery/commit/6d8bfd1d1d3031e8c198a834a3a7bcddb7266620 fix=9cb389d31ad838a42a1786df8a605c8991547cc2"
+}
