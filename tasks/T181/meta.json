@@ -1,0 +1,37 @@
+{
+  "task_id": "T181",
+  "title": "aio-libs/aiohttp 缺陷修复：Fix memory consumption on empty/small messages (#13393)",
+  "created_at": "2026-09-25T10:31:53",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 aio-libs/aiohttp @ 5fa8584295",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t181/base",
+    "sha": "694a0149e3970b139290e80952177d4f62968835",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/694a0149e3970b139290e80952177d4f62968835"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t181/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t181/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/aio-libs/aiohttp base=https://github.com/aio-libs/aiohttp/commit/5fa85842951ad68b2cba0bbc511dad1eca90cd3a fix=5e54037933fa8422be5fa8a2002d118ed2d4e5e0"
+}
