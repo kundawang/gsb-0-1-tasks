@@ -1,0 +1,37 @@
+{
+  "task_id": "T182",
+  "title": "celery/celery 缺陷修复：[Bug] chord hangs when a member is revoked through app.contr",
+  "created_at": "2026-09-25T10:32:02",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 celery/celery @ a277d3d673",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t182/base",
+    "sha": "efc03feef489f51a46621a3ab7ae64f4b0383c4f",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/efc03feef489f51a46621a3ab7ae64f4b0383c4f"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t182/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t182/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/celery/celery base=https://github.com/celery/celery/commit/a277d3d673fe7ab4b794b50ce3bc86d7ca7742d7 fix=a7d9c79688d3b5dd527fe2b2228b3041a6a602ac"
+}
