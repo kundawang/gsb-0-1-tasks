@@ -1,0 +1,37 @@
+{
+  "task_id": "T217",
+  "title": "nedbat/coveragepy 缺陷修复：fix: sysmon conflicts no longer cause errors",
+  "created_at": "2026-09-25T15:13:55",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 nedbat/coveragepy @ 1f211841cf",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t217/base",
+    "sha": "1e448843aefe10bc2125bc704ae3413a22f388e9",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/1e448843aefe10bc2125bc704ae3413a22f388e9"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t217/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t217/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/nedbat/coveragepy base=https://github.com/nedbat/coveragepy/commit/1f211841cfe5756b322301dcca446e5398f0d8ea fix=843479261fd9cb10ab739f50406a36ed4024ec92"
+}
