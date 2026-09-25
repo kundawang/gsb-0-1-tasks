@@ -2264,5 +2264,646 @@
       "tests/test_coroutine_sink.py"
     ],
     "prompt": "loguru 用 logger.complete() 等日志落盘，如果 sink 是我们自己写的（写文件、或者 sink 内部还要跟子进程/别的线程打交道），偶发死锁：complete() 和 sink 的 write 撞在一起就卡住不动。\n加上 logger.contextualize() 之后更容易复现，多进程场景下也出过。\n请把这几个锁的获取顺序理清楚，别让 complete 和写互相等死。补测试：complete 和 sink write 并发、complete 和 contextualize 并发、以及多进程的场景。"
+  },
+  {
+    "index": 119,
+    "suggested_id": "T189",
+    "repo": "agronholm/anyio",
+    "repo_url": "https://github.com/agronholm/anyio",
+    "base_sha": "b4059c7268ad2649702b24e54b3bfa2788842866",
+    "base_permalink": "https://github.com/agronholm/anyio/commit/b4059c7268ad2649702b24e54b3bfa2788842866",
+    "fix_sha": "142dbccc97e8e09f6dee4f0d243834ee5c4632a5",
+    "fix_date": "2026-05-27",
+    "subject": "Fixed Trio backend hangs when dynamically accessing async fixture via getfixturevalue (#1149)",
+    "src_files": [
+      "src/anyio/_backends/_asyncio.py",
+      "src/anyio/_backends/_trio.py",
+      "src/anyio/abc/_testing.py",
+      "src/anyio/pytest_plugin.py"
+    ],
+    "test_files": [
+      "tests/test_pytest_plugin.py"
+    ],
+    "prompt": "我们的测试用 anyio 的 pytest 插件，同一批用例参数化跑 asyncio 和 trio 两个后端。\nTrio 后端下用 request.getfixturevalue() 动态拿一个 async fixture，整个测试就卡死不动了，得手动 Ctrl-C 才停；同样这段换 asyncio 后端跑是正常的。插件里从同步上下文把 async fixture 的值取回来这块，看起来没走通。\n\n请修好让两个后端都能动态取 async fixture、不要挂住。补一个用例断言它不会 hang。插件里那个占位/无操作的分支也别漏掉。"
+  },
+  {
+    "index": 120,
+    "suggested_id": "T190",
+    "repo": "agronholm/anyio",
+    "repo_url": "https://github.com/agronholm/anyio",
+    "base_sha": "1a64bfb20eb774894893cee276b82d313d195ad0",
+    "base_permalink": "https://github.com/agronholm/anyio/commit/1a64bfb20eb774894893cee276b82d313d195ad0",
+    "fix_sha": "5c6029199dbaed3abc7cec0b667fafee17a1f37a",
+    "fix_date": "2024-10-12",
+    "subject": "Fixed missing or inconsistent error when acquiring already owned Lock (#799)",
+    "src_files": [
+      "src/anyio/_backends/_asyncio.py",
+      "src/anyio/_backends/_trio.py"
+    ],
+    "test_files": [
+      "tests/test_synchronization.py"
+    ],
+    "prompt": "anyio 的 Lock，如果同一个任务已经持有、又去 acquire 一次，两个后端给出来的行为对不上：一个直接抛错误、另一个默默地又拿了一次，还有的情况下干脆挂住。我们要的是明确且一致的报错。\n\n请把 asyncio 和 trio 两个后端对齐：重复获取自己已经持有的 Lock 要抛同样的异常、错误信息也说清楚。补两个用例，同步和异步的获取路径都要覆盖。"
+  },
+  {
+    "index": 121,
+    "suggested_id": "T191",
+    "repo": "celery/celery",
+    "repo_url": "https://github.com/celery/celery",
+    "base_sha": "ffc1aaa927e8588afca40369012272a4d2bcc399",
+    "base_permalink": "https://github.com/celery/celery/commit/ffc1aaa927e8588afca40369012272a4d2bcc399",
+    "fix_sha": "865922abda9551876c2fd6cd7fb1ce59e7f2291a",
+    "fix_date": "2026-03-09",
+    "subject": "fix(trace): dispatch chain/callbacks on dedup fast-path for redelivered tasks (#10159)",
+    "src_files": [
+      ".github/workflows/python-package.yml",
+      "celery/app/trace.py",
+      "t/integration/tasks.py"
+    ],
+    "test_files": [
+      "t/integration/conftest.py",
+      "t/integration/test_canvas.py",
+      "t/integration/test_dedup_chain_dispatch.py",
+      "t/unit/tasks/test_trace.py"
+    ],
+    "prompt": "celery 开了任务去重之后我们碰上一个丢任务的问题：worker 在 mark_as_done 之后、broker ack 之前崩掉，任务被重投，重投的这次命中\"去重快路径\"就直接返回了 —— chain 和 callback 都没有派发。\n\n结果就是整条 chain 永久丢了，后面挂的 callback 再也不会跑，而且没有任何报错，我们查了很久才发现是重投那一轮什么都没做。\n\n请把去重快路径补上 chain/callback 的派发。补测试：去重命中重投时 callback 和 chain 都要被派发、派发失败要记日志并且不要把任务错误地记进 successful requests、去重时不能改动 request 里原本的 chain。"
+  },
+  {
+    "index": 122,
+    "suggested_id": "T192",
+    "repo": "celery/celery",
+    "repo_url": "https://github.com/celery/celery",
+    "base_sha": "6d8bfd1d1d3031e8c198a834a3a7bcddb7266620",
+    "base_permalink": "https://github.com/celery/celery/commit/6d8bfd1d1d3031e8c198a834a3a7bcddb7266620",
+    "fix_sha": "9cb389d31ad838a42a1786df8a605c8991547cc2",
+    "fix_date": "2025-07-02",
+    "subject": "fix: (#8786) time out when chord header fails with group body (#9788)",
+    "src_files": [
+      "celery/app/builtins.py",
+      "celery/backends/base.py",
+      "celery/backends/gcs.py",
+      "celery/backends/redis.py"
+    ],
+    "test_files": [
+      "t/integration/test_canvas.py",
+      "t/smoke/tests/test_canvas.py",
+      "t/unit/backends/test_base.py",
+      "t/unit/backends/test_gcs.py"
+    ],
+    "prompt": "celery 的 chord，如果 header 是个 group 而且里面某个任务失败了，整个 chord 就一直等下去：不超时、也不报错，卡在那儿直到我们手工重启 worker。group 作为 body 的场景下基本必现。\n\n请把这条失败路径补上：header 失败要能让 chord 正常收尾、错误要能报出来，清理过程本身再出错也不能把原始错误吞掉。补测试覆盖 header 失败、多个任务失败、以及清理抛异常这几条路径。"
+  },
+  {
+    "index": 123,
+    "suggested_id": "T193",
+    "repo": "celery/celery",
+    "repo_url": "https://github.com/celery/celery",
+    "base_sha": "b0fdb91ccf992348448345163e53ea6d0686453e",
+    "base_permalink": "https://github.com/celery/celery/commit/b0fdb91ccf992348448345163e53ea6d0686453e",
+    "fix_sha": "2b3c6fa38c6c470c52480e3a94baa13f9ee1be8a",
+    "fix_date": "2026-03-01",
+    "subject": "Fix/10096 worker fails to reconnect after redis failover (#10151)",
+    "src_files": [
+      "celery/concurrency/asynpool.py",
+      "celery/worker/loops.py"
+    ],
+    "test_files": [
+      "t/unit/concurrency/test_prefork.py",
+      "t/unit/worker/test_loops.py"
+    ],
+    "prompt": "celery worker（prefork + redis）在 redis 主从切换之后连不回来，一直重连失败；日志里能看到 flush 那块有问题：要写的 ack 协程被直接丢掉了，没被推进；开 synack 和不开 synack 我们都试过，表现还不一样；另外 worker 进程已经死了的时候，flush 会陷在死循环里不出来。\n\n请把这条恢复路径修好：进程还活着就要把写 ack 的协程推进下去（别丢），进程死了要把对应的请求丢掉，没开 synack 时那些没被接受的 job 也要丢掉，hub 在出错之后要能重置。补测试把这几条分支都钉住。"
+  },
+  {
+    "index": 124,
+    "suggested_id": "T194",
+    "repo": "celery/kombu",
+    "repo_url": "https://github.com/celery/kombu",
+    "base_sha": "e3207800e57a4604afeaace6952cc822ac55e9d5",
+    "base_permalink": "https://github.com/celery/kombu/commit/e3207800e57a4604afeaace6952cc822ac55e9d5",
+    "fix_sha": "6cc2228f3b75a6db3ddce3276f8d7fd194494e70",
+    "fix_date": "2026-03-10",
+    "subject": "Fix for SQS transport deadlock (#2479)",
+    "src_files": [
+      "kombu/transport/SQS/SNS.py",
+      "kombu/transport/SQS/exceptions.py"
+    ],
+    "test_files": [
+      "t/unit/transport/SQS/test_SQS_SNS.py"
+    ],
+    "prompt": "kombu 的 SQS 传输里 SNS 那块多线程下会死锁：创建/查询 topic 的初始化路径和另一条路径互相等对方的锁，一卡就是永远。我们生产上碰到过一次，worker 全卡住。\n\n请把这处锁的顺序理清楚（初始化只做一次、查询路径不要重复加锁），补测试：已经初始化过、还没初始化、预定义 exchange 命中、预定义 exchange 没命中这几种情况都要覆盖，另外 topic arn 走缓存的路径也要测。"
+  },
+  {
+    "index": 125,
+    "suggested_id": "T195",
+    "repo": "celery/kombu",
+    "repo_url": "https://github.com/celery/kombu",
+    "base_sha": "156e003e5a5c9afcaa7e2360875cd4b9c9b5936c",
+    "base_permalink": "https://github.com/celery/kombu/commit/156e003e5a5c9afcaa7e2360875cd4b9c9b5936c",
+    "fix_sha": "829433043dbc4ad97b3e507eb1706e8fecbf6974",
+    "fix_date": "2026-03-06",
+    "subject": "Fix/2463 gevent concurrent error (#2478)",
+    "src_files": [
+      "kombu/common.py",
+      "kombu/utils/compat.py"
+    ],
+    "test_files": [
+      "t/unit/test_common.py",
+      "t/unit/utils/test_compat.py"
+    ],
+    "prompt": "kombu 的 ignore_errors() 在装了 gevent 的进程里会漏掉 gevent 的并发使用错误：那个 concurrentObjectUseErrors 类是在模块导入的时候查的，如果 gevent 还没导入就先固定成了\"没有\"，等后来 gevent 被导进来（celery 的 start/stop 流程里经常这样），这类噪音异常就会直接冒出来，把正常关闭流程搞得很乱。\n\n请改成运行时判断：gevent 在不在 sys.modules、那个类在不在，都要现查；没装 gevent 的时候异常该照样往外抛。补测试覆盖 gevent 已加载、未加载、以及后续再 import 的情况，还有 mock connection 下不要炸。"
+  },
+  {
+    "index": 126,
+    "suggested_id": "T196",
+    "repo": "celery/kombu",
+    "repo_url": "https://github.com/celery/kombu",
+    "base_sha": "75650c511b7491f47263818ce36ba52f76a8fd1f",
+    "base_permalink": "https://github.com/celery/kombu/commit/75650c511b7491f47263818ce36ba52f76a8fd1f",
+    "fix_sha": "6121539379bcb5ad5d14db6f3a4d52c0513c9a3e",
+    "fix_date": "2023-11-16",
+    "subject": "Use the correct protocol for SQS requests (#1807)",
+    "src_files": [
+      "kombu/asynchronous/aws/connection.py",
+      "kombu/asynchronous/aws/sqs/connection.py"
+    ],
+    "test_files": [
+      "t/unit/asynchronous/aws/sqs/test_connection.py"
+    ],
+    "prompt": "kombu 发 SQS 请求的时候协议用错了：查询协议（query）和 JSON 协议混着用，一旦依赖默认值，碰上 botocore 那边把默认协议改了就直接挂（我们上次就是这么出的线上事故）。\n\n请把请求按正确的协议显式构造并发出去，不要再依赖默认值；补测试：JSON 协议、query 协议各一条，以及 make_request 两个分支都要覆盖。"
+  },
+  {
+    "index": 127,
+    "suggested_id": "T197",
+    "repo": "redis/redis-py",
+    "repo_url": "https://github.com/redis/redis-py",
+    "base_sha": "e0456542b064017d20b3d7357dccc22cd8475200",
+    "base_permalink": "https://github.com/redis/redis-py/commit/e0456542b064017d20b3d7357dccc22cd8475200",
+    "fix_sha": "53e6d8af1e0dde9658d9bf49d927681f1224f1cb",
+    "fix_date": "2026-03-10",
+    "subject": "Fix PubSub timeout propagation to prevent indefinite hangs on socket read operations (#3982)",
+    "src_files": [
+      "redis/_parsers/hiredis.py",
+      "redis/_parsers/resp2.py",
+      "redis/_parsers/resp3.py",
+      "redis/_parsers/socket.py",
+      "redis/asyncio/client.py",
+      "redis/client.py",
+      "redis/cluster.py",
+      "redis/connection.py",
+      "redis/sentinel.py"
+    ],
+    "test_files": [
+      "tests/test_asyncio/test_pubsub.py",
+      "tests/test_connection.py",
+      "tests/test_pubsub.py",
+      "tests/test_sentinel_managed_connection.py"
+    ],
+    "prompt": "redis-py 的 PubSub 在 socket 读上会无限等：我们给 get_message 传了 timeout，但这个 timeout 根本没有传到解析器/socket 的读操作上，结果 get_message(timeout=1) 照样一直阻塞，进程就卡死在那里。\n\n同步客户端、asyncio 客户端、hiredis 解析器和 resp2/resp3 几个解析器都有这个问题，cluster/sentinel 那边也受影响。\n\n请把 timeout 一路传到 socket 读上。补测试：timeout 生效、timeout=None 时保持原来的阻塞行为、timeout=0 立即返回、以及有消息时能正常拿到（sharded pubsub 的分支也要覆盖）。"
+  },
+  {
+    "index": 128,
+    "suggested_id": "T198",
+    "repo": "redis/redis-py",
+    "repo_url": "https://github.com/redis/redis-py",
+    "base_sha": "42f823f85a50473935041bcf6e64a2e7e56d5cdc",
+    "base_permalink": "https://github.com/redis/redis-py/commit/42f823f85a50473935041bcf6e64a2e7e56d5cdc",
+    "fix_sha": "c40ec527c204b99c194989942fdc15136f0fbde5",
+    "fix_date": "2026-01-27",
+    "subject": "Fix ClusterClient behavior when cluster topology is refreshed. Fix several places where connections might leak. (#3917)",
+    "src_files": [
+      "redis/asyncio/cluster.py",
+      "redis/asyncio/connection.py",
+      "redis/cluster.py"
+    ],
+    "test_files": [
+      "tests/conftest.py",
+      "tests/test_asyncio/test_cluster.py",
+      "tests/test_asyncio/test_cluster_transaction.py",
+      "tests/test_cluster.py",
+      "tests/test_cluster_transaction.py"
+    ],
+    "prompt": "redis-py 的 Cluster 客户端在刷新拓扑的时候会把连接池里\"正在用\"的连接也一起断开，导致正在跑的命令直接报连接错误；另外好几个地方连接断开之后没有正确归还/释放，跑久了会泄漏。\n\n请改成：刷新时只把在用连接标记成需要重连、空闲的才断开；实在要遍历连接池的地方加个防御性检查。补测试：move_node_to_end_of_cached_nodes 的几种输入、断开空闲连接的分支、以及连接错误时节点缓存的调整。"
+  },
+  {
+    "index": 129,
+    "suggested_id": "T199",
+    "repo": "redis/redis-py",
+    "repo_url": "https://github.com/redis/redis-py",
+    "base_sha": "8210f32f0175f615ee4d6b4422e15faa4235c8a4",
+    "base_permalink": "https://github.com/redis/redis-py/commit/8210f32f0175f615ee4d6b4422e15faa4235c8a4",
+    "fix_sha": "1c77108df0ae50e9ac33770f33ef0cf8571c9ba6",
+    "fix_date": "2026-06-15",
+    "subject": "Fixing pubsub's listen method to be blocking. (#4119)",
+    "src_files": [
+      "redis/asyncio/client.py",
+      "redis/asyncio/connection.py",
+      "redis/client.py"
+    ],
+    "test_files": [
+      "tests/test_asyncio/test_pubsub.py",
+      "tests/test_pubsub.py"
+    ],
+    "prompt": "redis-py 的 PubSub.listen() 本该一直阻塞等消息，但我们给连接设了 socket_timeout 之后，listen() 到了这个超时就返回了，而且这个设置还把连接上的 socket timeout 状态改坏了，后面的读也跟着受影响。\n\n请让 listen() 不受 socket_timeout 影响（该阻塞就一直阻塞），并且不要改动连接上的 timeout 状态。补测试：block=True 时能超过 socket_timeout 继续阻塞、之后继续读不受污染、以及传 timeout 的获取路径行为正确。"
+  },
+  {
+    "index": 130,
+    "suggested_id": "T200",
+    "repo": "tox-dev/filelock",
+    "repo_url": "https://github.com/tox-dev/filelock",
+    "base_sha": "fe0e99d00f3a98f1df1e7b0d5fa9c4ce79023803",
+    "base_permalink": "https://github.com/tox-dev/filelock/commit/fe0e99d00f3a98f1df1e7b0d5fa9c4ce79023803",
+    "fix_sha": "6c46312e5aaaa3aaf89215668e05fd59e02e886d",
+    "fix_date": "2026-09-23",
+    "subject": "🐛 fix(async-rw): give each task its own hold (#746)",
+    "src_files": [
+      "src/filelock/_async.py",
+      "src/filelock/_async_read_write.py",
+      "src/filelock/_soft_rw/_async.py"
+    ],
+    "test_files": [
+      "tests/soft_rw/test_soft_rw_async.py",
+      "tests/test_async_read_write.py",
+      "tests/test_async_read_write_cancellation.py",
+      "tests/test_read_write_fork.py"
+    ],
+    "prompt": "filelock 的异步读写锁（async 的 read-write，以及 soft-rw 的异步版）现在把\"谁持有\"记在锁对象上，同一把锁被多个 asyncio 任务共享的时候就全乱了：\n两个任务一起拿读锁会被误判；写锁本该排队，结果放行了；某个排队的任务被取消之后，后面排队的写者再也进不来；还有嵌套写锁的 release 计数也不对。\n\n请改成按任务记录持有情况，每个任务自己一份 hold。补测试：两个任务共同持读锁、写锁一次只给一个任务、被取消的写者要放行后面的读者、嵌套写锁的最后一个 release 才算真正释放、不在任务里 acquire 要报错、没持有的任务去 release 也要报错。"
+  },
+  {
+    "index": 131,
+    "suggested_id": "T201",
+    "repo": "tox-dev/filelock",
+    "repo_url": "https://github.com/tox-dev/filelock",
+    "base_sha": "0f86a94a6b3d7212f3988efbb79e8a191ed6dfbd",
+    "base_permalink": "https://github.com/tox-dev/filelock/commit/0f86a94a6b3d7212f3988efbb79e8a191ed6dfbd",
+    "fix_sha": "9cbcbcc8611e188885ee1fe5301c91eef0b38958",
+    "fix_date": "2026-07-15",
+    "subject": "🔒 fix(soft): fail safe on transient heartbeat errors (#661)",
+    "src_files": [
+      "src/filelock/_identity.py",
+      "src/filelock/_lease.py",
+      "src/filelock/_soft_rw/_sync.py",
+      "src/filelock/_strict.py"
+    ],
+    "test_files": [
+      "tests/soft_rw/test_soft_rw_sync.py",
+      "tests/test_soft_lease.py",
+      "tests/test_strict_soft_failures.py"
+    ],
+    "prompt": "filelock 的 lease / 心跳这块碰到临时错误就直接崩：刷新租约标记的时候偶尔会读到写了一半的标记（内容不完整），或者一次临时的刷新失败，现在实现都是直接抛异常，锁的状态就卡在中间。\n\n我们希望这种情况是 fail-safe 的：标记短暂读坏要让心跳挺过去、坏掉的标记能自愈、一次临时的刷新失败要能容忍，而不是把整个锁搞死。补对应用例。"
+  },
+  {
+    "index": 132,
+    "suggested_id": "T202",
+    "repo": "tox-dev/filelock",
+    "repo_url": "https://github.com/tox-dev/filelock",
+    "base_sha": "4aa742ca0992135fe21df290c8e9023f6981bb6f",
+    "base_permalink": "https://github.com/tox-dev/filelock/commit/4aa742ca0992135fe21df290c8e9023f6981bb6f",
+    "fix_sha": "13b82a64adf51e768d65180abe05c4934cdca934",
+    "fix_date": "2026-08-15",
+    "subject": "🐛 fix: retry transient denials on open and claim read (#705)",
+    "src_files": [
+      "src/filelock/_strict.py",
+      "src/filelock/_windows.py"
+    ],
+    "test_files": [
+      "tests/test_filelock.py",
+      "tests/test_strict_soft_failures.py"
+    ],
+    "prompt": "filelock 在 Windows 上偶尔会因为文件被临时占用（拒绝访问）直接失败，其实等几十毫秒就能读到；strict soft 锁里那条 claim 读的路径也有同样的问题。\n\n请给\"打开\"和\"claim 读\"这两条路径加上在宽限时间内重试临时拒绝的逻辑，别让瞬时占用变成失败。补测试：被拒绝一次之后重试要成功、宽限期内要按预期重试、以及超出宽限期之后还是要报错。"
+  },
+  {
+    "index": 133,
+    "suggested_id": "T203",
+    "repo": "tox-dev/tox",
+    "repo_url": "https://github.com/tox-dev/tox",
+    "base_sha": "bedbcbe0b63a467960f3bedb1e52986366b08afb",
+    "base_permalink": "https://github.com/tox-dev/tox/commit/bedbcbe0b63a467960f3bedb1e52986366b08afb",
+    "fix_sha": "122bdb60a37cde6c17082630c48bef2561e64aaf",
+    "fix_date": "2026-07-20",
+    "subject": "🐛 fix(session): fix package env failure cascade and state corruption (#3991)",
+    "src_files": [
+      ".git.premigrate",
+      "src/tox/session/cmd/run/common.py",
+      "src/tox/session/env_select.py",
+      "src/tox/tox_env/python/virtual_env/package/pyproject.py"
+    ],
+    "test_files": [
+      "tests/session/cmd/test_depends.py",
+      "tests/session/test_env_select.py",
+      "tests/tox_env/python/virtual_env/package/test_package_pyproject.py"
+    ],
+    "prompt": "tox 里只要创建 package 环境（.pkg）失败过一次，后面就连环崩：再跑别的 run 环境会报 `duplicate configuration definition for .pkg`，看起来跟我们把 work_dir 放到另一个文件系统上有关系，但那个报错只是连带反应。\n\n真正的原因应该是失败的时候 `_get_package_env` 把半注册的配置留在缓存里了，之后共享 .pkg 的环境再注册就撞车。\n\n请把这条失败回滚路径修好：失败要报第一个真实错误、不能把半成品留在缓存里、共享环境要被保住、被插件 hook 跳过的环境也要处理。补测试（含 depends 循环的场景）。"
+  },
+  {
+    "index": 134,
+    "suggested_id": "T204",
+    "repo": "tox-dev/tox",
+    "repo_url": "https://github.com/tox-dev/tox",
+    "base_sha": "b1b0159a3f9e84db4c080dfffa8f6d372cc91bdd",
+    "base_permalink": "https://github.com/tox-dev/tox/commit/b1b0159a3f9e84db4c080dfffa8f6d372cc91bdd",
+    "fix_sha": "fa6ec2bb6b5e013a3b4865ddd85564929beaca9b",
+    "fix_date": "2026-07-20",
+    "subject": "🐛 fix(run): honor the fail-fast contract, resilient teardown (#3999)",
+    "src_files": [
+      "src/tox/session/cmd/run/common.py",
+      "src/tox/tox_env/python/virtual_env/package/pyproject.py",
+      "src/tox/tox_env/runner.py"
+    ],
+    "test_files": [
+      "tests/session/cmd/test_parallel.py",
+      "tests/session/cmd/test_sequential.py"
+    ],
+    "prompt": "tox 的 run 有两条契约没守住：\n一是 fail-fast 的退出码应该是第一个失败的退出码，而且并行跑到一半失败时，已经在跑的环境应该让它跑完，而不是粗暴掐掉；\n二是 teardown 遇到某个环境失败之后就不往下走了，剩下的环境该收尾的没收。\n\n请把这两块修好。补测试：退出码取第一个失败、并行 fail-fast 让在跑的跑完、teardown 在失败后继续。"
+  },
+  {
+    "index": 135,
+    "suggested_id": "T205",
+    "repo": "tox-dev/tox",
+    "repo_url": "https://github.com/tox-dev/tox",
+    "base_sha": "fa6ec2bb6b5e013a3b4865ddd85564929beaca9b",
+    "base_permalink": "https://github.com/tox-dev/tox/commit/fa6ec2bb6b5e013a3b4865ddd85564929beaca9b",
+    "fix_sha": "09dad3d69d7a376f6432306deab84ddd15191849",
+    "fix_date": "2026-07-20",
+    "subject": "🐛 fix(cli): honor tox c -o, clean devenv ALL error, correct provision pin (#3998)",
+    "src_files": [
+      "src/tox/provision.py",
+      "src/tox/session/cmd/devenv.py",
+      "src/tox/session/cmd/show_config/ini.py"
+    ],
+    "test_files": [
+      "tests/session/cmd/test_devenv.py",
+      "tests/session/cmd/test_show_config.py",
+      "tests/test_provision.py"
+    ],
+    "prompt": "tox 有三个小地方不对：\n`tox c -o <文件>` 的输出文件没被遵守，内容还是打到 stdout 了；\n`tox devenv -e ALL` 的报错信息不对（不是该有的那条）；\nprovision 那块 tox 的版本 pin 不对，不重建环境的时候会 pin 成错的版本。\n\n请逐个修好，各补一个测试。"
+  },
+  {
+    "index": 136,
+    "suggested_id": "T206",
+    "repo": "pytest-dev/pytest",
+    "repo_url": "https://github.com/pytest-dev/pytest",
+    "base_sha": "a6f3ec732798b2bd06746c55df2b147596caeed3",
+    "base_permalink": "https://github.com/pytest-dev/pytest/commit/a6f3ec732798b2bd06746c55df2b147596caeed3",
+    "fix_sha": "86608c3aaca8c6c9c009f463a01eec397f5f17ad",
+    "fix_date": "2025-11-09",
+    "subject": "Hard error when setting a mark on a fixture function",
+    "src_files": [
+      "src/_pytest/deprecated.py",
+      "src/_pytest/fixtures.py",
+      "src/_pytest/mark/structures.py",
+      "testing/deprecated_test.py"
+    ],
+    "test_files": [
+      "testing/test_mark.py"
+    ],
+    "prompt": "pytest 里给 fixture 函数加标记（fixture 函数上再套一个 @pytest.mark.xxx）现在是安静地不生效，什么都不说。我们要把它变成明确的报错——这个用法已经被标记为要移除、9.0 会删掉。\n\n请改成硬报错并给出清楚的提示。补测试：直接标在 fixture 函数上、标在已经被标记过的函数上、以及夹在几个标记中间的情况，都要报错。"
+  },
+  {
+    "index": 137,
+    "suggested_id": "T207",
+    "repo": "pytest-dev/pytest",
+    "repo_url": "https://github.com/pytest-dev/pytest",
+    "base_sha": "7256c0c226b0eea2453cc532e6786366aa2400c5",
+    "base_permalink": "https://github.com/pytest-dev/pytest/commit/7256c0c226b0eea2453cc532e6786366aa2400c5",
+    "fix_sha": "c98ef2bdcaf4f0478c77c38534bce788e6581967",
+    "fix_date": "2024-11-11",
+    "subject": "change implementation so the check happens in pytest_fixture_setup after any hooks (from async plugins) has had a chance to resolve the awaitable",
+    "src_files": [
+      "src/_pytest/compat.py",
+      "src/_pytest/fixtures.py",
+      "testing/acceptance_test.py"
+    ],
+    "test_files": [],
+    "prompt": "pytest 检查\"fixture 返回值是没被解析的 awaitable\"的时机不对：这个检查跑在别的插件 hook 之前，而 async 插件（anyio / asyncio 那类）本来会在自己的 hook 里把这个 awaitable 解析掉，结果我们先报了错，误伤一批正常用例。\n\n请把这个检查挪到 pytest_fixture_setup 里、等各插件 hook 都跑完之后再做。补测试确认被 async 插件解析过的 fixture 不再被误报。"
+  },
+  {
+    "index": 138,
+    "suggested_id": "T208",
+    "repo": "pytest-dev/pytest",
+    "repo_url": "https://github.com/pytest-dev/pytest",
+    "base_sha": "419bc7a7c39d21af8a2b7cf29928ee93b7e02b19",
+    "base_permalink": "https://github.com/pytest-dev/pytest/commit/419bc7a7c39d21af8a2b7cf29928ee93b7e02b19",
+    "fix_sha": "9a444d113658be6ccb8dc9f57ed118a1ef17c94c",
+    "fix_date": "2024-08-30",
+    "subject": "Fix assertion rewriting with importlib mode (#12716)",
+    "src_files": [
+      "AUTHORS",
+      "src/_pytest/assertion/rewrite.py",
+      "src/_pytest/pathlib.py"
+    ],
+    "test_files": [
+      "testing/test_pathlib.py"
+    ],
+    "prompt": "pytest 加 --import-mode=importlib 的时候，命名空间包里的测试模块断言重写不生效：失败的断言不会展开，报错信息里看不到中间值；多层命名空间包（好几层没有 __init__.py 的目录）尤其明显。\n\n请修好这条重写路径。补一个多层命名空间包的用例，断言重写确实生效。"
+  },
+  {
+    "index": 139,
+    "suggested_id": "T209",
+    "repo": "aio-libs/aiohttp",
+    "repo_url": "https://github.com/aio-libs/aiohttp",
+    "base_sha": "57983b4ac1d13fb32c509c5944175569370fa987",
+    "base_permalink": "https://github.com/aio-libs/aiohttp/commit/57983b4ac1d13fb32c509c5944175569370fa987",
+    "fix_sha": "16703bb955ae4a11a131cedbbbf3ec7aa55f4bb4",
+    "fix_date": "2025-07-10",
+    "subject": "Fix file uploads failing with HTTP 422 on 307/308 redirects (#11290)",
+    "src_files": [
+      "aiohttp/client.py",
+      "aiohttp/payload.py"
+    ],
+    "test_files": [
+      "tests/test_client_functional.py",
+      "tests/test_payload.py"
+    ],
+    "prompt": "aiohttp 的客户端在遇到 307/308 重定向时，会把带文件的表单请求重新构造一遍，结果 body 被改坏，服务端直接返回 422。只有\"重定向 + multipart 文件上传\"这个组合会有，普通表单和没有重定向都不受影响。\n\n请修好重定向时请求体的重建，带文件的表单要能被正确重新发送。补测试覆盖 307 和 308 两种情况。"
+  },
+  {
+    "index": 140,
+    "suggested_id": "T210",
+    "repo": "HypothesisWorks/hypothesis",
+    "repo_url": "https://github.com/HypothesisWorks/hypothesis",
+    "base_sha": "68a9105e5ac6dd0132f9d903dfee974c227475c1",
+    "base_permalink": "https://github.com/HypothesisWorks/hypothesis/commit/68a9105e5ac6dd0132f9d903dfee974c227475c1",
+    "fix_sha": "422763a58d4421f3be1e3ad53a6529544e480bf3",
+    "fix_date": "2023-06-25",
+    "subject": "Fix recursion limit error",
+    "src_files": [
+      "hypothesis-python/src/hypothesis/core.py",
+      "hypothesis-python/src/hypothesis/internal/conjecture/data.py",
+      "hypothesis-python/src/hypothesis/internal/conjecture/engine.py",
+      "hypothesis-python/src/hypothesis/internal/conjecture/junkdrawer.py"
+    ],
+    "test_files": [
+      "hypothesis-python/tests/cover/test_lookup.py"
+    ],
+    "prompt": "hypothesis 在我们某些用例上会撞到递归深度上限，直接抛 RecursionError —— 递归的不是我们的代码，是库内部那套引擎，用例稍微深一点就能复现。\n\n请修掉内部这处递归，让这类用例正常跑；该失败的用例还是要照常失败并给出正常的最小化结果，不能为了不报错而妥协。补测试。"
+  },
+  {
+    "index": 141,
+    "suggested_id": "T211",
+    "repo": "HypothesisWorks/hypothesis",
+    "repo_url": "https://github.com/HypothesisWorks/hypothesis",
+    "base_sha": "309ab67891ba6cd7cb73eeca11065d21736a3abe",
+    "base_permalink": "https://github.com/HypothesisWorks/hypothesis/commit/309ab67891ba6cd7cb73eeca11065d21736a3abe",
+    "fix_sha": "2dcb6ac0cd95dc0e161e66e7df1a5a5b00d33c8d",
+    "fix_date": "2024-06-20",
+    "subject": "Fix unsafe cache pin semantics",
+    "src_files": [
+      "hypothesis-python/src/hypothesis/internal/cache.py",
+      "hypothesis-python/src/hypothesis/internal/conjecture/engine.py"
+    ],
+    "test_files": [
+      "hypothesis-python/tests/cover/test_cache_implementation.py"
+    ],
+    "prompt": "hypothesis 内部那个 LRU 缓存（internal/cache.py）的 pin 语义不安全：被 pin 住的条目在某些淘汰顺序下还是会被换掉，于是 conjecture 引擎拿着一个已经失效的条目继续用，行为就变得不可预期。\n\n请把 pin / 淘汰的语义修正确。补测试把\"pin 住之后不能被淘汰、unpin 之后正常淘汰\"钉住。"
+  },
+  {
+    "index": 142,
+    "suggested_id": "T212",
+    "repo": "pydantic/pydantic",
+    "repo_url": "https://github.com/pydantic/pydantic",
+    "base_sha": "f120e7c92871c39a469bb93422de3db71824676e",
+    "base_permalink": "https://github.com/pydantic/pydantic/commit/f120e7c92871c39a469bb93422de3db71824676e",
+    "fix_sha": "1546db3cae0179ac7ced4ec16dd723a61609c566",
+    "fix_date": "2023-09-22",
+    "subject": "Fixing `__iter__` returning private `cached_property` info (#7570)",
+    "src_files": [
+      "pydantic/fields.py",
+      "pydantic/main.py"
+    ],
+    "test_files": [
+      "tests/test_computed_fields.py",
+      "tests/test_private_attributes.py"
+    ],
+    "prompt": "pydantic 的模型把私有属性泄漏到 __iter__ 里了：dict(model) 会带出这些私有字段，用 cached_property 声明的私有属性也一样，这在做序列化的时候会把内部状态漏出去。默认 repr 里也不该显示它们。\n\n请修好让私有属性不出现在 __iter__/dict 和默认 repr 里。补测试：普通私有属性和 cached_property 两种都要覆盖 __iter__ 和默认 repr。"
+  },
+  {
+    "index": 143,
+    "suggested_id": "T213",
+    "repo": "pydantic/pydantic",
+    "repo_url": "https://github.com/pydantic/pydantic",
+    "base_sha": "96876ef7c81999b0cdb8a1edf7599e754e14a78c",
+    "base_permalink": "https://github.com/pydantic/pydantic/commit/96876ef7c81999b0cdb8a1edf7599e754e14a78c",
+    "fix_sha": "ff4a325cb1a1d4e00584366d086c652463c1ea35",
+    "fix_date": "2024-11-12",
+    "subject": "Fix error when using type aliases referencing other type aliases (#10809)",
+    "src_files": [
+      "pydantic/_internal/_core_utils.py",
+      "pydantic/errors.py"
+    ],
+    "test_files": [
+      "tests/test_type_alias_type.py"
+    ],
+    "prompt": "pydantic 里类型别名引用另一个类型别名会报错：A = B，B = C 这种链式的也认不了；如果别名之间还有循环引用，报错信息更是没法看。\n\n请修好别名解析，中间别名、别名链、循环别名都要能正常处理（循环的那条要给出合理的报错），JSON 相关的类型路径也别漏。补测试覆盖这几种情况。"
+  },
+  {
+    "index": 144,
+    "suggested_id": "T214",
+    "repo": "sqlalchemy/sqlalchemy",
+    "repo_url": "https://github.com/sqlalchemy/sqlalchemy",
+    "base_sha": "efe4025c068d6746637db362245ab88ce7dfe785",
+    "base_permalink": "https://github.com/sqlalchemy/sqlalchemy/commit/efe4025c068d6746637db362245ab88ce7dfe785",
+    "fix_sha": "29948f6848a84e5124c886aa6466e76938cb27de",
+    "fix_date": "2023-10-18",
+    "subject": "fix AsyncSession.close_all()",
+    "src_files": [
+      "lib/sqlalchemy/ext/asyncio/__init__.py",
+      "lib/sqlalchemy/ext/asyncio/scoping.py",
+      "lib/sqlalchemy/ext/asyncio/session.py",
+      "lib/sqlalchemy/util/langhelpers.py"
+    ],
+    "test_files": [
+      "test/ext/asyncio/test_session_py3k.py"
+    ],
+    "prompt": "sqlalchemy 的 AsyncSession.close_all() 现在根本用不了：要么直接报错、要么什么也没关掉，跟同步那套 close_all_sessions 的行为完全对不上。\n\n请修好它，并补上 async 版的 close_all_sessions；旧入口的 deprecation 行为也要保持一致。补测试：close_all 能把所有 session 都关掉、以及旧的调用方式仍然按 deprecation 走。"
+  },
+  {
+    "index": 145,
+    "suggested_id": "T215",
+    "repo": "jd/tenacity",
+    "repo_url": "https://github.com/jd/tenacity",
+    "base_sha": "ee6a8f7a76654d712fd44604d3b6d4f9af6b2249",
+    "base_permalink": "https://github.com/jd/tenacity/commit/ee6a8f7a76654d712fd44604d3b6d4f9af6b2249",
+    "fix_sha": "a15fa645326ef776dbef81ee13e3833cd14bdced",
+    "fix_date": "2024-06-24",
+    "subject": "fix: Avoid overwriting local contexts with retry decorator (#479)",
+    "src_files": [
+      "releasenotes/notes/fix-local-context-overwrite-94190ba06a481631.yaml",
+      "tenacity/__init__.py",
+      "tenacity/asyncio/__init__.py"
+    ],
+    "test_files": [
+      "tests/test_issue_478.py"
+    ],
+    "prompt": "tenacity 的 @retry 装饰器会污染调用方的上下文：我们在外面用 contextvars 设了值，调用被装饰的函数之后，里面的值被 tenacity 的内部状态覆盖了，跨协程/线程再取就拿到错的值。\n\n请修好让重试装饰器别动调用方的上下文，同步和异步两条路径都要处理。补测试：同步和异步各一个，断言进入前后调用方上下文里的值没被改掉。"
+  },
+  {
+    "index": 146,
+    "suggested_id": "T216",
+    "repo": "jd/tenacity",
+    "repo_url": "https://github.com/jd/tenacity",
+    "base_sha": "0a3ca8a208a9365f2cae45b83c7673e606d1b563",
+    "base_permalink": "https://github.com/jd/tenacity/commit/0a3ca8a208a9365f2cae45b83c7673e606d1b563",
+    "fix_sha": "cb320c4d80d8af7e8953dbf40224172a06b9b977",
+    "fix_date": "2026-02-25",
+    "subject": "fix: make Retrying and retry strategies picklable for multiprocessing (#615)",
+    "src_files": [
+      "tenacity/__init__.py",
+      "tenacity/retry.py"
+    ],
+    "test_files": [
+      "tests/test_tenacity.py"
+    ],
+    "prompt": "tenacity 的 Retrying 对象和各类重试策略没法 pickle（里面用了 threading.local 和 lambda），所以我们想把重试逻辑丢给 multiprocessing / 进程池的时候直接失败。\n\n请让它们能正常序列化，往返之后行为要一致。补测试：策略可 pickle、Retrying 可 pickle、跑过之后再 pickle、pickle 往返之后还能正常重试。"
+  },
+  {
+    "index": 147,
+    "suggested_id": "T217",
+    "repo": "nedbat/coveragepy",
+    "repo_url": "https://github.com/nedbat/coveragepy",
+    "base_sha": "1f211841cfe5756b322301dcca446e5398f0d8ea",
+    "base_permalink": "https://github.com/nedbat/coveragepy/commit/1f211841cfe5756b322301dcca446e5398f0d8ea",
+    "fix_sha": "843479261fd9cb10ab739f50406a36ed4024ec92",
+    "fix_date": "2025-11-09",
+    "subject": "fix: sysmon conflicts no longer cause errors",
+    "src_files": [
+      "coverage/core.py",
+      "coverage/exceptions.py",
+      "metacov.ini",
+      "pyproject.toml"
+    ],
+    "test_files": [
+      "tests/conftest.py",
+      "tests/test_concurrency.py",
+      "tests/test_core.py"
+    ],
+    "prompt": "coverage.py 用上 sys.monitoring 之后，如果同一个进程里还有别的工具也在用 sysmon（比如同时挂着别的 profiler 或者调试器），coverage 会直接抛错崩掉，而不是退让。\n\n请让这种 sysmon 冲突变成可容忍的情况：能继续采集就继续、不能让整个测量崩掉，并且给出明确的说明。补测试覆盖冲突和不冲突两种场景。"
+  },
+  {
+    "index": 148,
+    "suggested_id": "T218",
+    "repo": "python-trio/trio",
+    "repo_url": "https://github.com/python-trio/trio",
+    "base_sha": "bb63c53681cd27569ecef99201ba38517d8527b0",
+    "base_permalink": "https://github.com/python-trio/trio/commit/bb63c53681cd27569ecef99201ba38517d8527b0",
+    "fix_sha": "23b2d318622a1fb3513de574bd3a259cf4b0fdec",
+    "fix_date": "2025-05-15",
+    "subject": "Add message with debugging info to Cancelled (#3256)",
+    "src_files": [
+      "src/trio/_channel.py",
+      "src/trio/_core/_asyncgens.py",
+      "src/trio/_core/_exceptions.py",
+      "src/trio/_core/_run.py",
+      "src/trio/_highlevel_generic.py",
+      "src/trio/_highlevel_open_tcp_stream.py",
+      "src/trio/_subprocess.py",
+      "src/trio/_threads.py",
+      "src/trio/_util.py"
+    ],
+    "test_files": [
+      "src/trio/_core/_tests/test_cancelled.py",
+      "src/trio/_core/_tests/test_run.py",
+      "src/trio/_tests/test_threads.py",
+      "src/trio/_tests/test_util.py"
+    ],
+    "prompt": "trio 抛出来的 Cancelled 现在只有一句\"被取消了\"，排查问题时完全不知道是谁、因为什么取消的，日志里看不出任何线索。\n\n请给 Cancelled 带上调试信息（哪个 cancel scope、什么原因）。注意不能影响取消本身的语义：多层取消的时候后面那个不能把前面的原因覆盖掉；字符串化和 pickle 要正常；子类和构造函数的签名也别破坏。补测试覆盖这几点。"
   }
 ]
