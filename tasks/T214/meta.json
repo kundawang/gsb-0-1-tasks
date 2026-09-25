@@ -1,0 +1,37 @@
+{
+  "task_id": "T214",
+  "title": "sqlalchemy/sqlalchemy 缺陷修复：fix AsyncSession.close_all()",
+  "created_at": "2026-09-25T15:13:39",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 sqlalchemy/sqlalchemy @ efe4025c06",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t214/base",
+    "sha": "9545a615806a5817f5d15fc8ee2a3f2a70a04590",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/9545a615806a5817f5d15fc8ee2a3f2a70a04590"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t214/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t214/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/sqlalchemy/sqlalchemy base=https://github.com/sqlalchemy/sqlalchemy/commit/efe4025c068d6746637db362245ab88ce7dfe785 fix=29948f6848a84e5124c886aa6466e76938cb27de"
+}
