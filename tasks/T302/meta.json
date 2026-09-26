@@ -1,0 +1,37 @@
+{
+  "task_id": "T302",
+  "title": "psycopg/psycopg 缺陷修复：fix(pool): trap CancelledError more consistently in the pool",
+  "created_at": "2026-09-27T00:26:23",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 psycopg/psycopg @ e1c6920f3d",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t302/base",
+    "sha": "60507607cea4b07a3bf39759f16348db5306f6b9",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/60507607cea4b07a3bf39759f16348db5306f6b9"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t302/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t302/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/psycopg/psycopg base=https://github.com/psycopg/psycopg/commit/e1c6920f3d624764155ddeffa5c1710778a54af6 fix=cee9e574b7c85dbca7d3e16e460d13f8dda9f10a"
+}
