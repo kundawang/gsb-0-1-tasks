@@ -1,0 +1,37 @@
+{
+  "task_id": "T315",
+  "title": "tortoise/tortoise-orm 缺陷修复：Fix AlterField ignoring max_length changes in migrations (#2",
+  "created_at": "2026-09-27T00:29:27",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tortoise/tortoise-orm @ 332709fa1a",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t315/base",
+    "sha": "560a977f5d85df32bc295c15845ea2e5c415b713",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/560a977f5d85df32bc295c15845ea2e5c415b713"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t315/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t315/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tortoise/tortoise-orm base=https://github.com/tortoise/tortoise-orm/commit/332709fa1a737408a53241a57ae30b8b70db853a fix=5d08bc297f213a9cf7be3a5ec3b3cdfbf0f80811"
+}
