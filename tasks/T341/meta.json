@@ -1,0 +1,37 @@
+{
+  "task_id": "T341",
+  "title": "nedbat/coveragepy 缺陷修复：fix: multi-line statements no longer confuse branch target d",
+  "created_at": "2026-09-27T00:36:59",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 nedbat/coveragepy @ 73e58fa9dd",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t341/base",
+    "sha": "b559346ec0a93e35dea7a4eb64b24d20feca566b",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/b559346ec0a93e35dea7a4eb64b24d20feca566b"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t341/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t341/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/nedbat/coveragepy base=https://github.com/nedbat/coveragepy/commit/73e58fa9dd361b6496f2aa42ede490118ec0429c fix=c85eaba206e1bf98302e0997e32c079e2c231f4b"
+}
