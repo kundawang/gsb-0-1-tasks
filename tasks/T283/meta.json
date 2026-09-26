@@ -1,0 +1,37 @@
+{
+  "task_id": "T283",
+  "title": "pygments/pygments 缺陷修复：fixed a token error, removed extraneous test files",
+  "created_at": "2026-09-26T23:49:40",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pygments/pygments @ 3746ded956",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t283/base",
+    "sha": "977fe6ff66ef3afe8986880ce6ed2c8e1270b343",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/977fe6ff66ef3afe8986880ce6ed2c8e1270b343"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t283/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t283/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pygments/pygments base=https://github.com/pygments/pygments/commit/3746ded95655e8f8421b0456388ade9c5a001ee6 fix=2c463c680943309520a2e8aa18927bb5d1a1602b"
+}
