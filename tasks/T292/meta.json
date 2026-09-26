@@ -1,0 +1,37 @@
+{
+  "task_id": "T292",
+  "title": "django/django 缺陷修复：Fixed #35241 -- Cached model's full parent list.",
+  "created_at": "2026-09-26T23:56:08",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 django/django @ 6e1ece7ed5",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t292/base",
+    "sha": "0fc20d1c8ec00984678b94ccf166cac593d76af7",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/0fc20d1c8ec00984678b94ccf166cac593d76af7"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t292/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t292/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/django/django base=https://github.com/django/django/commit/6e1ece7ed522c904a674966fa985159b7bbf1545 fix=73d5eb808435bcf27ebc935847196ac9e97b6ddc"
+}
