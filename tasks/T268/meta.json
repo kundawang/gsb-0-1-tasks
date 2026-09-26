@@ -1,0 +1,37 @@
+{
+  "task_id": "T268",
+  "title": "nedbat/coveragepy 缺陷修复：fix: change how the core default adjusts if sysmon isn't rig",
+  "created_at": "2026-09-26T23:39:51",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 nedbat/coveragepy @ 2047a7992f",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t268/base",
+    "sha": "36d8cbbde93e1bf4e0f95630f2a015ee31e6474e",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/36d8cbbde93e1bf4e0f95630f2a015ee31e6474e"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t268/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t268/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/nedbat/coveragepy base=https://github.com/nedbat/coveragepy/commit/2047a7992fd9bf3f42a42c18cc41ab6af589e05c fix=c2127c69ce2543790ab87fcdeea29b987e8b4879"
+}
