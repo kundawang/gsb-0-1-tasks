@@ -1,0 +1,37 @@
+{
+  "task_id": "T294",
+  "title": "pylint-dev/astroid 缺陷修复：Change order of search path to fix inconsistency between pyl",
+  "created_at": "2026-09-26T23:56:28",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pylint-dev/astroid @ 8696918751",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t294/base",
+    "sha": "9f60ede04cfc436e71e2ad11f317a3a4d37ea833",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/9f60ede04cfc436e71e2ad11f317a3a4d37ea833"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t294/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t294/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pylint-dev/astroid base=https://github.com/pylint-dev/astroid/commit/8696918751efe8a49ca13c4ed6ec03c084be8371 fix=f201120ba4c994517ca30ab30ef0108b68ed6505"
+}
