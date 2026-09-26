@@ -1,0 +1,37 @@
+{
+  "task_id": "T303",
+  "title": "psycopg/psycopg 缺陷修复：fix: cancel a running query on SystemExit",
+  "created_at": "2026-09-27T00:26:33",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 psycopg/psycopg @ 7ce96a8741",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t303/base",
+    "sha": "1bb6258e1b103b5799fa79ce8cadc8700a4a5c57",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/1bb6258e1b103b5799fa79ce8cadc8700a4a5c57"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t303/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t303/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/psycopg/psycopg base=https://github.com/psycopg/psycopg/commit/7ce96a874186a42d80aa83cf24be09a6b11c7e70 fix=bea9e0c8e29dbe816085ab52bae02d1aeb684b80"
+}
