@@ -1,0 +1,37 @@
+{
+  "task_id": "T291",
+  "title": "django/django 缺陷修复：Fixed #36903 -- Fixed further NameErrors when inspecting fun",
+  "created_at": "2026-09-26T23:55:03",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 django/django @ 2c2d36376a",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t291/base",
+    "sha": "f29c51e825136c2cc9b0767655dc697d8e01c34d",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/f29c51e825136c2cc9b0767655dc697d8e01c34d"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t291/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t291/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/django/django base=https://github.com/django/django/commit/2c2d36376a0ce0edc048c077a60be6e3b953bb09 fix=56ed37e17e5b1a509aa68a0c797dcff34fcc1366"
+}
