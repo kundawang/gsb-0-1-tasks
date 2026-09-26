@@ -1,0 +1,37 @@
+{
+  "task_id": "T263",
+  "title": "openai/openai-python 缺陷修复：fix(structured outputs): resolve memory leak in parse method",
+  "created_at": "2026-09-26T23:37:58",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 openai/openai-python @ d81ee8f852",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t263/base",
+    "sha": "47f6f7ed8765104c398675bc857e9656622baf4b",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/47f6f7ed8765104c398675bc857e9656622baf4b"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t263/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t263/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/openai/openai-python base=https://github.com/openai/openai-python/commit/d81ee8f85207bdc88c2749ae9d0644d9a997e397 fix=72e1e15abfc283fa2714bc4d61e4a31740833084"
+}
