@@ -1,0 +1,37 @@
+{
+  "task_id": "T305",
+  "title": "getsentry/sentry-python 缺陷修复：Fix cache pollution from mutable reference (#3887)",
+  "created_at": "2026-09-27T00:27:00",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 getsentry/sentry-python @ c3516db643",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t305/base",
+    "sha": "4ea793f96be18b8a61e56c686ba79d39d486be4e",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/4ea793f96be18b8a61e56c686ba79d39d486be4e"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t305/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t305/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/getsentry/sentry-python base=https://github.com/getsentry/sentry-python/commit/c3516db643af20396ea981393431646f1a3ef123 fix=bb85c26a2b877965c5e0a0cd841b7f676ec2533e"
+}
