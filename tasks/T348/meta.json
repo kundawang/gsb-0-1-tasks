@@ -1,0 +1,37 @@
+{
+  "task_id": "T348",
+  "title": "sqlalchemy/sqlalchemy 缺陷修复：ensure SQL expressions w/o bool pass through to correct typi",
+  "created_at": "2026-09-27T00:40:39",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 sqlalchemy/sqlalchemy @ 1d49add435",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t348/base",
+    "sha": "9dc7bae94344cf4fe260e991ef0e24f5d935a7fa",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/9dc7bae94344cf4fe260e991ef0e24f5d935a7fa"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t348/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t348/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/sqlalchemy/sqlalchemy base=https://github.com/sqlalchemy/sqlalchemy/commit/1d49add43530ecb4011b3fcd057a5273a3be774a fix=b19a09812c2b0806cc063e42993216fc1ead6ed2"
+}
