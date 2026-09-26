@@ -1,0 +1,37 @@
+{
+  "task_id": "T245",
+  "title": "pytest-dev/pytest 缺陷修复：Fix crash when passing a very long cmdline argument (#11404)",
+  "created_at": "2026-09-26T20:01:11",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pytest-dev/pytest @ 333e4eba6b",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t245/base",
+    "sha": "84d5d38bcb788580ea00d9d0ac2a37cde152cc11",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/84d5d38bcb788580ea00d9d0ac2a37cde152cc11"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t245/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t245/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pytest-dev/pytest base=https://github.com/pytest-dev/pytest/commit/333e4eba6b09f40f80aaeee6581a37c5af34aad7 fix=28ccf476b91be32ffda303f0d7a8b57e475b465b"
+}
