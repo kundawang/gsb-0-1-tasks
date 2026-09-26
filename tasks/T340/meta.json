@@ -1,0 +1,37 @@
+{
+  "task_id": "T340",
+  "title": "nedbat/coveragepy 缺陷修复：fix: avoid a SQLite error when async mode isn't available. #",
+  "created_at": "2026-09-27T00:36:49",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 nedbat/coveragepy @ a5f37e0ba1",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t340/base",
+    "sha": "9312cbeecb08041ab8d72713d4775dbddc1272d9",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/9312cbeecb08041ab8d72713d4775dbddc1272d9"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t340/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t340/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/nedbat/coveragepy base=https://github.com/nedbat/coveragepy/commit/a5f37e0ba1d00329d4e8aa68e3d17478feca157c fix=21251361e87c66099b69c87135f63d078bd87a64"
+}
