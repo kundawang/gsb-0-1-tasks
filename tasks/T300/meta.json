@@ -1,0 +1,37 @@
+{
+  "task_id": "T300",
+  "title": "psycopg/psycopg 缺陷修复：fix: include timeout as part of the generators/wait conversa",
+  "created_at": "2026-09-27T00:26:01",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 psycopg/psycopg @ 63cb46c384",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t300/base",
+    "sha": "2de1e326fc15bff219e2daedc8ee6131814cdc57",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/2de1e326fc15bff219e2daedc8ee6131814cdc57"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t300/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t300/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/psycopg/psycopg base=https://github.com/psycopg/psycopg/commit/63cb46c384c94c6f815516643faa27394eb25291 fix=4dbd5c2fdcf44e01865c95a1688b538458670632"
+}
