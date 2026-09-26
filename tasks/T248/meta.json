@@ -1,0 +1,37 @@
+{
+  "task_id": "T248",
+  "title": "python-trio/trio 缺陷修复：add newsfragments, add StalledLockError, reraise BrokenResou",
+  "created_at": "2026-09-26T20:01:33",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 python-trio/trio @ 94ff9a27ca",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t248/base",
+    "sha": "00304b913079b3a3a4cbb3c88410e63c776ea918",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/00304b913079b3a3a4cbb3c88410e63c776ea918"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t248/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t248/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/python-trio/trio base=https://github.com/python-trio/trio/commit/94ff9a27ca03213426746a97565fe31c08d1226d fix=eb7a451022a6d02cd0d81489c5e742252c294160"
+}
