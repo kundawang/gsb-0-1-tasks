@@ -1,0 +1,37 @@
+{
+  "task_id": "T289",
+  "title": "django/django 缺陷修复：Fixed #35074 -- Fixed adding/removing indexes when spatial_i",
+  "created_at": "2026-09-26T23:52:15",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 django/django @ ae1ee24178",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t289/base",
+    "sha": "e801da45ecf5342715a452aeb5ac67b7183d2ad8",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/e801da45ecf5342715a452aeb5ac67b7183d2ad8"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t289/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t289/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/django/django base=https://github.com/django/django/commit/ae1ee24178ecd53ac5ef3fc2055e4be8b9602ac9 fix=f8cc9285e14c491d8b8d51313c763808b7d1b115"
+}
