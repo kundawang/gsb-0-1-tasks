@@ -1,0 +1,37 @@
+{
+  "task_id": "T240",
+  "title": "celery/celery 缺陷修复：Fix #6912 rpc backend reconnection error (#10179)",
+  "created_at": "2026-09-26T20:00:31",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 celery/celery @ 6b1fad3695",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t240/base",
+    "sha": "0f728fd8606f1062487d01a4627e95b49b1df27e",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/0f728fd8606f1062487d01a4627e95b49b1df27e"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t240/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t240/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/celery/celery base=https://github.com/celery/celery/commit/6b1fad369597e263aa231edacccbd7fe22b11551 fix=6b20dcd2d16b360bb4c4c7bf01a2c0c72b204517"
+}
