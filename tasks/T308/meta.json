@@ -1,0 +1,37 @@
+{
+  "task_id": "T308",
+  "title": "getsentry/sentry-python 缺陷修复：fix(asyncpg): Add db.query.text to streamed query spans (#66",
+  "created_at": "2026-09-27T00:27:43",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 getsentry/sentry-python @ de01d8b821",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t308/base",
+    "sha": "6c88b366a0aa6389d6fa9af2d89c023eafc5d4f4",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/6c88b366a0aa6389d6fa9af2d89c023eafc5d4f4"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t308/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t308/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/getsentry/sentry-python base=https://github.com/getsentry/sentry-python/commit/de01d8b82131065e0f433b5f3355dc7787064377 fix=c04b9445fc514850fefd2505fe088464bab9633a"
+}
