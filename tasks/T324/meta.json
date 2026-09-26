@@ -1,0 +1,37 @@
+{
+  "task_id": "T324",
+  "title": "pgjones/hypercorn 缺陷修复：Bugfix ensure ExceptionGroup lifespan failures crash the ser",
+  "created_at": "2026-09-27T00:32:54",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pgjones/hypercorn @ edd0aac585",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t324/base",
+    "sha": "c5ed0c9ce87812cbe9335b0bef56127249d6aa7e",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/c5ed0c9ce87812cbe9335b0bef56127249d6aa7e"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t324/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t324/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pgjones/hypercorn base=https://github.com/pgjones/hypercorn/commit/edd0aac585043a00d2c8291b83482928750f555c fix=bfb087756da53c25fd9390b4ea0acf914408ecbf"
+}
