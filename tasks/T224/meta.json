@@ -1,0 +1,37 @@
+{
+  "task_id": "T224",
+  "title": "graphql-python/graphql-core 缺陷修复：fix(incremental): await async incremental cleanup",
+  "created_at": "2026-09-26T19:54:34",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 graphql-python/graphql-core @ b933887be0",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t224/base",
+    "sha": "c6aa96a9c3080bff21f6f7d90640779bbeebf801",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/c6aa96a9c3080bff21f6f7d90640779bbeebf801"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t224/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t224/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/graphql-python/graphql-core base=https://github.com/graphql-python/graphql-core/commit/b933887be0511c3de29ec234a181a430d1738882 fix=d8a96ac7f5e5d4efbfd175dd1fbd7ae971d2679b"
+}
