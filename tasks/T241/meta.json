@@ -1,0 +1,37 @@
+{
+  "task_id": "T241",
+  "title": "celery/celery 缺陷修复：Choose queue type and exchange type when creating missing qu",
+  "created_at": "2026-09-26T20:00:42",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 celery/celery @ 3703beb458",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t241/base",
+    "sha": "b7c2bbff2a54cb947a028e02a0435f8e6637ba0b",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/b7c2bbff2a54cb947a028e02a0435f8e6637ba0b"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t241/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t241/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/celery/celery base=https://github.com/celery/celery/commit/3703beb4589b4d590b84a1b08a8d6558149b6f4d fix=166f705adcae57a43423b0ae7286ab828b55b244"
+}
