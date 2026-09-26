@@ -1,0 +1,37 @@
+{
+  "task_id": "T318",
+  "title": "pdm-project/pdm 缺陷修复：fix: don't touch caches if no-cache is given (#2913)",
+  "created_at": "2026-09-27T00:30:00",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pdm-project/pdm @ 78110b22e5",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t318/base",
+    "sha": "9381551b70bed5ee678b35cd7d2101b3ed333512",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/9381551b70bed5ee678b35cd7d2101b3ed333512"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t318/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t318/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pdm-project/pdm base=https://github.com/pdm-project/pdm/commit/78110b22e5bd493ae1e73572410d366220698c95 fix=d925136c3f78293d13de88587025ce354c2ce3e8"
+}
