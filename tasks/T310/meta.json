@@ -1,0 +1,37 @@
+{
+  "task_id": "T310",
+  "title": "strawberry-graphql/strawberry 缺陷修复：Fix cleanup logic in graphql_ws protocol handler (#3778)",
+  "created_at": "2026-09-27T00:28:17",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 strawberry-graphql/strawberry @ 951e56c588",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t310/base",
+    "sha": "d5a3bb9a95591860bf85566b10ce0db43544e118",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/d5a3bb9a95591860bf85566b10ce0db43544e118"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t310/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t310/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/strawberry-graphql/strawberry base=https://github.com/strawberry-graphql/strawberry/commit/951e56c5885cb9516ac53118b389d3b2cb47c52f fix=33a5fbd7032508195fdee65799dbfd1a1f76d65f"
+}
