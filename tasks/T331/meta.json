@@ -1,0 +1,37 @@
+{
+  "task_id": "T331",
+  "title": "wntrblm/nox 缺陷修复：fix: percolate the `verbose` global option to the `silent` a",
+  "created_at": "2026-09-27T00:33:47",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 wntrblm/nox @ 05f0d0bbf7",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t331/base",
+    "sha": "737fbba076a828637ce53d684c563469c345c67e",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/737fbba076a828637ce53d684c563469c345c67e"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t331/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t331/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/wntrblm/nox base=https://github.com/wntrblm/nox/commit/05f0d0bbf7f1f7d11db4cbd0ff339e7f86ad7450 fix=a4b43d5f34a0b86d748d562861676e4dd2b0761a"
+}
