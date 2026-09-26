@@ -1,0 +1,37 @@
+{
+  "task_id": "T249",
+  "title": "encode/uvicorn 缺陷修复：Fix spurious LocalProtocolError errors when processing pipel",
+  "created_at": "2026-09-26T20:01:44",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 encode/uvicorn @ 4f74ed1447",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t249/base",
+    "sha": "6263c991aba242891671c0c2f4e784fb92ca695d",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/6263c991aba242891671c0c2f4e784fb92ca695d"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t249/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t249/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/encode/uvicorn base=https://github.com/encode/uvicorn/commit/4f74ed144768d53fe6a959683c8e2a9bc51cc00a fix=2ff704b91c8a3888eae7bfc3b053168dc59bd66e"
+}
