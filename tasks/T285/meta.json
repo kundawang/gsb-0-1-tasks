@@ -1,0 +1,37 @@
+{
+  "task_id": "T285",
+  "title": "pytest-dev/pytest 缺陷修复：testresult: correctly apply verbose word markup and avoid cr",
+  "created_at": "2026-09-26T23:50:24",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pytest-dev/pytest @ dbf7dee8c8",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t285/base",
+    "sha": "9dec56981588bb23f5bcefdf7a531cfd69c6b569",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/9dec56981588bb23f5bcefdf7a531cfd69c6b569"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t285/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t285/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pytest-dev/pytest base=https://github.com/pytest-dev/pytest/commit/dbf7dee8c8818de27d83d4593b0048ac5e06bfc7 fix=41ca4dd44eedd959f3fe562895519e3d9df185ca"
+}
