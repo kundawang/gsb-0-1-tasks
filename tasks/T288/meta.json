@@ -1,0 +1,37 @@
+{
+  "task_id": "T288",
+  "title": "simonw/sqlite-utils 缺陷修复：Polish: clearer errors, corrected docstrings, setuptools pin",
+  "created_at": "2026-09-26T23:51:20",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 simonw/sqlite-utils @ 30cc95c0a6",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t288/base",
+    "sha": "380395cfcb78a3e57ba7624480c2c0ddc4dbf51d",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/380395cfcb78a3e57ba7624480c2c0ddc4dbf51d"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t288/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t288/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/simonw/sqlite-utils base=https://github.com/simonw/sqlite-utils/commit/30cc95c0a6c4fc1947f43feb1dc9798305a1b9e8 fix=397cdcc491342825e460cb9a08ef06da7552a409"
+}
