@@ -1,0 +1,37 @@
+{
+  "task_id": "T232",
+  "title": "python-poetry/poetry 缺陷修复：fix: reinstall editable dependencies when develop mode chang",
+  "created_at": "2026-09-26T19:55:59",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 python-poetry/poetry @ acb779e60a",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t232/base",
+    "sha": "0d4b7f90bfe95e1cbc8311e663753e9177e5e236",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/0d4b7f90bfe95e1cbc8311e663753e9177e5e236"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t232/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t232/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/python-poetry/poetry base=https://github.com/python-poetry/poetry/commit/acb779e60add6dcde69b719c5d977aa1af41cb7d fix=d447dacd7c4506bedf0686b849e3eb076e1156fc"
+}
