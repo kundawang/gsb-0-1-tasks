@@ -1,0 +1,37 @@
+{
+  "task_id": "T334",
+  "title": "pypa/virtualenv 缺陷修复：🐛 fix(util): replace a stale symlink instead of writing thro",
+  "created_at": "2026-09-27T00:34:44",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pypa/virtualenv @ 4b31a6316a",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t334/base",
+    "sha": "657c48b2cc6d3bf5e167e31e2346d10b6d9aa340",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/657c48b2cc6d3bf5e167e31e2346d10b6d9aa340"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t334/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t334/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pypa/virtualenv base=https://github.com/pypa/virtualenv/commit/4b31a6316a872a5c0713c88ace1ceb1782d6b5b4 fix=66fadcbfeac2977a12d4d671b81a32f0a3458cb4"
+}
