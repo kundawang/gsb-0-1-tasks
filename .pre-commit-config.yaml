@@ -1,0 +1,54 @@
+# See https://pre-commit.com for more information
+#
+# Note: we use `language: system` to make sure that pre-commit uses the same
+# dependencies installed by `pip install psycopg[dev]` and not some random
+# version installed in a hidden virtualenv. This way running the tools via
+# pre-commit should give the same result of running them manually.
+#
+# Please check README.rst about setting up a development env.
+#
+# Note: this file is kept compatible with Python versions < 3.14, so the
+# files including tstrings are excluded. However the `lint.yml` will sed it
+# inplace removing the `exclude` entries in order to run linting of those files
+# too in CI.
+
+repos:
+  - repo: local
+    hooks:
+      - id: isort
+        name: isort
+        language: system
+        entry: isort --diff --color --check
+        files: \.(py[i]?|pxd|pyx)$
+
+      - id: black
+        name: black
+        language: system
+        entry: black --check --diff --color --quiet
+        files: \.py[i]?$
+        exclude: tests/test_tstring(_async)?.py
+
+      - id: codespell
+        name: codespell
+        language: system
+        entry: codespell
+
+      - id: flake8
+        name: flake8
+        language: system
+        entry: flake8
+        files: \.py$
+        exclude: tests/test_tstring(_async)?.py
+
+      - id: mypy
+        name: mypy
+        language: system
+        entry: mypy --pretty --follow-imports=silent
+        files: \.py[i]?$
+        exclude: tests/test_tstring(_async)?.py
+
+      - id: cython-lint
+        name: cython-lint
+        language: system
+        entry: cython-lint
+        files: \.(pxd|pyx)$
