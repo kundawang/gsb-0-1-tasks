@@ -1,0 +1,37 @@
+{
+  "task_id": "T339",
+  "title": "joblib/joblib 缺陷修复：FIX revert MemorizedFunc.call API change (#1576)",
+  "created_at": "2026-09-27T00:41:00",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 joblib/joblib @ 2be8dcd4cb",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t339/base",
+    "sha": "e54dd94cd5f0fb15a2d37e546ca2629d11bf6aa2",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/e54dd94cd5f0fb15a2d37e546ca2629d11bf6aa2"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t339/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t339/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/joblib/joblib base=https://github.com/joblib/joblib/commit/2be8dcd4cb777ced834808cb9349eef441e2d133 fix=398d8ee669ee355be48d9b2f80aaebbf8ca15d37"
+}
