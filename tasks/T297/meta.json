@@ -1,0 +1,37 @@
+{
+  "task_id": "T297",
+  "title": "sympy/sympy 缺陷修复：fixed invert for Fp groups, preventing it from crashing with",
+  "created_at": "2026-09-26T23:58:10",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 sympy/sympy @ 52a71d9c1d",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t297/base",
+    "sha": "2b7f5613802b04bb08f10f4ee8cb231b983867e9",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/2b7f5613802b04bb08f10f4ee8cb231b983867e9"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t297/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t297/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/sympy/sympy base=https://github.com/sympy/sympy/commit/52a71d9c1d8d6039e42078664cc88323fc2438e8 fix=9d16993f3bdd54a2ca0d3888b038e9e966a51757"
+}
