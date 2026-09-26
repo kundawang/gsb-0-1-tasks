@@ -1,0 +1,37 @@
+{
+  "task_id": "T221",
+  "title": "mongodb/mongo-python-driver 缺陷修复：PYTHON-3519 Fix race condition in pool _reset() causing flak",
+  "created_at": "2026-09-26T19:53:35",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 mongodb/mongo-python-driver @ e82e6d7e84",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t221/base",
+    "sha": "3838db407ae42b24e7d7ade1a4a6a71ff18efbf9",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/3838db407ae42b24e7d7ade1a4a6a71ff18efbf9"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t221/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t221/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/mongodb/mongo-python-driver base=https://github.com/mongodb/mongo-python-driver/commit/e82e6d7e8491f4f27da2e66f1b542c30a8211141 fix=06041261cb9020e4279db749f56a476156820e02"
+}
