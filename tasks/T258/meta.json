@@ -1,0 +1,37 @@
+{
+  "task_id": "T258",
+  "title": "pypa/pip 缺陷修复：Fix crash on invalid entry points (#14220)",
+  "created_at": "2026-09-26T20:03:47",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pypa/pip @ e62cc2de8a",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t258/base",
+    "sha": "a10d59e43f8394c8fbe1e31297263482bb559fb3",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/a10d59e43f8394c8fbe1e31297263482bb559fb3"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t258/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t258/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pypa/pip base=https://github.com/pypa/pip/commit/e62cc2de8abff1f459d82abbf4db58845f120dbd fix=d7d0d0a39494e28ec1c407bd0680e4a4d1067791"
+}
