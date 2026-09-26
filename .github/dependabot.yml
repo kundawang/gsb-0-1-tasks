@@ -1,0 +1,84 @@
+version: 2
+updates:
+  # Python dependencies (uv)
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
+    reviewers:
+      - "bellini666"
+      - "patrick91"
+    commit-message:
+      prefix: "deps(python)"
+      include: "scope"
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+    allow:
+      - dependency-type: direct
+
+  # npm dependencies (e2e tests)
+  - package-ecosystem: "npm"
+    directory: "/e2e"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "bellini666"
+      - "patrick91"
+    commit-message:
+      prefix: "deps(e2e)"
+      include: "scope"
+    groups:
+      relay:
+        patterns:
+          - "react-relay"
+          - "relay-runtime"
+          - "relay-compiler"
+          - "babel-plugin-relay"
+      eslint:
+        patterns:
+          - "eslint*"
+          - "@eslint/*"
+
+  # Docker dependencies
+  - package-ecosystem: "docker"
+    directory: "/federation-compatibility"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "bellini666"
+      - "patrick91"
+    commit-message:
+      prefix: "deps(docker)"
+      include: "scope"
+
+  - package-ecosystem: "docker"
+    directory: "/.devcontainer"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "bellini666"
+      - "patrick91"
+    commit-message:
+      prefix: "deps(docker)"
+      include: "scope"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "bellini666"
+      - "patrick91"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
