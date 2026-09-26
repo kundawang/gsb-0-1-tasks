@@ -4650,5 +4650,1074 @@
       "tests/test_postgresql.py"
     ],
     "prompt": "alembic 的 `Operations.add_column` 在较新版本里会自动把 `primary_key=True` 渲染成内联的 `PRIMARY KEY`，这会让\"只加一列\"的迁移顺带改掉表的主键约束，对已有主键的表是破坏性的。\n\n请把默认行为改回不内联，同时提供显式的内联方式（`inline_primary_key`），并保持 add_column 既有入口兼容；补测试：内联主键、普通主键、默认不内联、以及删掉主键列再加回来的场景。"
+  },
+  {
+    "index": 229,
+    "suggested_id": "T299",
+    "repo": "psycopg/psycopg",
+    "repo_url": "https://github.com/psycopg/psycopg",
+    "base_sha": "84cb324b267d2b5ae92960dcc64576bdec22889d",
+    "base_permalink": "https://github.com/psycopg/psycopg/commit/84cb324b267d2b5ae92960dcc64576bdec22889d",
+    "fix_sha": "e70010fa2626291201b76112a0f4593dcd3d92e3",
+    "fix_date": "2023-05-19",
+    "subject": "fix: finish the PGconn upon connection failure",
+    "src_files": [
+      "psycopg/psycopg/errors.py",
+      "psycopg/psycopg/generators.py",
+      "psycopg_c/psycopg_c/_psycopg/generators.pyx"
+    ],
+    "test_files": [
+      "tests/test_errors.py",
+      "tests/test_generators.py"
+    ],
+    "prompt": "psycopg 连接失败时，抛出的异常上带着一个没有 finish 的 PGconn：应用如果没及时处理这个异常对象，libpq 的连接结构就不会被释放（我们线上看到文件描述符和内存一直在涨）。\n\n请改成连接失败时先把 PGconn finish 掉再抛异常，纯 Python 和 C 加速两条实现都要改，补一个能验证 PGconn 已被 finish 的测试。"
+  },
+  {
+    "index": 230,
+    "suggested_id": "T300",
+    "repo": "psycopg/psycopg",
+    "repo_url": "https://github.com/psycopg/psycopg",
+    "base_sha": "63cb46c384c94c6f815516643faa27394eb25291",
+    "base_permalink": "https://github.com/psycopg/psycopg/commit/63cb46c384c94c6f815516643faa27394eb25291",
+    "fix_sha": "4dbd5c2fdcf44e01865c95a1688b538458670632",
+    "fix_date": "2024-01-24",
+    "subject": "fix: include timeout as part of the generators/wait conversation",
+    "src_files": [
+      "psycopg/psycopg/_enums.py",
+      "psycopg/psycopg/abc.py",
+      "psycopg/psycopg/generators.py",
+      "psycopg/psycopg/waiting.py",
+      "psycopg_c/psycopg_c/_psycopg/generators.pyx",
+      "psycopg_c/psycopg_c/_psycopg/waiting.pyx"
+    ],
+    "test_files": [
+      "tests/test_waiting.py"
+    ],
+    "prompt": "psycopg 的 wait 函数会把等待超时挡在生成器外面：生成器感知不到超时，于是没法被中断；我们希望超时作为 generators / wait 之间约定的一部分传进去，让等待可以被打断。\n\n请把这套约定改好（同步和异步路径、wait_c 也一起考虑），补测试：wait_ready、异步 wait_ready、以及超时路径。"
+  },
+  {
+    "index": 231,
+    "suggested_id": "T301",
+    "repo": "psycopg/psycopg",
+    "repo_url": "https://github.com/psycopg/psycopg",
+    "base_sha": "aa17f53a536443a2ffc5a7be57d3c072fdb42462",
+    "base_permalink": "https://github.com/psycopg/psycopg/commit/aa17f53a536443a2ffc5a7be57d3c072fdb42462",
+    "fix_sha": "6b74a2d0f974b0daf6354240596f4017880af93d",
+    "fix_date": "2025-07-26",
+    "subject": "fix(pool): fix infinite loop with close_returns=True",
+    "src_files": [
+      "psycopg_pool/psycopg_pool/pool.py",
+      "psycopg_pool/psycopg_pool/pool_async.py"
+    ],
+    "test_files": [
+      "tests/pool/test_pool.py",
+      "tests/pool/test_pool_async.py"
+    ],
+    "prompt": "psycopg_pool 开了 close_returns=True 之后关池会陷进死循环（池一直认为自己还有连接要关）。同步和异步的池都有这个问题。\n\n请修好关闭逻辑，补测试：close_returns 不死循环、自定义 close() 的情况、以及子类覆盖 close 的场景。"
+  },
+  {
+    "index": 232,
+    "suggested_id": "T302",
+    "repo": "psycopg/psycopg",
+    "repo_url": "https://github.com/psycopg/psycopg",
+    "base_sha": "e1c6920f3d624764155ddeffa5c1710778a54af6",
+    "base_permalink": "https://github.com/psycopg/psycopg/commit/e1c6920f3d624764155ddeffa5c1710778a54af6",
+    "fix_sha": "cee9e574b7c85dbca7d3e16e460d13f8dda9f10a",
+    "fix_date": "2025-11-21",
+    "subject": "fix(pool): trap CancelledError more consistently in the pool codebase",
+    "src_files": [
+      "psycopg_pool/psycopg_pool/pool.py",
+      "psycopg_pool/psycopg_pool/pool_async.py",
+      "psycopg_pool/psycopg_pool/sched.py",
+      "psycopg_pool/psycopg_pool/sched_async.py"
+    ],
+    "test_files": [
+      "tests/pool/test_pool_common.py",
+      "tests/pool/test_pool_common_async.py"
+    ],
+    "prompt": "psycopg_pool 里 CancelledError 的处理不一致：只在一部分地方兜住了，回滚和任务调度那几条路径漏掉，取消时会冒出去或者把池状态搞乱。\n\n请统一在池代码里处理取消（rollback、sched 也要覆盖），补一个回滚时被取消的测试。"
+  },
+  {
+    "index": 233,
+    "suggested_id": "T303",
+    "repo": "psycopg/psycopg",
+    "repo_url": "https://github.com/psycopg/psycopg",
+    "base_sha": "7ce96a874186a42d80aa83cf24be09a6b11c7e70",
+    "base_permalink": "https://github.com/psycopg/psycopg/commit/7ce96a874186a42d80aa83cf24be09a6b11c7e70",
+    "fix_sha": "bea9e0c8e29dbe816085ab52bae02d1aeb684b80",
+    "fix_date": "2026-09-14",
+    "subject": "fix: cancel a running query on SystemExit",
+    "src_files": [
+      "psycopg/psycopg/connection.py",
+      "psycopg/psycopg/connection_async.py"
+    ],
+    "test_files": [
+      "tests/test_concurrency.py",
+      "tests/test_concurrency_async.py"
+    ],
+    "prompt": "psycopg 在收到 SystemExit（进程要退出）的时候不会取消正在跑的查询：连接就那么挂在那里，服务端要等超时才回收。\n\n请按 Ctrl-C 那套做法尽力取消查询（同步和异步连接都要），补测试。"
+  },
+  {
+    "index": 234,
+    "suggested_id": "T304",
+    "repo": "getsentry/sentry-python",
+    "repo_url": "https://github.com/getsentry/sentry-python",
+    "base_sha": "9147b3c8bf03072e0ed2af8fc4c58507a700a286",
+    "base_permalink": "https://github.com/getsentry/sentry-python/commit/9147b3c8bf03072e0ed2af8fc4c58507a700a286",
+    "fix_sha": "e17291eea3d274c6a64252760af956b43f94947c",
+    "fix_date": "2026-08-25",
+    "subject": "fix(batcher): Do not let a failed flush kill the flusher thread",
+    "src_files": [
+      "sentry_sdk/_batcher.py",
+      "sentry_sdk/_span_batcher.py"
+    ],
+    "test_files": [
+      "tests/test_logs.py",
+      "tests/tracing/test_span_batcher.py"
+    ],
+    "prompt": "sentry-python 的 batcher：`_flush_loop` 里调用 `_flush()` 没有包异常，任何一次 flush 失败（序列化或发送时报错）都会把 flusher 线程直接干掉，之后事件再也发不出去。\n\n请让 flush 失败不再杀死线程（记录并继续），补一个 flush 抛异常后循环仍存活的测试。"
+  },
+  {
+    "index": 235,
+    "suggested_id": "T305",
+    "repo": "getsentry/sentry-python",
+    "repo_url": "https://github.com/getsentry/sentry-python",
+    "base_sha": "c3516db643af20396ea981393431646f1a3ef123",
+    "base_permalink": "https://github.com/getsentry/sentry-python/commit/c3516db643af20396ea981393431646f1a3ef123",
+    "fix_sha": "bb85c26a2b877965c5e0a0cd841b7f676ec2533e",
+    "fix_date": "2024-12-23",
+    "subject": "Fix cache pollution from mutable reference (#3887)",
+    "src_files": [
+      "sentry_sdk/_lru_cache.py",
+      "sentry_sdk/flag_utils.py",
+      "sentry_sdk/scope.py"
+    ],
+    "test_files": [
+      "tests/test_lru_cache.py"
+    ],
+    "prompt": "sentry-python 的缓存被可变引用污染：缓存里存的对象被外部改动之后再命中，拿到的就是改过的内容（scope / flag_utils 这条链路上出过问题）。\n\n请把这处缓存改成不会被调用方改动影响（不要靠覆盖 copy 行为来兜），补测试。"
+  },
+  {
+    "index": 236,
+    "suggested_id": "T306",
+    "repo": "getsentry/sentry-python",
+    "repo_url": "https://github.com/getsentry/sentry-python",
+    "base_sha": "b5e7e052dd6aebd6cf0a0c617792a7b8c722b6f7",
+    "base_permalink": "https://github.com/getsentry/sentry-python/commit/b5e7e052dd6aebd6cf0a0c617792a7b8c722b6f7",
+    "fix_sha": "b0885b88f4fdf9878ae75cf1b745ff17f6c9cd81",
+    "fix_date": "2026-01-13",
+    "subject": "fix(grpc): Derive interception state from channel fields (#5302)",
+    "src_files": [
+      "sentry_sdk/integrations/grpc/__init__.py",
+      "sentry_sdk/integrations/grpc/client.py"
+    ],
+    "test_files": [
+      "tests/integrations/grpc/test_grpc.py"
+    ],
+    "prompt": "sentry-python 的 gRPC 集成用集成级别的标志位判断\"是否已经插过 ClientInterceptor\"，同一个 channel 被多个客户端复用时判断失效，拦截器会被重复插入。\n\n请改成通过检查 grpc.Channel 上的字段来判断（提供个 helper），补测试。"
+  },
+  {
+    "index": 237,
+    "suggested_id": "T307",
+    "repo": "getsentry/sentry-python",
+    "repo_url": "https://github.com/getsentry/sentry-python",
+    "base_sha": "d7ccf06aea28c709abd3d6e7002951c4fa169fe2",
+    "base_permalink": "https://github.com/getsentry/sentry-python/commit/d7ccf06aea28c709abd3d6e7002951c4fa169fe2",
+    "fix_sha": "b3b2eb62d9f1d9132aa8114a4d2eecf7e5fc517c",
+    "fix_date": "2025-10-29",
+    "subject": "fix(integrations): hooking into error tracing function to find out if an execute tool span should be set to error (#4986)",
+    "src_files": [
+      "sentry_sdk/integrations/openai_agents/__init__.py",
+      "sentry_sdk/integrations/openai_agents/patches/__init__.py",
+      "sentry_sdk/integrations/openai_agents/patches/error_tracing.py"
+    ],
+    "test_files": [
+      "tests/integrations/openai_agents/test_openai_agents.py"
+    ],
+    "prompt": "sentry-python 的 openai agents 集成里，工具执行失败时 span 没有被标成 error：错误追踪那段逻辑没有覆盖到这条路径。\n\n请接到错误追踪函数上把状态标对，补测试。"
+  },
+  {
+    "index": 238,
+    "suggested_id": "T308",
+    "repo": "getsentry/sentry-python",
+    "repo_url": "https://github.com/getsentry/sentry-python",
+    "base_sha": "de01d8b82131065e0f433b5f3355dc7787064377",
+    "base_permalink": "https://github.com/getsentry/sentry-python/commit/de01d8b82131065e0f433b5f3355dc7787064377",
+    "fix_sha": "c04b9445fc514850fefd2505fe088464bab9633a",
+    "fix_date": "2026-06-23",
+    "subject": "fix(asyncpg): Add db.query.text to streamed query spans (#6633)",
+    "src_files": [
+      "sentry_sdk/consts.py",
+      "sentry_sdk/tracing_utils.py"
+    ],
+    "test_files": [
+      "tests/integrations/asyncpg/test_asyncpg.py"
+    ],
+    "prompt": "sentry-python 的 asyncpg 集成：流式查询（cursor 迭代 / fetch）生成的 span 上缺少 `db.query.text`，看链路的时候对不上是哪个查询。\n\n请把查询文本带上（常量表也要补），补一个 cursor 迭代产生 span 的测试。"
+  },
+  {
+    "index": 239,
+    "suggested_id": "T309",
+    "repo": "strawberry-graphql/strawberry",
+    "repo_url": "https://github.com/strawberry-graphql/strawberry",
+    "base_sha": "c3caabd1188acda62045e7fd9ba9e37ac430cf96",
+    "base_permalink": "https://github.com/strawberry-graphql/strawberry/commit/c3caabd1188acda62045e7fd9ba9e37ac430cf96",
+    "fix_sha": "8957d683744ba40ec36b1cb72fc368e9d06c2b12",
+    "fix_date": "2026-08-30",
+    "subject": "fix: correct dataclass transform ordering metadata (#4591)",
+    "src_files": [
+      "strawberry/federation/object_type.py",
+      "strawberry/federation/schema_directive.py",
+      "strawberry/schema_directive.py",
+      "strawberry/types/object_type.py"
+    ],
+    "test_files": [
+      "tests/typecheckers/test_directives.py",
+      "tests/typecheckers/test_federation.py",
+      "tests/typecheckers/test_type.py"
+    ],
+    "prompt": "strawberry 的 dataclass transform 在生成 ordering 元数据时顺序不对：自定义 ordering 方法、federation 场景下的 schema directive 都把字段顺序搞乱，生成的排序参数跟声明顺序不一致。\n\n请修好这处元数据顺序（含 federation 和 schema_directive 两条路径），补测试。"
+  },
+  {
+    "index": 240,
+    "suggested_id": "T310",
+    "repo": "strawberry-graphql/strawberry",
+    "repo_url": "https://github.com/strawberry-graphql/strawberry",
+    "base_sha": "951e56c5885cb9516ac53118b389d3b2cb47c52f",
+    "base_permalink": "https://github.com/strawberry-graphql/strawberry/commit/951e56c5885cb9516ac53118b389d3b2cb47c52f",
+    "fix_sha": "33a5fbd7032508195fdee65799dbfd1a1f76d65f",
+    "fix_date": "2025-02-27",
+    "subject": "Fix cleanup logic in graphql_ws protocol handler (#3778)",
+    "src_files": [
+      "noxfile.py",
+      "strawberry/federation/field.py",
+      "strawberry/relay/fields.py",
+      "strawberry/subscriptions/protocols/graphql_ws/handlers.py",
+      "tests/views/schema.py"
+    ],
+    "test_files": [
+      "tests/websockets/test_graphql_transport_ws.py",
+      "tests/websockets/test_graphql_ws.py"
+    ],
+    "prompt": "strawberry 的 graphql-ws 协议处理器清理逻辑不对：连接断开/出错时没有把订阅和资源收干净，长跑会泄漏。\n\n请把清理逻辑修好，补测试。"
+  },
+  {
+    "index": 241,
+    "suggested_id": "T311",
+    "repo": "strawberry-graphql/strawberry",
+    "repo_url": "https://github.com/strawberry-graphql/strawberry",
+    "base_sha": "2a6d7884b8cd1c7070d27b3910d764af8eb6a599",
+    "base_permalink": "https://github.com/strawberry-graphql/strawberry/commit/2a6d7884b8cd1c7070d27b3910d764af8eb6a599",
+    "fix_sha": "b701eb00b3980907993f5d0e1174a9ef213a7196",
+    "fix_date": "2024-10-21",
+    "subject": "Fix graphql ws did not ignore parsing errors (#3670)",
+    "src_files": [
+      "strawberry/aiohttp/views.py",
+      "strawberry/asgi/__init__.py",
+      "strawberry/channels/handlers/ws_handler.py",
+      "strawberry/http/async_base_view.py",
+      "strawberry/http/exceptions.py",
+      "strawberry/litestar/controller.py",
+      "strawberry/subscriptions/protocols/graphql_transport_ws/handlers.py",
+      "strawberry/subscriptions/protocols/graphql_ws/handlers.py"
+    ],
+    "test_files": [
+      "tests/websockets/test_graphql_transport_ws.py",
+      "tests/websockets/test_graphql_ws.py"
+    ],
+    "prompt": "strawberry 的 graphql-ws 在收到非 JSON / 非文本消息时会崩，而不是按协议忽略掉（各种后端——aiohttp / asgi / channels 都一样）。\n\n请改成忽略这类消息（必要时关连接），补测试覆盖协议各阶段。"
+  },
+  {
+    "index": 242,
+    "suggested_id": "T312",
+    "repo": "strawberry-graphql/strawberry",
+    "repo_url": "https://github.com/strawberry-graphql/strawberry",
+    "base_sha": "f0cb9654fcb44a9488de9d3e0944d5fe890b5c48",
+    "base_permalink": "https://github.com/strawberry-graphql/strawberry/commit/f0cb9654fcb44a9488de9d3e0944d5fe890b5c48",
+    "fix_sha": "46b7d6d1a755beac66ee4553e2ab429876b571d1",
+    "fix_date": "2025-04-05",
+    "subject": "fix: Ensure asyncgens gets properly closed in case of errors (#3834)",
+    "src_files": [
+      "strawberry/relay/types.py",
+      "strawberry/schema/schema.py",
+      "strawberry/utils/aio.py"
+    ],
+    "test_files": [
+      "tests/schema/test_permission.py",
+      "tests/schema/test_subscription.py"
+    ],
+    "prompt": "strawberry 在出错的时候没有把异步生成器（asyncgen）正确关闭，导致 'async generator was never awaited' 之类的告警和资源泄漏。\n\n请修好错误路径上的关闭逻辑，补测试。"
+  },
+  {
+    "index": 243,
+    "suggested_id": "T313",
+    "repo": "strawberry-graphql/strawberry",
+    "repo_url": "https://github.com/strawberry-graphql/strawberry",
+    "base_sha": "b9cfcda3e11485dd24c6250a4623067bcb892a49",
+    "base_permalink": "https://github.com/strawberry-graphql/strawberry/commit/b9cfcda3e11485dd24c6250a4623067bcb892a49",
+    "fix_sha": "3ba583f8776bb86315638191f962e79537400683",
+    "fix_date": "2026-07-23",
+    "subject": "Fix MaskErrors for synchronous pre-execution errors (#3968)",
+    "src_files": [
+      "strawberry/extensions/mask_errors.py",
+      "strawberry/schema/schema.py"
+    ],
+    "test_files": [
+      "tests/schema/extensions/test_mask_errors.py"
+    ],
+    "prompt": "strawberry 的 MaskErrors 扩展只处理执行期错误：同步的预执行错误（校验/解析阶段）会被原样漏出去，没被掩码。\n\n请把预执行错误也纳入掩码，补同步和异步两条路径的测试。"
+  },
+  {
+    "index": 244,
+    "suggested_id": "T314",
+    "repo": "tortoise/tortoise-orm",
+    "repo_url": "https://github.com/tortoise/tortoise-orm",
+    "base_sha": "29d7e024a303171f3ffac1f550a367353bae4adb",
+    "base_permalink": "https://github.com/tortoise/tortoise-orm/commit/29d7e024a303171f3ffac1f550a367353bae4adb",
+    "fix_sha": "513f852dab0cab47810bff6039a5667793650ddc",
+    "fix_date": "2024-12-26",
+    "subject": "Fix concurrent initialization of connection pool (#1825)",
+    "src_files": [
+      "tortoise/__init__.py",
+      "tortoise/backends/asyncpg/client.py",
+      "tortoise/backends/base/client.py",
+      "tortoise/backends/base_postgres/client.py",
+      "tortoise/backends/mssql/client.py",
+      "tortoise/backends/mysql/client.py",
+      "tortoise/backends/odbc/client.py",
+      "tortoise/backends/oracle/client.py",
+      "tortoise/backends/psycopg/client.py",
+      "tortoise/backends/sqlite/client.py"
+    ],
+    "test_files": [
+      "tests/test_concurrency.py"
+    ],
+    "prompt": "tortoise-orm 的连接池在并发初始化时会打架：多个协程同时首次访问数据库，池被重复初始化/状态错乱，压测下报错或卡住。\n\n请把初始化做成并发安全（含 asyncpg 后端），补测试：并发查询和并发事务。"
+  },
+  {
+    "index": 245,
+    "suggested_id": "T315",
+    "repo": "tortoise/tortoise-orm",
+    "repo_url": "https://github.com/tortoise/tortoise-orm",
+    "base_sha": "332709fa1a737408a53241a57ae30b8b70db853a",
+    "base_permalink": "https://github.com/tortoise/tortoise-orm/commit/332709fa1a737408a53241a57ae30b8b70db853a",
+    "fix_sha": "5d08bc297f213a9cf7be3a5ec3b3cdfbf0f80811",
+    "fix_date": "2026-03-03",
+    "subject": "Fix AlterField ignoring max_length changes in migrations (#2128)",
+    "src_files": [
+      "tortoise/migrations/schema_editor/base.py",
+      "tortoise/migrations/schema_editor/mssql.py",
+      "tortoise/migrations/schema_editor/mysql.py",
+      "tortoise/migrations/schema_editor/oracle.py"
+    ],
+    "test_files": [
+      "tests/migrations/test_schema_editor_backends.py"
+    ],
+    "prompt": "tortoise 的迁移 `_alter_field` 只比较了 nullable / index / unique / description / default / rename，没比较 SQL 类型，于是把 max_length 从 32 改成 64 这种改动不会生成 ALTER。\n\n请把类型比较补上（各后端一起），补测试：MySQL / PostgreSQL / MSSQL 的 max_length 变更。"
+  },
+  {
+    "index": 246,
+    "suggested_id": "T316",
+    "repo": "tortoise/tortoise-orm",
+    "repo_url": "https://github.com/tortoise/tortoise-orm",
+    "base_sha": "1e6089d04a8673b83e73ae0975409b32d7445e87",
+    "base_permalink": "https://github.com/tortoise/tortoise-orm/commit/1e6089d04a8673b83e73ae0975409b32d7445e87",
+    "fix_sha": "3d18d030a63ecee035522e37d72ee1905da0e2ab",
+    "fix_date": "2024-11-25",
+    "subject": "Fix query error when model with o2o pk and m2m field (#1783)",
+    "src_files": [
+      "tests/testmodels.py",
+      "tortoise/backends/base/schema_generator.py",
+      "tortoise/models.py"
+    ],
+    "test_files": [
+      "tests/contrib/test_pydantic.py",
+      "tests/test_relations.py"
+    ],
+    "prompt": "tortoise 里主键用 OneToOneField、同时又有 m2m 字段的模型，查询会报错（字段映射/生成器那块组合不对）。\n\n请修好这种组合的查询，补测试。"
+  },
+  {
+    "index": 247,
+    "suggested_id": "T317",
+    "repo": "tortoise/tortoise-orm",
+    "repo_url": "https://github.com/tortoise/tortoise-orm",
+    "base_sha": "4e47cffeb4d4805d0f7986c7b01c2fa1c81d512e",
+    "base_permalink": "https://github.com/tortoise/tortoise-orm/commit/4e47cffeb4d4805d0f7986c7b01c2fa1c81d512e",
+    "fix_sha": "0898c2bb03448b7659c5d198a705d50638c2296f",
+    "fix_date": "2025-02-17",
+    "subject": "fix: update pk field only raises unfriendly error (#1873)",
+    "src_files": [
+      "poetry.lock",
+      "pyproject.toml",
+      "tortoise/backends/base/executor.py",
+      "tortoise/models.py"
+    ],
+    "test_files": [
+      "tests/test_model_methods.py"
+    ],
+    "prompt": "tortoise 里用 `save(update_fields=...)` 只更新主键字段时，报出来的是一个很难懂的错（内部异常），既没说清为什么不支持、也不好排查。\n\n请改成明确的异常和说明，补测试并检查异常信息。"
+  },
+  {
+    "index": 248,
+    "suggested_id": "T318",
+    "repo": "pdm-project/pdm",
+    "repo_url": "https://github.com/pdm-project/pdm",
+    "base_sha": "78110b22e5bd493ae1e73572410d366220698c95",
+    "base_permalink": "https://github.com/pdm-project/pdm/commit/78110b22e5bd493ae1e73572410d366220698c95",
+    "fix_sha": "d925136c3f78293d13de88587025ce354c2ce3e8",
+    "fix_date": "2024-05-29",
+    "subject": "fix: don't touch caches if no-cache is given (#2913)",
+    "src_files": [
+      "src/pdm/core.py",
+      "src/pdm/environments/base.py",
+      "src/pdm/models/caches.py",
+      "src/pdm/models/candidates.py",
+      "src/pdm/models/session.py",
+      "src/pdm/project/core.py"
+    ],
+    "test_files": [
+      "tests/cli/test_use.py"
+    ],
+    "prompt": "pdm 加了 `--no-cache` 之后还是会去写缓存、动缓存目录：这个开关的语义应该是完全不碰缓存。\n\n请修好这条路径（cache 相关的几个调用点一起看），补测试。"
+  },
+  {
+    "index": 249,
+    "suggested_id": "T319",
+    "repo": "pdm-project/pdm",
+    "repo_url": "https://github.com/pdm-project/pdm",
+    "base_sha": "b203d171b404b48daedc593bf44b68b6815f9b57",
+    "base_permalink": "https://github.com/pdm-project/pdm/commit/b203d171b404b48daedc593bf44b68b6815f9b57",
+    "fix_sha": "e3784d814729c567b05941c5c2a4dd5c017d6542",
+    "fix_date": "2024-04-20",
+    "subject": "fix(cache): ensure installation and cache works with any environment (#2839)",
+    "src_files": [
+      "src/pdm/installers/installers.py",
+      "src/pdm/models/cached_package.py"
+    ],
+    "test_files": [
+      "tests/test_installer.py"
+    ],
+    "prompt": "pdm 的安装缓存换个环境就用不了：同一个 wheel 在不同项目/环境之间复用缓存会失败或者装错。\n\n请让缓存的安装逻辑与具体环境解耦，补一个跨项目复用缓存的测试。"
+  },
+  {
+    "index": 250,
+    "suggested_id": "T320",
+    "repo": "pylint-dev/pylint",
+    "repo_url": "https://github.com/pylint-dev/pylint",
+    "base_sha": "48d3c5490fe5f42f8752e86157c69bdc3882b8bd",
+    "base_permalink": "https://github.com/pylint-dev/pylint/commit/48d3c5490fe5f42f8752e86157c69bdc3882b8bd",
+    "fix_sha": "5ba4f69e7a953c45852f4e0333a2fdb4900dcf43",
+    "fix_date": "2026-08-27",
+    "subject": "Fix multiple crashes for classes with duplicate or inconsistent bases (#11272)",
+    "src_files": [
+      "doc/whatsnew/fragments/11272.bugfix",
+      "pylint/checkers/base/name_checker/checker.py",
+      "pylint/checkers/classes/class_checker.py",
+      "pylint/checkers/refactoring/refactoring_checker.py",
+      "pylint/checkers/utils.py",
+      "tests/checkers/unittest_utils.py",
+      "tests/functional/d/duplicate/duplicate_bases.py",
+      "tests/functional/d/duplicate/duplicate_bases_class_assign.py",
+      "tests/functional/d/duplicate/duplicate_bases_redefined_slots.py",
+      "tests/functional/d/duplicate/duplicate_bases_slots.py",
+      "tests/functional/d/duplicate/duplicate_bases_stop_iteration.py",
+      "tests/functional/i/inconsistent/inconsistent_mro.py"
+    ],
+    "test_files": [],
+    "prompt": "pylint 碰到\"重复基类\"或者\"基类不一致\"（MRO 算不出来）的类时会直接崩，好几处 checker 都中招（名字检查、类检查）。\n\n请让这些地方在 MRO 不可用时安全退化（返回空/跳过而不是抛异常），补测试。"
+  },
+  {
+    "index": 251,
+    "suggested_id": "T321",
+    "repo": "pylint-dev/pylint",
+    "repo_url": "https://github.com/pylint-dev/pylint",
+    "base_sha": "2757ade252e3716ae9fee80969090c161a65fc38",
+    "base_permalink": "https://github.com/pylint-dev/pylint/commit/2757ade252e3716ae9fee80969090c161a65fc38",
+    "fix_sha": "c4f8d9b94dbb8fd0844154d577779b98f8edf05a",
+    "fix_date": "2026-06-14",
+    "subject": "Fix a crash in not--context-manager when the manager has no name (#11103)",
+    "src_files": [
+      "doc/whatsnew/fragments/11102.bugfix",
+      "pylint/checkers/async_checker.py",
+      "pylint/checkers/typecheck.py",
+      "tests/functional/n/not_async_context_manager.py",
+      "tests/functional/n/not_context_manager.py"
+    ],
+    "test_files": [],
+    "prompt": "pylint 的 `not-context-manager` 检查在上下文管理器没有名字的时候会崩：它直接用 inferred.name 拼消息，而某些推断结果（比如 `async with slice(None)`）根本没有 name。\n\n请修好这条路径（async_checker / typecheck 两处），补测试。"
+  },
+  {
+    "index": 252,
+    "suggested_id": "T322",
+    "repo": "networkx/networkx",
+    "repo_url": "https://github.com/networkx/networkx",
+    "base_sha": "b7d0b0cc8f7395dc9668d25379f3615752112c20",
+    "base_permalink": "https://github.com/networkx/networkx/commit/b7d0b0cc8f7395dc9668d25379f3615752112c20",
+    "fix_sha": "a97c162a9a4a055aeba705b958082fee2c4d8bca",
+    "fix_date": "2023-12-22",
+    "subject": "New PR for Fixes minimal d-separator function failing to handle cases where no d-separators exist (#7019)",
+    "src_files": [
+      "networkx/algorithms/d_separation.py"
+    ],
+    "test_files": [
+      "networkx/algorithms/tests/test_d_separation.py",
+      "networkx/conftest.py"
+    ],
+    "prompt": "networkx 的 `is_minimal_d_separator` 在\"根本不存在 d-分离集\"的场景下判断错误：它会把不合法的集合当成合法的。\n\n请把校验补上（集合必须先真的是 d-分离集，再谈最小性），补测试。"
+  },
+  {
+    "index": 253,
+    "suggested_id": "T323",
+    "repo": "networkx/networkx",
+    "repo_url": "https://github.com/networkx/networkx",
+    "base_sha": "8977f1cfbae61ed7f33a33d19a40fd2c3f16c05c",
+    "base_permalink": "https://github.com/networkx/networkx/commit/8977f1cfbae61ed7f33a33d19a40fd2c3f16c05c",
+    "fix_sha": "083e47255d7087340e97ec13d256e9241ec25e77",
+    "fix_date": "2026-09-17",
+    "subject": "BUG: Hold the graph weakly in cached edge and degree views (#8892)",
+    "src_files": [
+      "networkx/classes/graph.py",
+      "networkx/classes/reportviews.py"
+    ],
+    "test_files": [
+      "networkx/classes/tests/test_graph.py",
+      "networkx/classes/tests/test_reportviews.py"
+    ],
+    "prompt": "networkx 的边视图/度视图缓存里强引用了图对象：临时图用完也回收不了，还会造成引用环；pickle 和 deepcopy 之后视图也不好用。\n\n请改成弱引用持有图，并让视图在临时图被回收后仍能正常调用，补测试。"
+  },
+  {
+    "index": 254,
+    "suggested_id": "T324",
+    "repo": "pgjones/hypercorn",
+    "repo_url": "https://github.com/pgjones/hypercorn",
+    "base_sha": "edd0aac585043a00d2c8291b83482928750f555c",
+    "base_permalink": "https://github.com/pgjones/hypercorn/commit/edd0aac585043a00d2c8291b83482928750f555c",
+    "fix_sha": "bfb087756da53c25fd9390b4ea0acf914408ecbf",
+    "fix_date": "2024-05-28",
+    "subject": "Bugfix ensure ExceptionGroup lifespan failures crash the server",
+    "src_files": [
+      "src/hypercorn/asyncio/lifespan.py",
+      "src/hypercorn/trio/lifespan.py",
+      "tests/helpers.py"
+    ],
+    "test_files": [
+      "tests/asyncio/test_lifespan.py",
+      "tests/trio/test_lifespan.py"
+    ],
+    "prompt": "hypercorn 的 lifespan 启动失败如果被 ASGI 应用包进了 ExceptionGroup，服务不会像预期那样直接崩掉，而是继续跑一个状态不对的实例。\n\n请让这种失败也终止服务（asyncio 和 trio 两套实现都要），补测试。"
+  },
+  {
+    "index": 255,
+    "suggested_id": "T325",
+    "repo": "pgjones/hypercorn",
+    "repo_url": "https://github.com/pgjones/hypercorn",
+    "base_sha": "50057c4ac733004d13135423f204fed6e1bc8062",
+    "base_permalink": "https://github.com/pgjones/hypercorn/commit/50057c4ac733004d13135423f204fed6e1bc8062",
+    "fix_sha": "cd992f80010edd4ee1398601b4ad54394a423f15",
+    "fix_date": "2025-02-01",
+    "subject": "fix connection state leak",
+    "src_files": [
+      "src/hypercorn/asyncio/tcp_server.py",
+      "src/hypercorn/protocol/http_stream.py",
+      "src/hypercorn/protocol/ws_stream.py",
+      "src/hypercorn/trio/tcp_server.py"
+    ],
+    "test_files": [
+      "tests/e2e/test_httpx.py"
+    ],
+    "prompt": "hypercorn 的 HTTP/WS 流在隔离（isolate）状态下会泄漏连接状态：流被换掉之后旧状态还留着，后续请求会串。\n\n请修好这条路径（tcp_server / http_stream / ws_stream），补测试。"
+  },
+  {
+    "index": 256,
+    "suggested_id": "T326",
+    "repo": "fsspec/filesystem_spec",
+    "repo_url": "https://github.com/fsspec/filesystem_spec",
+    "base_sha": "24e5cbf6cfc40fc07cc7122f53eaec7f2150a058",
+    "base_permalink": "https://github.com/fsspec/filesystem_spec/commit/24e5cbf6cfc40fc07cc7122f53eaec7f2150a058",
+    "fix_sha": "85facaaf2659c8bbd031df24ead9aca36668c635",
+    "fix_date": "2026-05-11",
+    "subject": "Fix infinite recursion in expand_path when resolving paths with glob magic characters (#2036) (#2038)",
+    "src_files": [
+      "fsspec/asyn.py",
+      "fsspec/spec.py"
+    ],
+    "test_files": [
+      "fsspec/tests/test_async.py",
+      "fsspec/tests/test_spec.py"
+    ],
+    "prompt": "fsspec 的 `expand_path` 在路径里带 glob 元字符（`*`、`?`、`[`）时会无限递归，栈直接爆掉。同步和异步两条路径都有。\n\n请修好解析逻辑，补测试（特殊字符、带 magic 的输入、异步版本）。"
+  },
+  {
+    "index": 257,
+    "suggested_id": "T327",
+    "repo": "fsspec/filesystem_spec",
+    "repo_url": "https://github.com/fsspec/filesystem_spec",
+    "base_sha": "ecc576506567b8413a4c5402cbb06b28f1ba27bb",
+    "base_permalink": "https://github.com/fsspec/filesystem_spec/commit/ecc576506567b8413a4c5402cbb06b28f1ba27bb",
+    "fix_sha": "16535529c79403778738d3226819acd1aecb7bc0",
+    "fix_date": "2024-03-19",
+    "subject": "LocalFileSystem fix _strip_protocol for root directory (#1477)",
+    "src_files": [
+      "fsspec/implementations/local.py",
+      "fsspec/mapping.py"
+    ],
+    "test_files": [
+      "fsspec/implementations/tests/test_jupyter.py",
+      "fsspec/implementations/tests/test_local.py",
+      "fsspec/tests/test_mapping.py"
+    ],
+    "prompt": "fsspec 的 LocalFileSystem 处理根目录时 `_strip_protocol` 结果不对：`/` 这种根路径被剥成了空串，映射层跟着出错。\n\n请修好根目录的处理，补测试。"
+  },
+  {
+    "index": 258,
+    "suggested_id": "T328",
+    "repo": "fsspec/filesystem_spec",
+    "repo_url": "https://github.com/fsspec/filesystem_spec",
+    "base_sha": "2576617e5cbe441bcc53b021bccd85ff3489fde7",
+    "base_permalink": "https://github.com/fsspec/filesystem_spec/commit/2576617e5cbe441bcc53b021bccd85ff3489fde7",
+    "fix_sha": "9603a7c8329c7c24b476c77dcf924dda572113f0",
+    "fix_date": "2026-01-29",
+    "subject": "fixes to parquet and known cache (#1982)",
+    "src_files": [
+      "fsspec/caching.py",
+      "fsspec/parquet.py",
+      "fsspec/utils.py"
+    ],
+    "test_files": [
+      "fsspec/tests/test_parquet.py"
+    ],
+    "prompt": "fsspec 的 parquet 缓存和 known-cache 有几处对不上：嵌套 schema/嵌套 arrow 类型缓存命中错误，导致读到错的元数据。\n\n请修好 caching / parquet / utils 这几处，补一个嵌套 arrow 类型的测试。"
+  },
+  {
+    "index": 259,
+    "suggested_id": "T329",
+    "repo": "tkem/cachetools",
+    "repo_url": "https://github.com/tkem/cachetools",
+    "base_sha": "143e78d528aaae92199257dc1f854b9d6ec74fc4",
+    "base_permalink": "https://github.com/tkem/cachetools/commit/143e78d528aaae92199257dc1f854b9d6ec74fc4",
+    "fix_sha": "a2d34a0d4d29e2fc40f514864a2e6ace0b272e3b",
+    "fix_date": "2025-02-20",
+    "subject": "Fix #294: Prevent \"cache stampede\" in cachetools.func decorators.",
+    "src_files": [
+      "src/cachetools/__init__.py",
+      "src/cachetools/_decorators.py",
+      "src/cachetools/func.py"
+    ],
+    "test_files": [
+      "tests/test_cached.py"
+    ],
+    "prompt": "cachetools 的 `func` 装饰器在并发下会出现缓存击穿（cache stampede）：同一个 key 被多个线程同时算，全部穿透到被装饰函数。\n\n请加上\"同 key 只算一次\"的机制（注意零容量缓存等边界），补测试。"
+  },
+  {
+    "index": 260,
+    "suggested_id": "T330",
+    "repo": "tkem/cachetools",
+    "repo_url": "https://github.com/tkem/cachetools",
+    "base_sha": "86352aed2bedb23aa0cc461a58e76bd667617eaa",
+    "base_permalink": "https://github.com/tkem/cachetools/commit/86352aed2bedb23aa0cc461a58e76bd667617eaa",
+    "fix_sha": "bb72c21aab48bdd720fbe173ff1938bd5d923e43",
+    "fix_date": "2026-01-30",
+    "subject": "Fix #357: Add cache_info() support for @cachedmethod.",
+    "src_files": [
+      "src/cachetools/__init__.py",
+      "src/cachetools/_cachedmethod.py",
+      "tests/__init__.py"
+    ],
+    "test_files": [
+      "tests/test_cachedmethod.py",
+      "tests/test_classmethod.py",
+      "tests/test_threading.py"
+    ],
+    "prompt": "cachetools 的 `@cachedmethod` 没有 `cache_info()`：按方法缓存之后拿不到命中率/淘汰统计，跟 `@cached` 不一致。\n\n请补上 `cache_info()` 支持（含 clear 等属性行为一致），补测试。"
+  },
+  {
+    "index": 261,
+    "suggested_id": "T331",
+    "repo": "wntrblm/nox",
+    "repo_url": "https://github.com/wntrblm/nox",
+    "base_sha": "05f0d0bbf7f1f7d11db4cbd0ff339e7f86ad7450",
+    "base_permalink": "https://github.com/wntrblm/nox/commit/05f0d0bbf7f1f7d11db4cbd0ff339e7f86ad7450",
+    "fix_sha": "a4b43d5f34a0b86d748d562861676e4dd2b0761a",
+    "fix_date": "2025-10-08",
+    "subject": "fix: percolate the `verbose` global option to the `silent` argument for session installation commands, and document it (#983)",
+    "src_files": [
+      "nox/_options.py",
+      "nox/sessions.py"
+    ],
+    "test_files": [
+      "tests/test_sessions.py"
+    ],
+    "prompt": "nox 的 `--verbose` 全局选项没有传到会话安装命令的 `silent` 参数上：加了 -v 之后安装命令还是静默的，日志看不到。\n\n请把 verbose 传递到安装（含 conda）那条路径，补测试。"
+  },
+  {
+    "index": 262,
+    "suggested_id": "T332",
+    "repo": "wntrblm/nox",
+    "repo_url": "https://github.com/wntrblm/nox",
+    "base_sha": "7a94886faaeed24ea8ff1f3d22fd95011b5aacca",
+    "base_permalink": "https://github.com/wntrblm/nox/commit/7a94886faaeed24ea8ff1f3d22fd95011b5aacca",
+    "fix_sha": "6edc697d317ff4f4d753cecf7c23bc7f3a04c699",
+    "fix_date": "2024-10-29",
+    "subject": "fix: error with helpful message if invalid option is set via nox.options (#871)",
+    "src_files": [
+      "nox/_option_set.py",
+      "nox/_options.py"
+    ],
+    "test_files": [
+      "tests/test_main.py"
+    ],
+    "prompt": "nox 里如果通过 `nox.options` 设置了一个不存在的选项，现在报的错很难懂（或者干脆不报）。\n\n请改成给出明确的错误信息（说明选项名和可用选项），补测试。"
+  },
+  {
+    "index": 263,
+    "suggested_id": "T333",
+    "repo": "pypa/virtualenv",
+    "repo_url": "https://github.com/pypa/virtualenv",
+    "base_sha": "f264539ffc14cbb313d1c3af041c3af88f7ac867",
+    "base_permalink": "https://github.com/pypa/virtualenv/commit/f264539ffc14cbb313d1c3af041c3af88f7ac867",
+    "fix_sha": "0c847288171bed06ed2c0c2f6d241e7de704ccde",
+    "fix_date": "2025-08-01",
+    "subject": "fix 'Too many open files' error and improve error message (#2922)",
+    "src_files": [
+      "src/virtualenv/__main__.py",
+      "src/virtualenv/seed/embed/via_app_data/pip_install/base.py",
+      "src/virtualenv/util/lock.py"
+    ],
+    "test_files": [
+      "tests/unit/test_file_limit.py"
+    ],
+    "prompt": "virtualenv 在某些环境里创建/安装会报 'Too many open files'：内嵌 wheel 安装那条路径没有及时关闭文件句柄。\n\n请修好句柄泄漏并改进错误信息，补测试。"
+  },
+  {
+    "index": 264,
+    "suggested_id": "T334",
+    "repo": "pypa/virtualenv",
+    "repo_url": "https://github.com/pypa/virtualenv",
+    "base_sha": "4b31a6316a872a5c0713c88ace1ceb1782d6b5b4",
+    "base_permalink": "https://github.com/pypa/virtualenv/commit/4b31a6316a872a5c0713c88ace1ceb1782d6b5b4",
+    "fix_sha": "66fadcbfeac2977a12d4d671b81a32f0a3458cb4",
+    "fix_date": "2026-09-08",
+    "subject": "🐛 fix(util): replace a stale symlink instead of writing through it (#3229)",
+    "src_files": [
+      "src/virtualenv/create/via_global_ref/builtin/ref.py",
+      "src/virtualenv/util/path/_sync.py"
+    ],
+    "test_files": [
+      "tests/unit/create/test_creator.py",
+      "tests/unit/test_util.py"
+    ],
+    "prompt": "virtualenv 重建环境时，如果旧的符号链接已经失效（dangling），现在会顺着链接往里写，导致新环境建出来是坏的。\n\n请改成先把失效链接替换掉再写，补测试：重建带 dangling alias 的环境、替换 dangling symlink。"
+  },
+  {
+    "index": 265,
+    "suggested_id": "T335",
+    "repo": "pytest-dev/pytest-cov",
+    "repo_url": "https://github.com/pytest-dev/pytest-cov",
+    "base_sha": "66e4a0b639f44eca89821c9d59db51fe0daa0c52",
+    "base_permalink": "https://github.com/pytest-dev/pytest-cov/commit/66e4a0b639f44eca89821c9d59db51fe0daa0c52",
+    "fix_sha": "75174bd4087d0ec5678c213d84f524cd5ef81bf6",
+    "fix_date": "2024-09-16",
+    "subject": "Use coverage's functions for checking fail_under. Bumps min coverage requirement to 7.5.0. Closes #611. Fixes #601. Fixes #403.",
+    "src_files": [
+      ".github/workflows/test.yml",
+      "setup.py",
+      "src/pytest_cov/plugin.py",
+      "tox.ini"
+    ],
+    "test_files": [
+      "tests/test_pytest_cov.py"
+    ],
+    "prompt": "pytest-cov 自己实现了一套 fail_under 判断，和 coverage 的行为对不上（阈值、精度、报错方式都有差异）。\n\n请改用 coverage 提供的函数来判断 fail_under（同时放宽最低 coverage 版本要求），补测试。"
+  },
+  {
+    "index": 266,
+    "suggested_id": "T336",
+    "repo": "boto/botocore",
+    "repo_url": "https://github.com/boto/botocore",
+    "base_sha": "5a144086d234b239c018a3479fd1f17a0b94386f",
+    "base_permalink": "https://github.com/boto/botocore/commit/5a144086d234b239c018a3479fd1f17a0b94386f",
+    "fix_sha": "09d168c57166910f018ad0911f921a7be92a236d",
+    "fix_date": "2025-06-05",
+    "subject": "Protocol selection bugfix (#3473)",
+    "src_files": [
+      "botocore/args.py",
+      "botocore/endpoint.py",
+      "botocore/model.py",
+      "botocore/response.py",
+      "botocore/utils.py",
+      "tests/functional/models/test-protocol-list/2020-08-20/service-2.json"
+    ],
+    "test_files": [
+      "tests/functional/test_protocol_selection.py",
+      "tests/unit/response_parsing/test_response_parsing.py",
+      "tests/unit/test_args.py",
+      "tests/unit/test_model.py"
+    ],
+    "prompt": "botocore 选择协议（protocol）的逻辑有 bug：模型的 protocols 列表没被正确解析/排序，导致选错协议（选了低优先级甚至不支持的），或者本该报错的情况安静通过。\n\n请修好 args / endpoint / model 这几处的协议选择，补测试：正确选择、选最高优先级、缺 trait 的情况、不支持协议要报错。"
+  },
+  {
+    "index": 267,
+    "suggested_id": "T337",
+    "repo": "mongodb/motor",
+    "repo_url": "https://github.com/mongodb/motor",
+    "base_sha": "3cd98d9b9417f8d6b75b287263e8196dfcbde551",
+    "base_permalink": "https://github.com/mongodb/motor/commit/3cd98d9b9417f8d6b75b287263e8196dfcbde551",
+    "fix_sha": "0876271b12d7b6a6b96c7046c615af7732a6627e",
+    "fix_date": "2026-06-03",
+    "subject": "MOTOR-1479 & MOTOR-1480 Fix build failures from PyMongo 4.17 changes (#386)",
+    "src_files": [
+      "doc/conf.py",
+      "motor/web.py",
+      "synchro/__init__.py",
+      "synchro/synchrotest.py"
+    ],
+    "test_files": [
+      "test/tornado_tests/test_motor_client.py",
+      "test/tornado_tests/test_motor_core.py"
+    ],
+    "prompt": "motor 适配新版 PyMongo 之后有几处构建/运行失败：web 那层的 API 和 synchro 的签名跟 PyMongo 4.17 对不上。\n\n请把这些适配点修好，补测试。"
+  },
+  {
+    "index": 268,
+    "suggested_id": "T338",
+    "repo": "kiorky/croniter",
+    "repo_url": "https://github.com/kiorky/croniter",
+    "base_sha": "40920bc724f7e27a6973bbd49bc43ebf57f16aa1",
+    "base_permalink": "https://github.com/kiorky/croniter/commit/40920bc724f7e27a6973bbd49bc43ebf57f16aa1",
+    "fix_sha": "99bf300473a60b9c3a7b8594b58121748e171676",
+    "fix_date": "2019-04-27",
+    "subject": "Fix overflow error on 32bit systems",
+    "src_files": [
+      "src/croniter/__init__.py",
+      "src/croniter/croniter.py"
+    ],
+    "test_files": [
+      "src/croniter/tests/test_croniter.py"
+    ],
+    "prompt": "croniter 在 32 位系统上会抛 OverflowError：内部用的是 time_t 范围之外的时间戳。\n\n请修好溢出（别依赖 time_t 的位宽），补测试。"
+  },
+  {
+    "index": 269,
+    "suggested_id": "T339",
+    "repo": "joblib/joblib",
+    "repo_url": "https://github.com/joblib/joblib",
+    "base_sha": "2be8dcd4cb777ced834808cb9349eef441e2d133",
+    "base_permalink": "https://github.com/joblib/joblib/commit/2be8dcd4cb777ced834808cb9349eef441e2d133",
+    "fix_sha": "398d8ee669ee355be48d9b2f80aaebbf8ca15d37",
+    "fix_date": "2024-05-02",
+    "subject": "FIX revert MemorizedFunc.call API change (#1576)",
+    "src_files": [
+      "joblib/memory.py"
+    ],
+    "test_files": [
+      "conftest.py",
+      "joblib/test/test_memory.py",
+      "joblib/test/test_memory_async.py"
+    ],
+    "prompt": "joblib 的 MemorizedFunc.call 之前被改过 API，导致老用法不兼容（记忆化函数调用行为变了）。\n\n请把 API 恢复回原样，补测试：记忆化/非记忆化调用、异步调用。"
+  },
+  {
+    "index": 270,
+    "suggested_id": "T340",
+    "repo": "nedbat/coveragepy",
+    "repo_url": "https://github.com/nedbat/coveragepy",
+    "base_sha": "a5f37e0ba1d00329d4e8aa68e3d17478feca157c",
+    "base_permalink": "https://github.com/nedbat/coveragepy/commit/a5f37e0ba1d00329d4e8aa68e3d17478feca157c",
+    "fix_sha": "21251361e87c66099b69c87135f63d078bd87a64",
+    "fix_date": "2023-06-22",
+    "subject": "fix: avoid a SQLite error when async mode isn't available. #1646",
+    "src_files": [
+      "coverage/debug.py",
+      "coverage/sqldata.py"
+    ],
+    "test_files": [
+      "tests/test_debug.py"
+    ],
+    "prompt": "coverage.py 在 async 模式不可用的环境下用 SQLite 数据文件会直接抛 SQLite 错误，而不是给出可读的说明（或者优雅退让）。\n\n请修好这条路径并给出清楚的错误，补测试。"
+  },
+  {
+    "index": 271,
+    "suggested_id": "T341",
+    "repo": "nedbat/coveragepy",
+    "repo_url": "https://github.com/nedbat/coveragepy",
+    "base_sha": "73e58fa9dd361b6496f2aa42ede490118ec0429c",
+    "base_permalink": "https://github.com/nedbat/coveragepy/commit/73e58fa9dd361b6496f2aa42ede490118ec0429c",
+    "fix_sha": "c85eaba206e1bf98302e0997e32c079e2c231f4b",
+    "fix_date": "2024-12-24",
+    "subject": "fix: multi-line statements no longer confuse branch target descriptions. #1874 #1875",
+    "src_files": [
+      "coverage/parser.py",
+      "coverage/results.py"
+    ],
+    "test_files": [
+      "tests/test_lcov.py"
+    ],
+    "prompt": "coverage.py 在多行语句（跨行的条件和表达式）上会把分支目标描述串错：报告里显示的分支指向了错误的行。\n\n请修好 parser/results 这两处，补测试：多行条件、模块退出。"
+  },
+  {
+    "index": 272,
+    "suggested_id": "T342",
+    "repo": "nedbat/coveragepy",
+    "repo_url": "https://github.com/nedbat/coveragepy",
+    "base_sha": "93fc29d0931fbe4800ff1f1d2f892a3db2a85896",
+    "base_permalink": "https://github.com/nedbat/coveragepy/commit/93fc29d0931fbe4800ff1f1d2f892a3db2a85896",
+    "fix_sha": "0a5df250a473ceea1ca811767fb2dd30c99ea737",
+    "fix_date": "2026-08-18",
+    "subject": "fix: a non-string value in a TOML setting exits with a traceback (#2263)",
+    "src_files": [
+      "coverage/config.py",
+      "coverage/tomlconfig.py"
+    ],
+    "test_files": [
+      "tests/test_config.py"
+    ],
+    "prompt": "coverage.py 读 TOML 配置时，如果某个设置写成了非字符串值，程序直接吐 traceback，而不是给出\"哪个设置在哪个文件里类型不对\"的提示。\n\n请改成清晰的配置错误，补测试。"
+  },
+  {
+    "index": 273,
+    "suggested_id": "T343",
+    "repo": "nedbat/coveragepy",
+    "repo_url": "https://github.com/nedbat/coveragepy",
+    "base_sha": "cc1ced4d4c8ef7674a824002aa5157d1f37acd78",
+    "base_permalink": "https://github.com/nedbat/coveragepy/commit/cc1ced4d4c8ef7674a824002aa5157d1f37acd78",
+    "fix_sha": "f653aaec4c58f89375716389e4ca17dd056d2069",
+    "fix_date": "2026-09-21",
+    "subject": "fix: loop completion arcs on Python 3.14 (#2281)",
+    "src_files": [
+      "coverage/ctracer/tracer.c",
+      "coverage/pytracer.py"
+    ],
+    "test_files": [
+      "tests/test_arcs.py"
+    ],
+    "prompt": "coverage.py 在 Python 3.14 上循环的完成弧（loop completion arcs）记错了：循环里提前 return 的场景会漏掉/多算分支，和 3.13 的行为不一致。\n\n请修好 pytracer / C tracer 两处，补一个\"循环里提前 return\"的测试。"
+  },
+  {
+    "index": 274,
+    "suggested_id": "T344",
+    "repo": "openai/openai-python",
+    "repo_url": "https://github.com/openai/openai-python",
+    "base_sha": "e507a4ebeea4c3f93cd48986014a3e2ca79230c2",
+    "base_permalink": "https://github.com/openai/openai-python/commit/e507a4ebeea4c3f93cd48986014a3e2ca79230c2",
+    "fix_sha": "f9d2d1359688a6247ecba858fc687173c480c9c8",
+    "fix_date": "2026-04-24",
+    "subject": "fix(api): correct prompt_cache_retention enum value from in-memory to in_memory (#1822)",
+    "src_files": [
+      "src/openai/resources/chat/completions/completions.py",
+      "src/openai/resources/responses/responses.py",
+      "src/openai/types/chat/completion_create_params.py",
+      "src/openai/types/responses/response.py",
+      "src/openai/types/responses/response_create_params.py",
+      "src/openai/types/responses/responses_client_event.py",
+      "src/openai/types/responses/responses_client_event_param.py"
+    ],
+    "test_files": [
+      "tests/api_resources/chat/test_completions.py",
+      "tests/api_resources/test_responses.py"
+    ],
+    "prompt": "openai-python 的 `prompt_cache_retention` 枚举值写错了（写成了 in-memory，服务端要的是 in_memory），传进去会被拒。\n\n请把相关资源与类型定义里的枚举值改对，补测试。"
+  },
+  {
+    "index": 275,
+    "suggested_id": "T345",
+    "repo": "openai/openai-python",
+    "repo_url": "https://github.com/openai/openai-python",
+    "base_sha": "bccad31277a98f120bdce604a35a5774a0beaeae",
+    "base_permalink": "https://github.com/openai/openai-python/commit/bccad31277a98f120bdce604a35a5774a0beaeae",
+    "fix_sha": "009b7f6ae6493e1abfa7583449595f144c8beb5a",
+    "fix_date": "2026-09-18",
+    "subject": "fix(parsing): drop TextFormatT parameterization in parse_response to fix memory leak (#3084) (#3088)",
+    "src_files": [
+      "src/openai/lib/_parsing/_responses.py",
+      "src/openai/lib/streaming/responses/_responses.py",
+      "src/openai/resources/responses/responses.py"
+    ],
+    "test_files": [
+      "tests/lib/responses/test_commentary_parsing.py"
+    ],
+    "prompt": "openai-python 的 `AsyncResponses.parse()` 有内存泄漏：每次都重新参数化 TextFormatT，pydantic 的 schema 对象无上限地累积（有人用火焰图抓到过）。\n\n请去掉这处参数化（让类型在上下文之间复用），补测试。"
+  },
+  {
+    "index": 276,
+    "suggested_id": "T346",
+    "repo": "aio-libs/aiohttp",
+    "repo_url": "https://github.com/aio-libs/aiohttp",
+    "base_sha": "fb69cf0bc9f380e04b632fe92f76c4613902978d",
+    "base_permalink": "https://github.com/aio-libs/aiohttp/commit/fb69cf0bc9f380e04b632fe92f76c4613902978d",
+    "fix_sha": "46ef156b015a6a329174289296f8a3b9e6f28d88",
+    "fix_date": "2025-10-16",
+    "subject": "[PR #11634/cde03b9 backport][3.14] Fix blocking I/O to load netrc when creating requests (#11679)",
+    "src_files": [
+      "aiohttp/client.py",
+      "aiohttp/client_reqrep.py"
+    ],
+    "test_files": [
+      "tests/conftest.py",
+      "tests/test_client_functional.py",
+      "tests/test_client_request.py",
+      "tests/test_client_session.py"
+    ],
+    "prompt": "aiohttp 在创建请求时读 netrc 是阻塞 I/O，在事件循环里会卡住整个循环（尤其 netrc 在网络文件系统上时）。\n\n请把这段改成非阻塞（丢到执行器里），保持 netrc 认证行为不变，补测试：环境变量里的 netrc、host 不在 netrc 里、以及连接复用。"
+  },
+  {
+    "index": 277,
+    "suggested_id": "T347",
+    "repo": "django/django",
+    "repo_url": "https://github.com/django/django",
+    "base_sha": "0ddbe12ea99a2dc1b757dc2015ba8bb6bfd9d653",
+    "base_permalink": "https://github.com/django/django/commit/0ddbe12ea99a2dc1b757dc2015ba8bb6bfd9d653",
+    "fix_sha": "2a636118dacdcda074c99ebd50311d64a8cca367",
+    "fix_date": "2025-08-19",
+    "subject": "Fixed #36564 -- Changed DEFAULT_AUTO_FIELD from AutoField to BigAutoField.",
+    "src_files": [
+      "django/conf/app_template/apps.py-tpl",
+      "django/conf/global_settings.py",
+      "django/conf/project_template/project_name/settings.py-tpl",
+      "django/db/backends/postgresql/features.py",
+      "django/db/models/base.py",
+      "tests/admin_scripts/tests.py",
+      "tests/check_framework/apps.py",
+      "tests/introspection/tests.py",
+      "tests/migrations/test_migrations_no_changes/0001_initial.py",
+      "tests/migrations/test_migrations_no_changes/0002_second.py",
+      "tests/migrations/test_migrations_no_changes/0003_third.py",
+      "tests/migrations/test_migrations_no_default/0001_initial.py",
+      "tests/postgres_tests/array_default_migrations/0001_initial.py",
+      "tests/postgres_tests/array_index_migrations/0001_initial.py",
+      "tests/postgres_tests/migrations/0002_create_test_models.py",
+      "tests/postgres_tests/models.py",
+      "tests/schema/tests.py"
+    ],
+    "test_files": [
+      "tests/check_framework/test_model_checks.py",
+      "tests/model_inheritance/test_abstract_inheritance.py",
+      "tests/model_options/test_default_pk.py",
+      "tests/postgres_tests/test_constraints.py",
+      "tests/test_sqlite.py"
+    ],
+    "prompt": "django 新建项目/应用的默认主键类型还是 AutoField：大表跑到 21 亿就溢出，官方建议改成 BigAutoField，但改默认值涉及全局设置和模板，还要保证已有项目不受影响。\n\n请把默认值改成 BigAutoField（全局设置 + 项目/应用模板一起），并处理好迁移相关的影响，补测试。"
+  },
+  {
+    "index": 278,
+    "suggested_id": "T348",
+    "repo": "sqlalchemy/sqlalchemy",
+    "repo_url": "https://github.com/sqlalchemy/sqlalchemy",
+    "base_sha": "1d49add43530ecb4011b3fcd057a5273a3be774a",
+    "base_permalink": "https://github.com/sqlalchemy/sqlalchemy/commit/1d49add43530ecb4011b3fcd057a5273a3be774a",
+    "fix_sha": "b19a09812c2b0806cc063e42993216fc1ead6ed2",
+    "fix_date": "2025-03-17",
+    "subject": "ensure SQL expressions w/o bool pass through to correct typing error",
+    "src_files": [
+      "lib/sqlalchemy/orm/decl_base.py",
+      "lib/sqlalchemy/orm/exc.py",
+      "lib/sqlalchemy/orm/properties.py",
+      "lib/sqlalchemy/orm/util.py",
+      "lib/sqlalchemy/util/typing.py"
+    ],
+    "test_files": [
+      "test/orm/declarative/test_tm_future_annotations_sync.py",
+      "test/orm/declarative/test_typed_mapping.py"
+    ],
+    "prompt": "sqlalchemy 2.0.37 之后有个回归：在 `Mapped[...]` 里用不合适类型/对象时，本该抛出的 `ArgumentError` 消失了——错误被类型系统吞掉，用户拿到的是别的报错。\n\n请把这条检查恢复（decl_base / properties / exc 三处一起看），补一个构造左侧类型不对的测试。"
   }
 ]
