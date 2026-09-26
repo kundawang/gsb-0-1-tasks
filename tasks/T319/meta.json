@@ -1,0 +1,37 @@
+{
+  "task_id": "T319",
+  "title": "pdm-project/pdm 缺陷修复：fix(cache): ensure installation and cache works with any env",
+  "created_at": "2026-09-27T00:30:17",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pdm-project/pdm @ b203d171b4",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t319/base",
+    "sha": "b06fbbcfaea25758b5918f2580157b9193ab6f79",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/b06fbbcfaea25758b5918f2580157b9193ab6f79"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t319/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t319/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pdm-project/pdm base=https://github.com/pdm-project/pdm/commit/b203d171b404b48daedc593bf44b68b6815f9b57 fix=e3784d814729c567b05941c5c2a4dd5c017d6542"
+}
