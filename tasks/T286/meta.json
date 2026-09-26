@@ -1,0 +1,37 @@
+{
+  "task_id": "T286",
+  "title": "ipython/ipython 缺陷修复：Add tests for resolving backend name and gui loop",
+  "created_at": "2026-09-26T23:50:52",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 ipython/ipython @ f9ce8c21a5",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t286/base",
+    "sha": "833b9a959d268c41b4d4154baf4c1708342eb56b",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/833b9a959d268c41b4d4154baf4c1708342eb56b"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t286/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t286/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/ipython/ipython base=https://github.com/ipython/ipython/commit/f9ce8c21a550d08c25b575ee55862b2dd76c9a3d fix=6dcf7cf5068970bc07f6ad67fe8a3bb18edbc58d"
+}
