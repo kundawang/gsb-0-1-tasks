@@ -1,0 +1,37 @@
+{
+  "task_id": "T247",
+  "title": "python-trio/trio 缺陷修复：raise brokenresourceerror if registering an already exited t",
+  "created_at": "2026-09-26T20:01:25",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 python-trio/trio @ c742a52da0",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t247/base",
+    "sha": "5f8bec84fb861ab04ae701cf8c882d1f7d4562b7",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/5f8bec84fb861ab04ae701cf8c882d1f7d4562b7"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t247/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t247/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/python-trio/trio base=https://github.com/python-trio/trio/commit/c742a52da0fe88478c153de9608cb021bef88eb2 fix=7a1ce5b755b5775153a3525bea793ab7da05fb44"
+}
