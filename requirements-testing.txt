@@ -1,0 +1,16 @@
+pip
+pytest
+pytest-cov
+pytest-forked
+pytest-localserver
+pytest-watch
+jsonschema
+pyrsistent
+executing
+asttokens
+responses
+pysocks
+socksio
+httpcore[http2]
+setuptools
+Brotli
