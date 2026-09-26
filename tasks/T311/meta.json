@@ -1,0 +1,37 @@
+{
+  "task_id": "T311",
+  "title": "strawberry-graphql/strawberry 缺陷修复：Fix graphql ws did not ignore parsing errors (#3670)",
+  "created_at": "2026-09-27T00:28:31",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 strawberry-graphql/strawberry @ 2a6d7884b8",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t311/base",
+    "sha": "fde51fbe64ad498933b43f2005b98091824c8082",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/fde51fbe64ad498933b43f2005b98091824c8082"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t311/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t311/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/strawberry-graphql/strawberry base=https://github.com/strawberry-graphql/strawberry/commit/2a6d7884b8cd1c7070d27b3910d764af8eb6a599 fix=b701eb00b3980907993f5d0e1174a9ef213a7196"
+}
