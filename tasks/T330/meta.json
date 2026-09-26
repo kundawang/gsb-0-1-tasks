@@ -1,0 +1,37 @@
+{
+  "task_id": "T330",
+  "title": "tkem/cachetools 缺陷修复：Fix #357: Add cache_info() support for @cachedmethod.",
+  "created_at": "2026-09-27T00:33:31",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tkem/cachetools @ 86352aed2b",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t330/base",
+    "sha": "2049d1024d400b24f2e83d83b02018065d865ab7",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/2049d1024d400b24f2e83d83b02018065d865ab7"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t330/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t330/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tkem/cachetools base=https://github.com/tkem/cachetools/commit/86352aed2bedb23aa0cc461a58e76bd667617eaa fix=bb72c21aab48bdd720fbe173ff1938bd5d923e43"
+}
