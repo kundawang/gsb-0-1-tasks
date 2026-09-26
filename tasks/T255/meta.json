@@ -1,0 +1,37 @@
+{
+  "task_id": "T255",
+  "title": "sqlalchemy/sqlalchemy 缺陷修复：deprecate joinedload, subqueryload with DML; use correct sta",
+  "created_at": "2026-09-26T20:03:17",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 sqlalchemy/sqlalchemy @ 75ab6b3700",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t255/base",
+    "sha": "a5723bdae3cd7d8660fb6b18a3c98e7efb3486db",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/a5723bdae3cd7d8660fb6b18a3c98e7efb3486db"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t255/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t255/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/sqlalchemy/sqlalchemy base=https://github.com/sqlalchemy/sqlalchemy/commit/75ab6b370034e69bc798f9a77751afb200e24f1d fix=9ea449bf41006e94273186a974d3a1b091a0552a"
+}
