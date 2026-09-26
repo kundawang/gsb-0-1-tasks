@@ -595,9 +595,17 @@ def materialize(task_id, base_ref, dest):
     archive = subprocess.run(["git", "archive", base_ref], cwd=REPO, capture_output=True)
     if archive.returncode != 0:
         raise SystemExit("git archive 失败")
-    extract = subprocess.run(["tar", "-x", "-C", dest], input=archive.stdout, capture_output=True)
-    if extract.returncode != 0:
-        raise SystemExit(f"解包失败: {extract.stderr.decode(errors='replace')[:300]}")
+    # 用 Python 的 tarfile 解包：Windows 自带的 tar 遇到长路径会直接失败
+    import io
+    import tarfile
+    try:
+        with tarfile.open(fileobj=io.BytesIO(archive.stdout), mode="r:") as tf:
+            try:
+                tf.extractall(dest, filter="data")
+            except TypeError:      # Python < 3.12 没有 filter 参数
+                tf.extractall(dest)
+    except Exception as exc:       # noqa: BLE001
+        raise SystemExit(f"解包失败: {exc}")
 
     ensure_workspace_repo(dest)
     return f"铺出 {base}"
