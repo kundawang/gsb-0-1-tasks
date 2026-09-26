@@ -1,0 +1,37 @@
+{
+  "task_id": "T256",
+  "title": "Delgan/loguru 缺陷修复：Fix error using \"set_start_method()\" after \"logger\" import (",
+  "created_at": "2026-09-26T20:03:27",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 Delgan/loguru @ 14fa062bdb",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t256/base",
+    "sha": "df98b1c22b08ae2e97dc4ed0c836c77cea3e5b11",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/df98b1c22b08ae2e97dc4ed0c836c77cea3e5b11"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t256/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t256/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/Delgan/loguru base=https://github.com/Delgan/loguru/commit/14fa062bdb4388d77250b1f7224024fea3c84bbf fix=086126fd8d0065336e40f7ea05546c5e62313e1b"
+}
