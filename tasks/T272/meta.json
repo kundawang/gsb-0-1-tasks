@@ -1,0 +1,37 @@
+{
+  "task_id": "T272",
+  "title": "graphql-python/graphql-core 缺陷修复：fix(OneOf): fail coercion when two fields are provided \"pre-",
+  "created_at": "2026-09-26T23:40:36",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 graphql-python/graphql-core @ 8676357c65",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t272/base",
+    "sha": "1bdeef059ae673a5355d9bdb3d5c64a71098687c",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/1bdeef059ae673a5355d9bdb3d5c64a71098687c"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t272/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t272/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/graphql-python/graphql-core base=https://github.com/graphql-python/graphql-core/commit/8676357c65c0d292b2b04e27d23c8f3b290578f5 fix=5f93d17eb96e69c5aaf3aa750503f113f30e4787"
+}
