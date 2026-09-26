@@ -1,0 +1,37 @@
+{
+  "task_id": "T243",
+  "title": "jd/tenacity 缺陷修复：Keep statistics visible when @retry is further wrapped (fixe",
+  "created_at": "2026-09-26T20:00:53",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 jd/tenacity @ b2cd0274c6",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t243/base",
+    "sha": "87719af46bf529c0290ead661bfa44018181ae45",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/87719af46bf529c0290ead661bfa44018181ae45"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t243/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t243/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/jd/tenacity base=https://github.com/jd/tenacity/commit/b2cd0274c67610d615019ab4745f521504a0576d fix=4213bad9560479e71ce294b52501765068e38f80"
+}
