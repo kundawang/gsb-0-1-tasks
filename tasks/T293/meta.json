@@ -1,0 +1,37 @@
+{
+  "task_id": "T293",
+  "title": "pylint-dev/astroid 缺陷修复：Fix partial descriptor binding crash",
+  "created_at": "2026-09-26T23:56:19",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pylint-dev/astroid @ 848d754518",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t293/base",
+    "sha": "405f51de8f990324f46e63238ccf38ad195c2ac9",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/405f51de8f990324f46e63238ccf38ad195c2ac9"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t293/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t293/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pylint-dev/astroid base=https://github.com/pylint-dev/astroid/commit/848d754518b062f7db0167d3107bb49aab4580a9 fix=4e1842043b61350d0469c07741d7ea12eee31bf3"
+}
