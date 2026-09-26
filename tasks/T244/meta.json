@@ -1,0 +1,37 @@
+{
+  "task_id": "T244",
+  "title": "pytest-dev/pytest 缺陷修复：Remove PytestReturnNotNoneWarning and PytestUnhandledCorouti",
+  "created_at": "2026-09-26T20:01:01",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pytest-dev/pytest @ 45c2ffb635",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t244/base",
+    "sha": "946970e3a0f262e212875fb54b69279aae534303",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/946970e3a0f262e212875fb54b69279aae534303"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t244/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t244/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pytest-dev/pytest base=https://github.com/pytest-dev/pytest/commit/45c2ffb635ad228fdb24d3f8feb35c383a3dbdf3 fix=216ec3c0ba87b50af11a3fd6f633b69105a7708e"
+}
