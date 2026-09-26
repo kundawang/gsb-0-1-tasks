@@ -1,0 +1,37 @@
+{
+  "task_id": "T253",
+  "title": "tox-dev/filelock 缺陷修复：🐛 fix(soft-rw): replace the state mutex with a generation lo",
+  "created_at": "2026-09-26T20:02:55",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tox-dev/filelock @ 20929f7d14",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t253/base",
+    "sha": "6fd4ef0b8de72a9c01888570833c7a0ca52bf191",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/6fd4ef0b8de72a9c01888570833c7a0ca52bf191"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t253/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t253/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tox-dev/filelock base=https://github.com/tox-dev/filelock/commit/20929f7d1439d5fa1df158fcac87b60815f5d422 fix=f9743288a2885220560d608e197e4020fd2ac61c"
+}
