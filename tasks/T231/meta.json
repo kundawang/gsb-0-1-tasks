@@ -1,0 +1,37 @@
+{
+  "task_id": "T231",
+  "title": "python-poetry/poetry 缺陷修复：fix(keyring): make keyring unlock thread safe",
+  "created_at": "2026-09-26T19:55:42",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 python-poetry/poetry @ 1ac829f5e4",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t231/base",
+    "sha": "179b3c1ba4fb676fa76a4894f66e3badd057267d",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/179b3c1ba4fb676fa76a4894f66e3badd057267d"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t231/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t231/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/python-poetry/poetry base=https://github.com/python-poetry/poetry/commit/1ac829f5e49c280f459ee37d1d64ded64a2be596 fix=11d76b6ecc917d3808768681050cd4743ffaeb15"
+}
