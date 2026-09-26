@@ -1,0 +1,37 @@
+{
+  "task_id": "T320",
+  "title": "pylint-dev/pylint 缺陷修复：Fix multiple crashes for classes with duplicate or inconsist",
+  "created_at": "2026-09-27T00:30:56",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pylint-dev/pylint @ 48d3c5490f",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t320/base",
+    "sha": "d970fdf5537d92d25eaca22e46670a775c208d5d",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/d970fdf5537d92d25eaca22e46670a775c208d5d"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t320/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t320/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pylint-dev/pylint base=https://github.com/pylint-dev/pylint/commit/48d3c5490fe5f42f8752e86157c69bdc3882b8bd fix=5ba4f69e7a953c45852f4e0333a2fdb4900dcf43"
+}
