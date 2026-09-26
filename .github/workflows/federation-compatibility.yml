@@ -1,0 +1,53 @@
+name: 🛰️ Federation compatibility tests
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}-federation
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    paths:
+      - "strawberry/federation/**"
+      - "strawberry/printer/**"
+      - "federation-compatibility/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/federation-compatibility.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  federation-tests:
+    name: Federation tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          enable-cache: true
+          python-version: "3.12"
+      - run: uv sync
+
+      - name: export schema
+        run: uv run strawberry export-schema schema:schema > schema.graphql
+        working-directory: federation-compatibility
+
+      - uses: apollographql/federation-subgraph-compatibility@f688595a4637f0307944672c49b1121618953f74 # v3.0.1
+        with:
+          compose: 'federation-compatibility/docker-compose.yml'
+          schema: 'federation-compatibility/schema.graphql'
+          port: 4001
+          token: ${{ secrets.BOT_TOKEN }}
+          failOnWarning: true
+          failOnRequired: true

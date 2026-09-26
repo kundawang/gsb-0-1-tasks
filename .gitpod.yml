@@ -1,0 +1,6 @@
+tasks:
+  - before: |
+      pip install uv pre-commit
+    init: |
+      uv sync
+      pre-commit install --install-hooks
