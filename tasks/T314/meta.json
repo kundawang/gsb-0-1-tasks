@@ -1,0 +1,37 @@
+{
+  "task_id": "T314",
+  "title": "tortoise/tortoise-orm 缺陷修复：Fix concurrent initialization of connection pool (#1825)",
+  "created_at": "2026-09-27T00:29:17",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 tortoise/tortoise-orm @ 29d7e024a3",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t314/base",
+    "sha": "bc291267383a6da4e6a45a88705cd678b680ff42",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/bc291267383a6da4e6a45a88705cd678b680ff42"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t314/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t314/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/tortoise/tortoise-orm base=https://github.com/tortoise/tortoise-orm/commit/29d7e024a303171f3ffac1f550a367353bae4adb fix=513f852dab0cab47810bff6039a5667793650ddc"
+}
