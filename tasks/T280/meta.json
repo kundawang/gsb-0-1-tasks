@@ -1,0 +1,37 @@
+{
+  "task_id": "T280",
+  "title": "prompt-toolkit/python-prompt-toolkit 缺陷修复：Fix inputhook implementation to be compatible with asyncio.r",
+  "created_at": "2026-09-26T23:44:23",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 prompt-toolkit/python-prompt-toolkit @ b6a9f05f9a",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t280/base",
+    "sha": "ec734ae45204c201e104d8179304870b3bf4af3d",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/ec734ae45204c201e104d8179304870b3bf4af3d"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t280/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t280/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/prompt-toolkit/python-prompt-toolkit base=https://github.com/prompt-toolkit/python-prompt-toolkit/commit/b6a9f05f9a71f82785a4d2ba99bd12a7072744e1 fix=2e2175a736fdc6f1890a41c8a13065d44586e13a"
+}
