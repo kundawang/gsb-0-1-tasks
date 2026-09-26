@@ -3786,5 +3786,869 @@
       "tests/unit/test_wheel.py"
     ],
     "prompt": "pip 在安装的包里 entry_points.txt 有非法内容时会直接吐 traceback：pkg_resources 抛的是裸的 ValueError，没有被转成安装错误，用户看到一大段堆栈。\n\n请把这类错误转成清晰的 InstallationError（Python 3.15 的 importlib.metadata 也会在解析时校验 entry points，一并处理），补测试。"
+  },
+  {
+    "index": 189,
+    "suggested_id": "T259",
+    "repo": "mongodb/mongo-python-driver",
+    "repo_url": "https://github.com/mongodb/mongo-python-driver",
+    "base_sha": "083359f95f7ce1c202d54a0a16506ae4c5162b23",
+    "base_permalink": "https://github.com/mongodb/mongo-python-driver/commit/083359f95f7ce1c202d54a0a16506ae4c5162b23",
+    "fix_sha": "821811e80d72d2ae822d11bac30e1c7a935208c2",
+    "fix_date": "2024-09-30",
+    "subject": "PYTHON-4782 Fix deadlock and blocking behavior in _ACondition.wait (#1875)",
+    "src_files": [
+      "pymongo/asynchronous/pool.py",
+      "pymongo/asynchronous/topology.py",
+      "pymongo/lock.py",
+      "pymongo/synchronous/pool.py",
+      "pymongo/synchronous/topology.py",
+      "tools/synchro.py"
+    ],
+    "test_files": [
+      "test/asynchronous/test_client.py",
+      "test/asynchronous/test_client_bulk_write.py",
+      "test/asynchronous/test_cursor.py",
+      "test/asynchronous/test_locks.py",
+      "test/test_client.py",
+      "test/test_client_bulk_write.py",
+      "test/test_cursor.py",
+      "test/test_server_selection_in_window.py"
+    ],
+    "prompt": "pymongo 在 asyncio 下有个死锁：等锁的时候被取消，`_ACondition.wait()` 这条路径会把锁和等待状态搞乱——被取消的等待者不唤醒后来者，或者唤醒之后重拿锁失败，压测里表现成整个客户端卡住不动。\n\n请把 `pymongo/lock.py` 的 `_ACondition.wait()` 修好：被取消时要正确释放并唤醒等待者、唤醒后重拿锁要可靠；asynchronous 和 synchronous 两套调用方（连接池、topology）跟着一起调整。补测试覆盖取消后重新获取、取消时唤醒别人、以及上下文管理器路径。"
+  },
+  {
+    "index": 190,
+    "suggested_id": "T260",
+    "repo": "mongodb/mongo-python-driver",
+    "repo_url": "https://github.com/mongodb/mongo-python-driver",
+    "base_sha": "adf8817df8f3fd47d82cf4c5e3bd4e93cfdfb602",
+    "base_permalink": "https://github.com/mongodb/mongo-python-driver/commit/adf8817df8f3fd47d82cf4c5e3bd4e93cfdfb602",
+    "fix_sha": "297dfe6aa3d31aa23e081a79d56e11ffd45dd952",
+    "fix_date": "2024-08-15",
+    "subject": "PYTHON-4660 Fix AttributeError when MongoClient.bulk_write batch fails with InvalidBSON (#1792)",
+    "src_files": [
+      "pymongo/asynchronous/client_bulk.py",
+      "pymongo/asynchronous/mongo_client.py",
+      "pymongo/synchronous/client_bulk.py",
+      "pymongo/synchronous/mongo_client.py"
+    ],
+    "test_files": [
+      "test/asynchronous/test_client_bulk_write.py",
+      "test/test_client_bulk_write.py"
+    ],
+    "prompt": "pymongo 的 `MongoClient.bulk_write` 在某一批失败时（比如服务端回了 InvalidBSON）会抛 AttributeError，把真正的错误盖掉，调用方拿不到原始原因，排查很痛苦。\n\n请修好同步和异步两套 client_bulk，让非 pymongo 自身的异常也能正常往上抛（保留原始错误信息），补一个 batch 里出现非 pymongo 异常的测试。"
+  },
+  {
+    "index": 191,
+    "suggested_id": "T261",
+    "repo": "mongodb/mongo-python-driver",
+    "repo_url": "https://github.com/mongodb/mongo-python-driver",
+    "base_sha": "2235b8354cef0acc0b41321fc103d14acf0ef92f",
+    "base_permalink": "https://github.com/mongodb/mongo-python-driver/commit/2235b8354cef0acc0b41321fc103d14acf0ef92f",
+    "fix_sha": "f1af9178946c51f8f200cf6960f37b610c294158",
+    "fix_date": "2025-01-22",
+    "subject": "PYTHON-5044 - Fix successive AsyncMongoClients on a single loop always ti… (#2065)",
+    "src_files": [
+      "pymongo/network_layer.py",
+      "pymongo/periodic_executor.py"
+    ],
+    "test_files": [
+      "test/asynchronous/test_connections_survive_primary_stepdown_spec.py",
+      "test/test_connections_survive_primary_stepdown_spec.py"
+    ],
+    "prompt": "pymongo 的异步客户端有个坑：在同一个事件循环里先后创建多个 `AsyncMongoClient`，后面的客户端总是超时连不上——周期性执行器和网络层那边没有清理干净。\n\n请修好，补一个连续创建多个异步客户端都能正常工作的测试。"
+  },
+  {
+    "index": 192,
+    "suggested_id": "T262",
+    "repo": "mongodb/mongo-python-driver",
+    "repo_url": "https://github.com/mongodb/mongo-python-driver",
+    "base_sha": "6c9a20a49d37bff2f2163011d1ccd686f83555a6",
+    "base_permalink": "https://github.com/mongodb/mongo-python-driver/commit/6c9a20a49d37bff2f2163011d1ccd686f83555a6",
+    "fix_sha": "493fc2ab3e237c2155fde4400002ed2aafe9b2be",
+    "fix_date": "2025-01-10",
+    "subject": "PYTHON-5014 Fix handling of async socket errors in kms request (#2054)",
+    "src_files": [
+      "pymongo/asynchronous/encryption.py",
+      "pymongo/synchronous/encryption.py"
+    ],
+    "test_files": [
+      "test/asynchronous/test_encryption.py",
+      "test/test_encryption.py"
+    ],
+    "prompt": "pymongo 的客户端加密（KMS）在异步模式下碰到 socket 错误处理得不对：异常不会传到调用方，连接状态也不对；同步那一侧是正常的。\n\n请把 asynchronous/encryption.py 这块对齐同步实现，补测试。"
+  },
+  {
+    "index": 193,
+    "suggested_id": "T263",
+    "repo": "openai/openai-python",
+    "repo_url": "https://github.com/openai/openai-python",
+    "base_sha": "d81ee8f85207bdc88c2749ae9d0644d9a997e397",
+    "base_permalink": "https://github.com/openai/openai-python/commit/d81ee8f85207bdc88c2749ae9d0644d9a997e397",
+    "fix_sha": "72e1e15abfc283fa2714bc4d61e4a31740833084",
+    "fix_date": "2026-02-13",
+    "subject": "fix(structured outputs): resolve memory leak in parse methods (#2860)",
+    "src_files": [
+      "src/openai/lib/_parsing/__init__.py",
+      "src/openai/lib/_parsing/_completions.py",
+      "src/openai/lib/_parsing/_responses.py",
+      "src/openai/lib/streaming/chat/_completions.py",
+      "tests/lib/utils.py"
+    ],
+    "test_files": [
+      "tests/lib/chat/test_completions.py",
+      "tests/lib/chat/test_completions_streaming.py"
+    ],
+    "prompt": "openai-python 的 structured outputs 解析（`responses.parse`、`chat.completions.parse`，以及流式解析）有内存泄漏：每次调用都会把响应或 schema 相关的对象留在某个引用里，长时间跑内存只涨不降。\n\n请找出并修掉这处引用（流式那条路径一起处理），补一个能验证对象可回收的测试。"
+  },
+  {
+    "index": 194,
+    "suggested_id": "T264",
+    "repo": "openai/openai-python",
+    "repo_url": "https://github.com/openai/openai-python",
+    "base_sha": "d468f301a897ee1f15c5d01b245a37aa03fe0da0",
+    "base_permalink": "https://github.com/openai/openai-python/commit/d468f301a897ee1f15c5d01b245a37aa03fe0da0",
+    "fix_sha": "d052708a5b7f61c17d858419c625d70dbd661e3b",
+    "fix_date": "2023-12-08",
+    "subject": "fix: avoid leaking memory when Client.with_options is used (#956)",
+    "src_files": [
+      "pyproject.toml",
+      "src/openai/_base_client.py",
+      "src/openai/_client.py"
+    ],
+    "test_files": [
+      "tests/test_client.py"
+    ],
+    "prompt": "openai-python 里 `client.with_options(...)` 会泄漏内存：每次派生一个新 client，父子之间互相持有，旧的回收不掉，长期跑的服务里很明显。\n\n请修好派生逻辑，补测试（派生出来的 client 构造请求的行为要和原来一致）。"
+  },
+  {
+    "index": 195,
+    "suggested_id": "T265",
+    "repo": "openai/openai-python",
+    "repo_url": "https://github.com/openai/openai-python",
+    "base_sha": "233d9557be3e7ee186b5ac3f1ab634a257134ac1",
+    "base_permalink": "https://github.com/openai/openai-python/commit/233d9557be3e7ee186b5ac3f1ab634a257134ac1",
+    "fix_sha": "e57a1b19fbcc32306a691e63334fd2dc4b1a804c",
+    "fix_date": "2026-09-15",
+    "subject": "fix: include completion in content filter errors (#3094)",
+    "src_files": [
+      "src/openai/_exceptions.py",
+      "src/openai/lib/_parsing/_completions.py",
+      "src/openai/lib/streaming/chat/_completions.py"
+    ],
+    "test_files": [
+      "tests/lib/chat/test_content_filter.py"
+    ],
+    "prompt": "openai-python 解析响应时如果命中内容过滤（ContentFilterFinishReasonError），抛出来的异常里没有带 completion，调用方拿不到 usage 等信息；流式那条路径也一样。\n\n请把 completion 附到异常上（解析和流式都要），补三个测试：没有 completion 的错误、解析路径、流式路径。"
+  },
+  {
+    "index": 196,
+    "suggested_id": "T266",
+    "repo": "openai/openai-python",
+    "repo_url": "https://github.com/openai/openai-python",
+    "base_sha": "3844843c277f42b0b18beaa58152cfda61df524a",
+    "base_permalink": "https://github.com/openai/openai-python/commit/3844843c277f42b0b18beaa58152cfda61df524a",
+    "fix_sha": "7fa7946485b5ecbadd0ebf8624c574e2c9e3370c",
+    "fix_date": "2026-07-30",
+    "subject": "fix(client): honor Retry-After delays up to two minutes (#3555)",
+    "src_files": [
+      "src/openai/_base_client.py",
+      "src/openai/_constants.py"
+    ],
+    "test_files": [
+      "tests/test_client.py"
+    ],
+    "prompt": "openai-python 的客户端重试没有正确处理 `Retry-After`：服务端让等 30 秒，客户端却按自己的指数退避去重试；等得比上限还久的请求也会被重试；非法日期还会把原始的 HTTP 状态错误盖掉。\n\n请改成：正的、有限的 `Retry-After`（上限两分钟）就按它等；超过上限视为不可重试；为零或没这个头时保持指数退避；非法日期不要吞掉状态错误。补测试。"
+  },
+  {
+    "index": 197,
+    "suggested_id": "T267",
+    "repo": "openai/openai-python",
+    "repo_url": "https://github.com/openai/openai-python",
+    "base_sha": "99b9c422f385aa5126b6b525f066a9750e463e1e",
+    "base_permalink": "https://github.com/openai/openai-python/commit/99b9c422f385aa5126b6b525f066a9750e463e1e",
+    "fix_sha": "14b8afce7f17a9748a3d2946eee4d2d0b180e1d8",
+    "fix_date": "2026-05-06",
+    "subject": "fix(api): fix imagegen `size` enum regression",
+    "src_files": [
+      ".stats.yml",
+      "src/openai/resources/images.py",
+      "src/openai/types/image_edit_params.py",
+      "src/openai/types/image_generate_params.py",
+      "src/openai/types/responses/tool.py",
+      "src/openai/types/responses/tool_param.py"
+    ],
+    "test_files": [
+      "tests/api_resources/test_images.py"
+    ],
+    "prompt": "openai-python 的图像生成接口有个回归：`size` 参数的枚举值跟服务端接受的对不上，传合法值会被拒。\n\n请按最新的 API 定义修正这个枚举（相关 types 里的定义一起改），补测试。"
+  },
+  {
+    "index": 198,
+    "suggested_id": "T268",
+    "repo": "nedbat/coveragepy",
+    "repo_url": "https://github.com/nedbat/coveragepy",
+    "base_sha": "2047a7992fd9bf3f42a42c18cc41ab6af589e05c",
+    "base_permalink": "https://github.com/nedbat/coveragepy/commit/2047a7992fd9bf3f42a42c18cc41ab6af589e05c",
+    "fix_sha": "c2127c69ce2543790ab87fcdeea29b987e8b4879",
+    "fix_date": "2025-11-05",
+    "subject": "fix: change how the core default adjusts if sysmon isn't right #2064",
+    "src_files": [
+      "coverage/core.py",
+      "coverage/exceptions.py",
+      "metacov.ini"
+    ],
+    "test_files": [
+      "tests/conftest.py",
+      "tests/test_concurrency.py",
+      "tests/test_core.py"
+    ],
+    "prompt": "coverage.py 在 3.12/3.13 上用 sys.monitoring 测量时分支测量是完不成的，但现在不会明确告诉用户：核心的默认值在这种情况下应该换一种处理方式，并给出一个能被上层识别的异常（好让测试跳过这类场景）。\n\n请修好这个默认值调整逻辑并加上对应异常，补测试。"
+  },
+  {
+    "index": 199,
+    "suggested_id": "T269",
+    "repo": "nedbat/coveragepy",
+    "repo_url": "https://github.com/nedbat/coveragepy",
+    "base_sha": "d2b0a9b6fd7df70cd5a712755f3153007fce3fe8",
+    "base_permalink": "https://github.com/nedbat/coveragepy/commit/d2b0a9b6fd7df70cd5a712755f3153007fce3fe8",
+    "fix_sha": "31f91f816244a89051b301f2e3536e5f7b951e3d",
+    "fix_date": "2025-10-27",
+    "subject": "fix: multiline statement branches with sysmon #2070",
+    "src_files": [
+      "coverage/bytecode.py",
+      "coverage/sysmon.py"
+    ],
+    "test_files": [
+      "tests/test_arcs.py"
+    ],
+    "prompt": "coverage.py 用 sys.monitoring（3.14 起是默认）时，多行的 `for` 和 `match/case` 被报成\"分支缺失\"，其实是漏记了，覆盖率数字因此虚低。\n\n请修好 bytecode / sysmon 这两处的分支拆分，补 for 和 match/case 的测试。"
+  },
+  {
+    "index": 200,
+    "suggested_id": "T270",
+    "repo": "nedbat/coveragepy",
+    "repo_url": "https://github.com/nedbat/coveragepy",
+    "base_sha": "64b7a45de6004fecb9b6c149ff412466831a3076",
+    "base_permalink": "https://github.com/nedbat/coveragepy/commit/64b7a45de6004fecb9b6c149ff412466831a3076",
+    "fix_sha": "b8c236aa620f31134405aa2876e5922a8db053d3",
+    "fix_date": "2024-10-20",
+    "subject": "fix: multi-line with-statements exit correctly. #1880",
+    "src_files": [
+      "coverage/env.py",
+      "coverage/parser.py"
+    ],
+    "test_files": [
+      "tests/test_arcs.py"
+    ],
+    "prompt": "coverage.py 在多行 `with` 语句上退出位置记错了：一个 with 里套多个上下文管理器、或者跨行写的时候，行号和分支报告跟实际不一致。\n\n请修好解析器这块，补单行和多行 with 的测试。"
+  },
+  {
+    "index": 201,
+    "suggested_id": "T271",
+    "repo": "nedbat/coveragepy",
+    "repo_url": "https://github.com/nedbat/coveragepy",
+    "base_sha": "1958c3f60acd3f485c6597820f2c9f44711a4025",
+    "base_permalink": "https://github.com/nedbat/coveragepy/commit/1958c3f60acd3f485c6597820f2c9f44711a4025",
+    "fix_sha": "9f94c87677fd86c7ced9ea2f3cddfcc0b4d5bc2d",
+    "fix_date": "2025-06-08",
+    "subject": "fix: properly render double braces in f-strings. #1980",
+    "src_files": [
+      "coverage/env.py",
+      "coverage/htmlfiles/style.scss",
+      "coverage/phystokens.py"
+    ],
+    "test_files": [
+      "tests/test_html.py",
+      "tests/test_phystokens.py"
+    ],
+    "prompt": "coverage.py 渲染代码（annotate/html 输出）时，f-string 里成对的花括号 `{{`、`}}` 会被当成真实花括号处理，导致渲染出来的代码错位。\n\n请修好这块渲染，补测试。"
+  },
+  {
+    "index": 202,
+    "suggested_id": "T272",
+    "repo": "graphql-python/graphql-core",
+    "repo_url": "https://github.com/graphql-python/graphql-core",
+    "base_sha": "8676357c65c0d292b2b04e27d23c8f3b290578f5",
+    "base_permalink": "https://github.com/graphql-python/graphql-core/commit/8676357c65c0d292b2b04e27d23c8f3b290578f5",
+    "fix_sha": "5f93d17eb96e69c5aaf3aa750503f113f30e4787",
+    "fix_date": "2026-06-11",
+    "subject": "fix(OneOf): fail coercion when two fields are provided \"pre-coercion-only\"",
+    "src_files": [
+      "src/graphql/utilities/coerce_input_value.py",
+      "src/graphql/utilities/value_from_ast.py"
+    ],
+    "test_files": [
+      "tests/execution/test_oneof.py",
+      "tests/utilities/test_coerce_input_value.py",
+      "tests/utilities/test_validate_input_value.py",
+      "tests/utilities/test_value_from_ast.py"
+    ],
+    "prompt": "graphql-core 的 OneOf 输入类型：同时提供两个字段时应该在校验阶段直接失败，现在只有部分路径会拒（\"pre-coercion-only\" 的场景漏掉），而且 `value_from_ast` 和 `coerce_input_value` 两条路径的行为不一致。\n\n请对齐 graphql-js 的实现，让两条路径一致地拒绝，补测试。"
+  },
+  {
+    "index": 203,
+    "suggested_id": "T273",
+    "repo": "fastapi/fastapi",
+    "repo_url": "https://github.com/fastapi/fastapi",
+    "base_sha": "c57ac7bdf3613798c94caceff562a41fa16d4a2d",
+    "base_permalink": "https://github.com/fastapi/fastapi/commit/c57ac7bdf3613798c94caceff562a41fa16d4a2d",
+    "fix_sha": "bba4d4c95e0de8fc9c99f88c269909d37d64d494",
+    "fix_date": "2025-12-03",
+    "subject": "🐛 Fix support for functools wraps and partial combined, for async and regular functions and classes in path operations and dependencies (#14448)",
+    "src_files": [
+      "fastapi/dependencies/models.py",
+      "fastapi/dependencies/utils.py"
+    ],
+    "test_files": [
+      "tests/test_dependency_wrapped.py"
+    ],
+    "prompt": "fastapi 的路径操作和依赖，一旦被 `functools.wraps`（或者 `functools.partial`）包过一层，参数识别就乱了：路径参数、查询参数、依赖注入都会认错；包过的 async 函数、同步函数和类都有问题。\n\n请修好依赖模型这处识别（wraps 和 partial 的组合都要正确），不要破坏原有签名推断，补测试。"
+  },
+  {
+    "index": 204,
+    "suggested_id": "T274",
+    "repo": "redis/redis-py",
+    "repo_url": "https://github.com/redis/redis-py",
+    "base_sha": "3431570ceaf2edc7669d191879d68b3fd5a2eb59",
+    "base_permalink": "https://github.com/redis/redis-py/commit/3431570ceaf2edc7669d191879d68b3fd5a2eb59",
+    "fix_sha": "640f0d055f19a9203cc894998d97150676dbf947",
+    "fix_date": "2026-06-10",
+    "subject": "Fixed async MultiDBClient with underlying RedisCluster (#4108)",
+    "src_files": [
+      ".github/actions/run-tests/action.yml",
+      ".github/workflows/install_and_test.sh",
+      ".github/workflows/integration.yaml",
+      "docker-compose.yml",
+      "pyproject.toml",
+      "redis/asyncio/multidb/healthcheck.py",
+      "tasks.py",
+      "tests/test_multidb/_integration_endpoints.py"
+    ],
+    "test_files": [
+      "tests/test_asyncio/test_multidb/test_integration.py",
+      "tests/test_multidb/conftest.py",
+      "tests/test_multidb/test_integration.py"
+    ],
+    "prompt": "redis-py 的 asyncio MultiDBClient 在底层是 RedisCluster 时用不了：健康检查那条路径按单节点处理，cluster 场景直接失败（或者一直判不健康）。\n\n请修好 healthcheck 这块，补一个对两个数据库 ping 的测试。"
+  },
+  {
+    "index": 205,
+    "suggested_id": "T275",
+    "repo": "dask/dask",
+    "repo_url": "https://github.com/dask/dask",
+    "base_sha": "3bfdc8682418a5407894660d745e484e9c877c17",
+    "base_permalink": "https://github.com/dask/dask/commit/3bfdc8682418a5407894660d745e484e9c877c17",
+    "fix_sha": "6aea3b046771ddfbae841ef94b2490b9a102208b",
+    "fix_date": "2024-01-15",
+    "subject": "Add various fixes around axis=1 and dtype inconsistencies (#724)",
+    "src_files": [
+      "dask_expr/_collection.py",
+      "dask_expr/_cumulative.py",
+      "dask_expr/_expr.py",
+      "dask_expr/_reductions.py"
+    ],
+    "test_files": [
+      "dask_expr/tests/test_collection.py",
+      "dask_expr/tests/test_reductions.py"
+    ],
+    "prompt": "dask-expr 里 `axis=1` 相关的一批操作结果不对：dtype 跟 pandas 对不上，某些聚合和累积在 axis=1 上算错或者报错。\n\n请修好 _collection / _expr / _reductions / _cumulative 这几处，补测试。"
+  },
+  {
+    "index": 206,
+    "suggested_id": "T276",
+    "repo": "dask/dask",
+    "repo_url": "https://github.com/dask/dask",
+    "base_sha": "a5d5e43de73a0248c9305402ed8f20c6934e109f",
+    "base_permalink": "https://github.com/dask/dask/commit/a5d5e43de73a0248c9305402ed8f20c6934e109f",
+    "fix_sha": "d8934fe477fad5735b68e11556da71d8f4ce183d",
+    "fix_date": "2023-06-12",
+    "subject": "Fix `H5FD_lock` error when writing to hdf with distributed client (#10309)",
+    "src_files": [
+      "dask/dataframe/io/hdf.py",
+      "dask/dataframe/io/utils.py",
+      "dask/utils.py"
+    ],
+    "test_files": [
+      "dask/tests/test_distributed.py"
+    ],
+    "prompt": "用 distributed 客户端往同一个 hdf 文件写数据会报 `H5FD_lock` 错误：多个进程同时写同一个文件，没有调度级别的文件锁。\n\n请在 dask 里加一个跨进程的文件锁（单机也要能用），补测试：单机获取锁、distributed 下获取锁、以及写 hdf 的用例。"
+  },
+  {
+    "index": 207,
+    "suggested_id": "T277",
+    "repo": "python-poetry/poetry",
+    "repo_url": "https://github.com/python-poetry/poetry",
+    "base_sha": "165fb4b42e0138249abf58e3228d1f2d14cee826",
+    "base_permalink": "https://github.com/python-poetry/poetry/commit/165fb4b42e0138249abf58e3228d1f2d14cee826",
+    "fix_sha": "f8408cab10a99ad81e4e16a0f2fda9593f5f089f",
+    "fix_date": "2026-09-20",
+    "subject": "fix TypeError when using `installer.builtin-uninstall` (#11077)",
+    "src_files": [
+      "src/poetry/installation/uninstaller.py",
+      "src/poetry/utils/env/base_env.py",
+      "src/poetry/utils/env/null_env.py",
+      "src/poetry/utils/env/system_env.py",
+      "src/poetry/utils/env/virtual_env.py"
+    ],
+    "test_files": [
+      "tests/conftest.py",
+      "tests/installation/test_uninstaller.py",
+      "tests/repositories/test_installed_repository.py",
+      "tests/utils/env/test_env.py"
+    ],
+    "prompt": "poetry 用 `installer.builtin-uninstall` 卸载包时会抛 TypeError：内部的环境接口签名和回退路径对不上（base_env / null_env / system_env 几处不一致）。\n\n请修好并统一这些接口，补一个带回退路径的卸载测试。"
+  },
+  {
+    "index": 208,
+    "suggested_id": "T278",
+    "repo": "python-poetry/poetry",
+    "repo_url": "https://github.com/python-poetry/poetry",
+    "base_sha": "f46702336862f30050d5c641d5ed6f7568ded793",
+    "base_permalink": "https://github.com/python-poetry/poetry/commit/f46702336862f30050d5c641d5ed6f7568ded793",
+    "fix_sha": "a07d84a7ece108acc40fb9125b76d257130ac1e2",
+    "fix_date": "2026-07-26",
+    "subject": "fix(env): fail on incompatible Python without venv creation (#10941)",
+    "src_files": [
+      "src/poetry/utils/env/env_manager.py",
+      "src/poetry/utils/env/python/exceptions.py"
+    ],
+    "test_files": [
+      "tests/utils/env/test_env_manager.py"
+    ],
+    "prompt": "poetry 在当前 Python 版本不受支持、而且还没有创建虚拟环境的时候不会给出清楚的失败，而是一直往下走最后报个莫名其妙的错。\n\n请改成直接失败并说明原因（env_manager 这条路径），补测试。"
+  },
+  {
+    "index": 209,
+    "suggested_id": "T279",
+    "repo": "pytest-dev/pytest-asyncio",
+    "repo_url": "https://github.com/pytest-dev/pytest-asyncio",
+    "base_sha": "fe12dcb7c87265a5d89e3b23e328d615b29ecf3d",
+    "base_permalink": "https://github.com/pytest-dev/pytest-asyncio/commit/fe12dcb7c87265a5d89e3b23e328d615b29ecf3d",
+    "fix_sha": "810c9d7a2e9a87e9e00aee39c52325e59c0780f0",
+    "fix_date": "2023-11-15",
+    "subject": "[fix] Fixes a bug that caused tests to run in the wrong event loop when requesting larger-scoped fixtures in a narrower-scoped test.",
+    "src_files": [
+      "docs/source/reference/markers/class_scoped_loop_with_fixture_strict_mode_example.py",
+      "pytest_asyncio/plugin.py"
+    ],
+    "test_files": [
+      "tests/async_fixtures/test_async_fixtures_with_finalizer.py",
+      "tests/markers/test_class_scope.py",
+      "tests/markers/test_module_scope.py",
+      "tests/markers/test_package_scope.py",
+      "tests/markers/test_session_scope.py"
+    ],
+    "prompt": "pytest-asyncio 有个 bug：在作用域更窄的测试里请求作用域更大的 fixture 时，测试会跑在错误的事件循环上。原因是循环作用域以前靠 collector 上的 mark 判断，拆到 fixture 之后这条逻辑失效了。\n\n请修好作用域判定，补测试：class 作用域 fixture + function 作用域测试、module + class、module + function、package + class、package + function 都要覆盖。"
+  },
+  {
+    "index": 210,
+    "suggested_id": "T280",
+    "repo": "prompt-toolkit/python-prompt-toolkit",
+    "repo_url": "https://github.com/prompt-toolkit/python-prompt-toolkit",
+    "base_sha": "b6a9f05f9a71f82785a4d2ba99bd12a7072744e1",
+    "base_permalink": "https://github.com/prompt-toolkit/python-prompt-toolkit/commit/b6a9f05f9a71f82785a4d2ba99bd12a7072744e1",
+    "fix_sha": "2e2175a736fdc6f1890a41c8a13065d44586e13a",
+    "fix_date": "2023-11-11",
+    "subject": "Fix inputhook implementation to be compatible with asyncio.run().",
+    "src_files": [
+      ".github/workflows/test.yaml",
+      "src/prompt_toolkit/application/application.py",
+      "src/prompt_toolkit/application/dummy.py",
+      "src/prompt_toolkit/eventloop/__init__.py",
+      "src/prompt_toolkit/eventloop/inputhook.py",
+      "src/prompt_toolkit/layout/controls.py",
+      "src/prompt_toolkit/shortcuts/prompt.py"
+    ],
+    "test_files": [],
+    "prompt": "prompt-toolkit 的 inputhook 实现在 `asyncio.get_event_loop()` 被废弃之后就不对了：它还在启动阶段预先装事件循环，于是 `asyncio.run()` 里用不了，换到别的循环里跑也会出问题。\n\n请改成把 inputhook 作为 `Application.run()` / `PromptSession` 的参数传进去，不要在导入或初始化阶段绑定循环，补测试。"
+  },
+  {
+    "index": 211,
+    "suggested_id": "T281",
+    "repo": "Textualize/textual",
+    "repo_url": "https://github.com/Textualize/textual",
+    "base_sha": "61530d3691e1c6536554031e977a392217e9a95e",
+    "base_permalink": "https://github.com/Textualize/textual/commit/61530d3691e1c6536554031e977a392217e9a95e",
+    "fix_sha": "43dfe081178d9cc7ff2a47df0e9e86c6f6a802c1",
+    "fix_date": "2024-09-05",
+    "subject": "Fix Number and Float validation errors, allow underscores, add tests.  Fix issue #4718 (#4784)",
+    "src_files": [
+      "src/textual/validation.py",
+      "src/textual/widgets/_input.py"
+    ],
+    "test_files": [
+      "tests/input/test_input_restrict.py",
+      "tests/test_validation.py"
+    ],
+    "prompt": "textual 的 Input 里 Number / Float 校验器有问题：非法值不报错、合法值反而被拒，而且数字里带下划线（`1_000`）不被接受。\n\n请把 Number / Integer / Float 的校验和正则修对（支持下划线），补测试。"
+  },
+  {
+    "index": 212,
+    "suggested_id": "T282",
+    "repo": "Textualize/textual",
+    "repo_url": "https://github.com/Textualize/textual",
+    "base_sha": "9c1e89fcf014457f4adbf7cb14ec2b481b6d629f",
+    "base_permalink": "https://github.com/Textualize/textual/commit/9c1e89fcf014457f4adbf7cb14ec2b481b6d629f",
+    "fix_sha": "fdc96f8c0e224712e5b5fdb3fb0284d7fedb4570",
+    "fix_date": "2023-10-17",
+    "subject": "fix for cache (#3538)",
+    "src_files": [
+      "src/textual/_cache.py",
+      "src/textual/widgets/_log.py"
+    ],
+    "test_files": [
+      "tests/test_cache.py"
+    ],
+    "prompt": "textual 的 `_cache` 在 discard 之后还会命中旧值（Log 组件上尤其明显），淘汰/丢弃的语义不对。\n\n请修好缓存实现，补一个 discard 的回归测试。"
+  },
+  {
+    "index": 213,
+    "suggested_id": "T283",
+    "repo": "pygments/pygments",
+    "repo_url": "https://github.com/pygments/pygments",
+    "base_sha": "3746ded95655e8f8421b0456388ade9c5a001ee6",
+    "base_permalink": "https://github.com/pygments/pygments/commit/3746ded95655e8f8421b0456388ade9c5a001ee6",
+    "fix_sha": "2c463c680943309520a2e8aa18927bb5d1a1602b",
+    "fix_date": "2024-06-12",
+    "subject": "fixed a token error, removed extraneous test files",
+    "src_files": [
+      "json5-tests/json5.py",
+      "json5-tests/jsonnet.py",
+      "json5-tests/test.json5",
+      "json5-tests/test.jsonnet",
+      "json5-tests/test0.json5",
+      "json5-tests/test0.jsonnet",
+      "pygments/lexers/json5.py"
+    ],
+    "test_files": [
+      "tests/snippets/json5/test_example.txt"
+    ],
+    "prompt": "pygments 的 JSON5 / JSONnet 词法分析有 token 错误：一些合法写法（注释、尾逗号、标识符那几类）会被解析成错误的 token 类型。\n\n请修好 token 规则，补测试。"
+  },
+  {
+    "index": 214,
+    "suggested_id": "T284",
+    "repo": "locustio/locust",
+    "repo_url": "https://github.com/locustio/locust",
+    "base_sha": "ec93dd99467553dcc823c3e8a3d98521c41a23e3",
+    "base_permalink": "https://github.com/locustio/locust/commit/ec93dd99467553dcc823c3e8a3d98521c41a23e3",
+    "fix_sha": "da94639a74b55e09a13e111e4d0b3ce093e88787",
+    "fix_date": "2026-07-09",
+    "subject": "UI: use currentRps/currentFailPerSec instead of totalRps everywhere except in the final table, now that the endpoint returns correct values.",
+    "src_files": [
+      "locust/webui/src/components/Layout/Navbar/SwarmMonitor.test.tsx",
+      "locust/webui/src/components/Layout/Navbar/SwarmMonitor.tsx",
+      "locust/webui/src/hooks/useFetchStats.ts",
+      "locust/webui/src/redux/slice/ui.slice.ts",
+      "locust/webui/src/types/ui.types.ts"
+    ],
+    "test_files": [
+      "locust/webui/src/redux/slice/tests/ui.slice.test.ts",
+      "locust/webui/src/test/mocks/statsRequest.mock.ts"
+    ],
+    "prompt": "locust 的 Web UI 好几处还在用总 RPS / 总失败数（totalRps），但接口现在返回的是当前值（currentRps / currentFailPerSec），只有最终统计表该用总数，其它地方用错了，界面数字对不上。\n\n请改好前端这几处（Navbar 的 SwarmMonitor、useFetchStats、ui.slice），补测试。"
+  },
+  {
+    "index": 215,
+    "suggested_id": "T285",
+    "repo": "pytest-dev/pytest",
+    "repo_url": "https://github.com/pytest-dev/pytest",
+    "base_sha": "dbf7dee8c8818de27d83d4593b0048ac5e06bfc7",
+    "base_permalink": "https://github.com/pytest-dev/pytest/commit/dbf7dee8c8818de27d83d4593b0048ac5e06bfc7",
+    "fix_sha": "41ca4dd44eedd959f3fe562895519e3d9df185ca",
+    "fix_date": "2024-06-18",
+    "subject": "testresult: correctly apply verbose word markup and avoid crash",
+    "src_files": [
+      "src/_pytest/reports.py",
+      "src/_pytest/terminal.py"
+    ],
+    "test_files": [
+      "testing/test_terminal.py"
+    ],
+    "prompt": "pytest 的终端报告在自定义 `pytest_report_teststatus` 返回元组形式的 verbose word 时会崩：`_get_verbose_word` 只接受字符串；带 markup 的词也没有被正确处理。\n\n请修好 reports.py 和 terminal.py 这两处，补测试（用 hook 返回带 markup 的元组）。"
+  },
+  {
+    "index": 216,
+    "suggested_id": "T286",
+    "repo": "ipython/ipython",
+    "repo_url": "https://github.com/ipython/ipython",
+    "base_sha": "f9ce8c21a550d08c25b575ee55862b2dd76c9a3d",
+    "base_permalink": "https://github.com/ipython/ipython/commit/f9ce8c21a550d08c25b575ee55862b2dd76c9a3d",
+    "fix_sha": "6dcf7cf5068970bc07f6ad67fe8a3bb18edbc58d",
+    "fix_date": "2024-04-02",
+    "subject": "Add tests for resolving backend name and gui loop",
+    "src_files": [
+      "IPython/core/display_functions.py",
+      "IPython/terminal/embed.py"
+    ],
+    "test_files": [
+      "IPython/core/tests/test_pylabtools.py"
+    ],
+    "prompt": "IPython 解析显示后端（backend）名字时几处行为不一致：builtin 名字、entry point 注册的名字、以及未知名字的处理路径不一样，terminal/embed 里拿到 gui loop 的结果也不对。\n\n请修好解析逻辑，补三种情况的测试（builtin / entry point / 未知）。"
+  },
+  {
+    "index": 217,
+    "suggested_id": "T287",
+    "repo": "encode/starlette",
+    "repo_url": "https://github.com/encode/starlette",
+    "base_sha": "a8b8856ce393a82ab4a714131085dbc4d658e34d",
+    "base_permalink": "https://github.com/encode/starlette/commit/a8b8856ce393a82ab4a714131085dbc4d658e34d",
+    "fix_sha": "7349c60a813972b902a7be6daa7b9916668201ab",
+    "fix_date": "2023-08-25",
+    "subject": "Fixed import error when exceptiongroup isn't available (#2231)",
+    "src_files": [
+      "starlette/_utils.py",
+      "starlette/middleware/base.py"
+    ],
+    "test_files": [
+      "tests/middleware/test_wsgi.py"
+    ],
+    "prompt": "starlette 在没有 exceptiongroup 依赖的 Python 版本上导入就会失败：middleware/base 里直接用了那个包。\n\n请改成兼容写法（没有该依赖时用内置的 ExceptionGroup），补测试。"
+  },
+  {
+    "index": 218,
+    "suggested_id": "T288",
+    "repo": "simonw/sqlite-utils",
+    "repo_url": "https://github.com/simonw/sqlite-utils",
+    "base_sha": "30cc95c0a6c4fc1947f43feb1dc9798305a1b9e8",
+    "base_permalink": "https://github.com/simonw/sqlite-utils/commit/30cc95c0a6c4fc1947f43feb1dc9798305a1b9e8",
+    "fix_sha": "397cdcc491342825e460cb9a08ef06da7552a409",
+    "fix_date": "2026-07-04",
+    "subject": "Polish: clearer errors, corrected docstrings, setuptools pin",
+    "src_files": [
+      "pyproject.toml",
+      "sqlite_utils/cli.py",
+      "sqlite_utils/db.py",
+      "sqlite_utils/migrations.py"
+    ],
+    "test_files": [
+      "tests/test_cli_insert.py",
+      "tests/test_create.py",
+      "tests/test_migrations.py"
+    ],
+    "prompt": "sqlite-utils 有几处报错很难用：往一个其实是 view 的名字里 insert/upsert 会直接吐 traceback；对其实是 table 的名字调 `db.view()` 也不说清楚；迁移名字重复时的提示同样不明确。\n\n请把这些改成清晰的错误信息（相关 docstring 一并更正），补测试。"
+  },
+  {
+    "index": 219,
+    "suggested_id": "T289",
+    "repo": "django/django",
+    "repo_url": "https://github.com/django/django",
+    "base_sha": "ae1ee24178ecd53ac5ef3fc2055e4be8b9602ac9",
+    "base_permalink": "https://github.com/django/django/commit/ae1ee24178ecd53ac5ef3fc2055e4be8b9602ac9",
+    "fix_sha": "f8cc9285e14c491d8b8d51313c763808b7d1b115",
+    "fix_date": "2024-08-18",
+    "subject": "Fixed #35074 -- Fixed adding/removing indexes when spatial_index is changed on MySQL, PostgreSQL, and Oracle.",
+    "src_files": [
+      "django/contrib/gis/db/backends/mysql/schema.py",
+      "django/contrib/gis/db/backends/oracle/schema.py",
+      "django/contrib/gis/db/backends/postgis/schema.py"
+    ],
+    "test_files": [
+      "tests/gis_tests/gis_migrations/test_operations.py"
+    ],
+    "prompt": "django 的 GIS 后端在 `spatial_index` 改变时（MySQL / PostgreSQL / Oracle）不会正确地加/删索引：把一个字段的 spatial_index 从 True 改成 False（或反过来）之后，表结构没有跟着变。\n\n请修好这三个后端的 schema 编辑逻辑，补测试：加索引、删索引、以及带 nullable 的情况。"
+  },
+  {
+    "index": 220,
+    "suggested_id": "T290",
+    "repo": "django/django",
+    "repo_url": "https://github.com/django/django",
+    "base_sha": "73cc09f14f13fedddc14d6ba5b287cb33c24e4a4",
+    "base_permalink": "https://github.com/django/django/commit/73cc09f14f13fedddc14d6ba5b287cb33c24e4a4",
+    "fix_sha": "fe81969e83d03b61e587a28ddebb92b9fca2b441",
+    "fix_date": "2026-08-08",
+    "subject": "Fixed #37263 -- Fixed changelist __exact search crashes and over-matching.",
+    "src_files": [
+      "django/contrib/admin/formfields.py",
+      "django/contrib/admin/options.py",
+      "tests/admin_changelist/admin.py",
+      "tests/admin_changelist/models.py",
+      "tests/admin_changelist/tests.py"
+    ],
+    "test_files": [],
+    "prompt": "django admin 的 changelist 搜索，对非文本字段用 `__exact` 时有问题：非法搜索词不会在入口被拒（后面直接崩），而布尔 / choices 字段的精确匹配又会过度匹配——大小写不敏感，把不该匹配的记录也搜出来。\n\n请修好搜索词的转换与匹配逻辑（用对应的表单字段来校验，不要自己拿 to_python），补测试：布尔字段的 exact（含显式 None、大小写）、choices 字段的 exact 以及 changelist 视图。"
+  },
+  {
+    "index": 221,
+    "suggested_id": "T291",
+    "repo": "django/django",
+    "repo_url": "https://github.com/django/django",
+    "base_sha": "2c2d36376a0ce0edc048c077a60be6e3b953bb09",
+    "base_permalink": "https://github.com/django/django/commit/2c2d36376a0ce0edc048c077a60be6e3b953bb09",
+    "fix_sha": "56ed37e17e5b1a509aa68a0c797dcff34fcc1366",
+    "fix_date": "2026-02-09",
+    "subject": "Fixed #36903 -- Fixed further NameErrors when inspecting functions with deferred annotations.",
+    "src_files": [
+      "django/contrib/auth/__init__.py",
+      "django/core/checks/security/csrf.py",
+      "django/core/checks/urls.py",
+      "django/db/models/expressions.py",
+      "django/template/base.py",
+      "django/utils/deprecation.py",
+      "django/utils/inspect.py",
+      "tests/check_framework/urls/good_error_handler_deferred_annotations.py",
+      "tests/expressions/tests.py",
+      "tests/template_tests/tests.py"
+    ],
+    "test_files": [
+      "tests/auth_tests/test_auth_backends.py",
+      "tests/check_framework/test_security.py",
+      "tests/check_framework/test_urls.py",
+      "tests/deprecation/test_deprecate_posargs.py"
+    ],
+    "prompt": "django 在 Python 3.14+（延迟注解，PEP 649）下检查用户函数和可调用对象时会抛 NameError：好几处直接对函数签名求值，碰到前向引用就炸。\n\n请提供一个安全的 introspection 包装并把这些调用点换过去，补测试：带延迟注解的 backend、callable、装饰器拒绝可变位置参数、表达式签名、错误视图。"
+  },
+  {
+    "index": 222,
+    "suggested_id": "T292",
+    "repo": "django/django",
+    "repo_url": "https://github.com/django/django",
+    "base_sha": "6e1ece7ed522c904a674966fa985159b7bbf1545",
+    "base_permalink": "https://github.com/django/django/commit/6e1ece7ed522c904a674966fa985159b7bbf1545",
+    "fix_sha": "73d5eb808435bcf27ebc935847196ac9e97b6ddc",
+    "fix_date": "2024-02-23",
+    "subject": "Fixed #35241 -- Cached model's full parent list.",
+    "src_files": [
+      "django/contrib/admin/helpers.py",
+      "django/db/models/base.py",
+      "django/db/models/deletion.py",
+      "django/db/models/expressions.py",
+      "django/db/models/options.py",
+      "django/db/models/query.py",
+      "django/db/models/query_utils.py",
+      "django/db/models/sql/compiler.py",
+      "django/forms/models.py",
+      "tests/model_meta/tests.py"
+    ],
+    "test_files": [],
+    "prompt": "django 的模型每次取父类列表（`_meta.get_parent_list` / all_parents）都要重新走一遍 meta 查找，继承链多的地方开销明显；admin helpers、删除、表达式构造这些调用点还在反复取。\n\n请把父类列表缓存起来（注意不能改变删除、表达式和 admin 那几处的行为），补测试。"
+  },
+  {
+    "index": 223,
+    "suggested_id": "T293",
+    "repo": "pylint-dev/astroid",
+    "repo_url": "https://github.com/pylint-dev/astroid",
+    "base_sha": "848d754518b062f7db0167d3107bb49aab4580a9",
+    "base_permalink": "https://github.com/pylint-dev/astroid/commit/848d754518b062f7db0167d3107bb49aab4580a9",
+    "fix_sha": "4e1842043b61350d0469c07741d7ea12eee31bf3",
+    "fix_date": "2026-06-24",
+    "subject": "Fix partial descriptor binding crash",
+    "src_files": [
+      "astroid/brain/brain_functools.py",
+      "astroid/interpreter/objectmodel.py",
+      "astroid/objects.py"
+    ],
+    "test_files": [
+      "tests/brain/test_brain.py"
+    ],
+    "prompt": "astroid 在推断被 `functools.partial` 包住的描述符（比如 partial 一个方法或属性访问器）时会崩，抛的是内部推断异常。\n\n请修好 brain_functools / objectmodel / objects 这几处，补一个 partial 描述符绑定的测试。"
+  },
+  {
+    "index": 224,
+    "suggested_id": "T294",
+    "repo": "pylint-dev/astroid",
+    "repo_url": "https://github.com/pylint-dev/astroid",
+    "base_sha": "8696918751efe8a49ca13c4ed6ec03c084be8371",
+    "base_permalink": "https://github.com/pylint-dev/astroid/commit/8696918751efe8a49ca13c4ed6ec03c084be8371",
+    "fix_sha": "f201120ba4c994517ca30ab30ef0108b68ed6505",
+    "fix_date": "2024-10-08",
+    "subject": "Change order of search path to fix inconsistency between pylint and astroid. (#2589)",
+    "src_files": [
+      "ChangeLog",
+      "astroid/modutils.py",
+      "astroid/util.py"
+    ],
+    "test_files": [
+      "tests/test_modutils.py"
+    ],
+    "prompt": "astroid 和 pylint 对同一个文件算出来的模块搜索路径顺序不一致，于是两边对\"这个 import 到底解析到哪个模块\"的判断不一样（modutils 和 util 各有一套顺序）。\n\n请统一成同一套顺序，补一个 `modpath_from_file` 顺序的测试。"
+  },
+  {
+    "index": 225,
+    "suggested_id": "T295",
+    "repo": "pylint-dev/astroid",
+    "repo_url": "https://github.com/pylint-dev/astroid",
+    "base_sha": "ef5d473252d0c40cd5aed6af29f4ffac34273432",
+    "base_permalink": "https://github.com/pylint-dev/astroid/commit/ef5d473252d0c40cd5aed6af29f4ffac34273432",
+    "fix_sha": "2c08ac19bd34e6715c188731ebfefbac77c244b1",
+    "fix_date": "2026-03-02",
+    "subject": "Fix ValueError in __str__/repr and error messages with extreme values (#2971)",
+    "src_files": [
+      "ChangeLog",
+      "astroid/interpreter/objectmodel.py",
+      "astroid/nodes/node_classes.py",
+      "astroid/nodes/node_ng.py"
+    ],
+    "test_files": [
+      "tests/test_nodes.py"
+    ],
+    "prompt": "astroid 在生成节点的 `__str__`/`repr` 和错误信息时，碰到极端值会抛 ValueError：标识符特别长（50 多个字符）时 pprint 的宽度算成负数，超大整数做下标也会崩。\n\n请修好这几处，补测试：长名字、超大整数、超大整数下标。"
+  },
+  {
+    "index": 226,
+    "suggested_id": "T296",
+    "repo": "sympy/sympy",
+    "repo_url": "https://github.com/sympy/sympy",
+    "base_sha": "d780c8bd9d0593dc451b9d8e2f1b537eaf916273",
+    "base_permalink": "https://github.com/sympy/sympy/commit/d780c8bd9d0593dc451b9d8e2f1b537eaf916273",
+    "fix_sha": "b4d02dcd82dfb81b0b73f27119d398b86bb80ada",
+    "fix_date": "2025-12-22",
+    "subject": "fix(ntheory): make ntheory mostly thread-safe",
+    "src_files": [
+      "sympy/ntheory/generate.py",
+      "sympy/ntheory/partitions_.py"
+    ],
+    "test_files": [
+      "sympy/ntheory/tests/test_factor_.py",
+      "sympy/ntheory/tests/test_generate.py",
+      "sympy/ntheory/tests/test_qs.py"
+    ],
+    "prompt": "sympy 的 ntheory 不是线程安全的：素数筛 `Sieve` 的数组和 partitions_ 里的全局变量在多线程下会被写坏，或者抛内部错误。\n\n请把筛数组改成 copy-on-write、全局变量改成原子赋值，让这块基本可重入，补测试。"
+  },
+  {
+    "index": 227,
+    "suggested_id": "T297",
+    "repo": "sympy/sympy",
+    "repo_url": "https://github.com/sympy/sympy",
+    "base_sha": "52a71d9c1d8d6039e42078664cc88323fc2438e8",
+    "base_permalink": "https://github.com/sympy/sympy/commit/52a71d9c1d8d6039e42078664cc88323fc2438e8",
+    "fix_sha": "9d16993f3bdd54a2ca0d3888b038e9e966a51757",
+    "fix_date": "2025-11-26",
+    "subject": "fixed invert for Fp groups, preventing it from crashing with key errors, and added image membership test for Fp groups and permutation groups",
+    "src_files": [
+      "sympy/combinatorics/coset_table.py",
+      "sympy/combinatorics/homomorphisms.py"
+    ],
+    "test_files": [
+      "sympy/combinatorics/tests/test_homomorphisms.py"
+    ],
+    "prompt": "sympy 的 Fp 群求逆会崩：`invert` 在某些元素上找不到逆就抛 KeyError，而不是给出正确结果；顺带 Fp 群和置换群的 image 成员判断也需要补上。\n\n请修好 coset_table 和 homomorphisms 这两处，补一个 Fp 群同构的测试。"
+  },
+  {
+    "index": 228,
+    "suggested_id": "T298",
+    "repo": "sqlalchemy/alembic",
+    "repo_url": "https://github.com/sqlalchemy/alembic",
+    "base_sha": "588bdacfac736cea7d51a0e21a3ba56c8e592fc9",
+    "base_permalink": "https://github.com/sqlalchemy/alembic/commit/588bdacfac736cea7d51a0e21a3ba56c8e592fc9",
+    "fix_sha": "fa35ee9264cb0cbe25729c753595f7a6ebbd3f70",
+    "fix_date": "2026-02-10",
+    "subject": "revert primary_key=True change and replace with inline_primary_key",
+    "src_files": [
+      "alembic/ddl/base.py",
+      "alembic/ddl/impl.py",
+      "alembic/op.pyi",
+      "alembic/operations/base.py",
+      "alembic/operations/ops.py",
+      "alembic/operations/toimpl.py"
+    ],
+    "test_files": [
+      "tests/test_batch.py",
+      "tests/test_op.py",
+      "tests/test_postgresql.py"
+    ],
+    "prompt": "alembic 的 `Operations.add_column` 在较新版本里会自动把 `primary_key=True` 渲染成内联的 `PRIMARY KEY`，这会让\"只加一列\"的迁移顺带改掉表的主键约束，对已有主键的表是破坏性的。\n\n请把默认行为改回不内联，同时提供显式的内联方式（`inline_primary_key`），并保持 add_column 既有入口兼容；补测试：内联主键、普通主键、默认不内联、以及删掉主键列再加回来的场景。"
   }
 ]
