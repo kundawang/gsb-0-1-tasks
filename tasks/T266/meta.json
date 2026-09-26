@@ -1,0 +1,37 @@
+{
+  "task_id": "T266",
+  "title": "openai/openai-python 缺陷修复：fix(client): honor Retry-After delays up to two minutes (#35",
+  "created_at": "2026-09-26T23:39:14",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 openai/openai-python @ 3844843c27",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t266/base",
+    "sha": "e54ce8dda0c2c161e91daab5c2296923075484e2",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/e54ce8dda0c2c161e91daab5c2296923075484e2"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t266/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t266/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/openai/openai-python base=https://github.com/openai/openai-python/commit/3844843c277f42b0b18beaa58152cfda61df524a fix=7fa7946485b5ecbadd0ebf8624c574e2c9e3370c"
+}
