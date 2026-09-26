@@ -1,0 +1,37 @@
+{
+  "task_id": "T234",
+  "title": "Textualize/textual 缺陷修复：fix threading issue (#3779)",
+  "created_at": "2026-09-26T19:57:05",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 Textualize/textual @ eed7a94eda",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t234/base",
+    "sha": "cd0cdec9bb2e021a5bc8760ac8f6886f3d55f16e",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/cd0cdec9bb2e021a5bc8760ac8f6886f3d55f16e"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t234/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t234/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/Textualize/textual base=https://github.com/Textualize/textual/commit/eed7a94edac0f2402775d83e7a646a4a0153c165 fix=1a76b628c78c15c0dca4e31f76c5ce6d43c80cbf"
+}
