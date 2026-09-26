@@ -1,0 +1,37 @@
+{
+  "task_id": "T301",
+  "title": "psycopg/psycopg 缺陷修复：fix(pool): fix infinite loop with close_returns=True",
+  "created_at": "2026-09-27T00:26:15",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 psycopg/psycopg @ aa17f53a53",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t301/base",
+    "sha": "0b55176aae0728b5c3391edffaec1a4ecd6d41e8",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/0b55176aae0728b5c3391edffaec1a4ecd6d41e8"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t301/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t301/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/psycopg/psycopg base=https://github.com/psycopg/psycopg/commit/aa17f53a536443a2ffc5a7be57d3c072fdb42462 fix=6b74a2d0f974b0daf6354240596f4017880af93d"
+}
