@@ -1,0 +1,37 @@
+{
+  "task_id": "T327",
+  "title": "fsspec/filesystem_spec 缺陷修复：LocalFileSystem fix _strip_protocol for root directory (#147",
+  "created_at": "2026-09-27T00:33:14",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 fsspec/filesystem_spec @ ecc5765065",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t327/base",
+    "sha": "016221d38ebbc8edb17db667a055c34b55599278",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/016221d38ebbc8edb17db667a055c34b55599278"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t327/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t327/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/fsspec/filesystem_spec base=https://github.com/fsspec/filesystem_spec/commit/ecc576506567b8413a4c5402cbb06b28f1ba27bb fix=16535529c79403778738d3226819acd1aecb7bc0"
+}
