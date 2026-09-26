@@ -1,0 +1,37 @@
+{
+  "task_id": "T304",
+  "title": "getsentry/sentry-python 缺陷修复：fix(batcher): Do not let a failed flush kill the flusher thr",
+  "created_at": "2026-09-27T00:26:48",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 getsentry/sentry-python @ 9147b3c8bf",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t304/base",
+    "sha": "c912a106ac38311b14ba1088fa873fe24e2277ba",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/c912a106ac38311b14ba1088fa873fe24e2277ba"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t304/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t304/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/getsentry/sentry-python base=https://github.com/getsentry/sentry-python/commit/9147b3c8bf03072e0ed2af8fc4c58507a700a286 fix=e17291eea3d274c6a64252760af956b43f94947c"
+}
