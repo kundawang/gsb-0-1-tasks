@@ -1,0 +1,37 @@
+{
+  "task_id": "T229",
+  "title": "dask/dask 缺陷修复：Fix orphaned dependencies in Fused expression (#1163)",
+  "created_at": "2026-09-26T19:55:14",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 dask/dask @ 735fc89048",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t229/base",
+    "sha": "7595bacc1415ba28a2991ccf20d201377cedd031",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/7595bacc1415ba28a2991ccf20d201377cedd031"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t229/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t229/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/dask/dask base=https://github.com/dask/dask/commit/735fc8904832c723680c5c9ef5f89e01e622a076 fix=4cb13201687fdc7ac516c6c3b28270344e28f145"
+}
