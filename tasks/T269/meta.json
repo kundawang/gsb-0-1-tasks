@@ -1,0 +1,37 @@
+{
+  "task_id": "T269",
+  "title": "nedbat/coveragepy 缺陷修复：fix: multiline statement branches with sysmon #2070",
+  "created_at": "2026-09-26T23:40:06",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 nedbat/coveragepy @ d2b0a9b6fd",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t269/base",
+    "sha": "4a4ca3d2c466eb19cd0ce6a47500700a21dc4637",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/4a4ca3d2c466eb19cd0ce6a47500700a21dc4637"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t269/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t269/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/nedbat/coveragepy base=https://github.com/nedbat/coveragepy/commit/d2b0a9b6fd7df70cd5a712755f3153007fce3fe8 fix=31f91f816244a89051b301f2e3536e5f7b951e3d"
+}
