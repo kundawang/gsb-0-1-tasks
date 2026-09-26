@@ -1,0 +1,37 @@
+{
+  "task_id": "T220",
+  "title": "mongodb/mongo-python-driver 缺陷修复：PYTHON-5794 - Add prose tests to verify correct retry behavi",
+  "created_at": "2026-09-26T19:53:11",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 mongodb/mongo-python-driver @ 35e51a50f3",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t220/base",
+    "sha": "0f5cb3412bc31175ad929cfaa65676b06ea98796",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/0f5cb3412bc31175ad929cfaa65676b06ea98796"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t220/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t220/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/mongodb/mongo-python-driver base=https://github.com/mongodb/mongo-python-driver/commit/35e51a50f3ecf2020be10b6eae96e3ad0038174a fix=5da91837d4db9b2f1d3521f2e39cff9e0ff94334"
+}
