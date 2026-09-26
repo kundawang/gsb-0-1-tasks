@@ -1,0 +1,37 @@
+{
+  "task_id": "T257",
+  "title": "pallets/werkzeug 缺陷修复：fix cache control issues",
+  "created_at": "2026-09-26T20:03:35",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pallets/werkzeug @ 8556654833",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t257/base",
+    "sha": "ca936740deee2c1d8d251edb9fde5dd49137e049",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/ca936740deee2c1d8d251edb9fde5dd49137e049"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t257/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t257/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pallets/werkzeug base=https://github.com/pallets/werkzeug/commit/855665483334f8ae45d0b847351083617f81c4f8 fix=b28001e06f71126d32ec095721282c7da647c3c6"
+}
