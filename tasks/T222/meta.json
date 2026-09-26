@@ -1,0 +1,37 @@
+{
+  "task_id": "T222",
+  "title": "mongodb/mongo-python-driver 缺陷修复：PYTHON-5021 - Fix usages of getaddrinfo to be non-blocking (",
+  "created_at": "2026-09-26T19:54:00",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 mongodb/mongo-python-driver @ 8fa6750a7e",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t222/base",
+    "sha": "cadd885ae3684419bcdf04360c5fa1be776768eb",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/cadd885ae3684419bcdf04360c5fa1be776768eb"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t222/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t222/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/mongodb/mongo-python-driver base=https://github.com/mongodb/mongo-python-driver/commit/8fa6750a7e077c33f304e72f3e17467ced9cd224 fix=e4d84494c321f2532c93cf4d5cc815311f396e03"
+}
