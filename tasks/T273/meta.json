@@ -1,0 +1,37 @@
+{
+  "task_id": "T273",
+  "title": "fastapi/fastapi 缺陷修复：🐛 Fix support for functools wraps and partial combined, for ",
+  "created_at": "2026-09-26T23:41:05",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 fastapi/fastapi @ c57ac7bdf3",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t273/base",
+    "sha": "953c7c11c31c1e9e8781b17af9fe85999ed29a74",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/953c7c11c31c1e9e8781b17af9fe85999ed29a74"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t273/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t273/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/fastapi/fastapi base=https://github.com/fastapi/fastapi/commit/c57ac7bdf3613798c94caceff562a41fa16d4a2d fix=bba4d4c95e0de8fc9c99f88c269909d37d64d494"
+}
