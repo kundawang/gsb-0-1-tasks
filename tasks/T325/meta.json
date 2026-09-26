@@ -1,0 +1,37 @@
+{
+  "task_id": "T325",
+  "title": "pgjones/hypercorn 缺陷修复：fix connection state leak",
+  "created_at": "2026-09-27T00:33:01",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 pgjones/hypercorn @ 50057c4ac7",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t325/base",
+    "sha": "87e1d7432fa85e60029de0a756f402503e79e53d",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/87e1d7432fa85e60029de0a756f402503e79e53d"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t325/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t325/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/pgjones/hypercorn base=https://github.com/pgjones/hypercorn/commit/50057c4ac733004d13135423f204fed6e1bc8062 fix=cd992f80010edd4ee1398601b4ad54394a423f15"
+}
