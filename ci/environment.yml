@@ -1,0 +1,14 @@
+name: dask-expr
+channels:
+  - conda-forge
+dependencies:
+  - pytest
+  - pytest-cov
+  - pytest-xdist
+  - dask  # overridden by git tip below
+  - pyarrow
+  - pandas>=2
+  - pre-commit
+  - pip:
+      - git+https://github.com/dask/distributed
+      - git+https://github.com/dask/dask
