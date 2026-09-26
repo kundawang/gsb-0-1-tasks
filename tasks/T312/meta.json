@@ -1,0 +1,37 @@
+{
+  "task_id": "T312",
+  "title": "strawberry-graphql/strawberry 缺陷修复：fix: Ensure asyncgens gets properly closed in case of errors",
+  "created_at": "2026-09-27T00:28:45",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 strawberry-graphql/strawberry @ f0cb9654fc",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t312/base",
+    "sha": "53755ae77cbcb5e4568d25583cf509e60a1212e1",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/53755ae77cbcb5e4568d25583cf509e60a1212e1"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t312/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t312/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/strawberry-graphql/strawberry base=https://github.com/strawberry-graphql/strawberry/commit/f0cb9654fcb44a9488de9d3e0944d5fe890b5c48 fix=46b7d6d1a755beac66ee4553e2ab429876b571d1"
+}
