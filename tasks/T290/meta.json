@@ -1,0 +1,37 @@
+{
+  "task_id": "T290",
+  "title": "django/django 缺陷修复：Fixed #37263 -- Fixed changelist __exact search crashes and ",
+  "created_at": "2026-09-26T23:53:57",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 django/django @ 73cc09f14f",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t290/base",
+    "sha": "29d3d0083e3b0324c6f59e041b6401e47953308f",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/29d3d0083e3b0324c6f59e041b6401e47953308f"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t290/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t290/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/django/django base=https://github.com/django/django/commit/73cc09f14f13fedddc14d6ba5b287cb33c24e4a4 fix=fe81969e83d03b61e587a28ddebb92b9fca2b441"
+}
