@@ -1,0 +1,37 @@
+{
+  "task_id": "T338",
+  "title": "kiorky/croniter 缺陷修复：Fix overflow error on 32bit systems",
+  "created_at": "2026-09-27T00:36:36",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 kiorky/croniter @ 40920bc724",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t338/base",
+    "sha": "7773d435f278ea8cd2834284e1ae5c99c519b2bb",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/7773d435f278ea8cd2834284e1ae5c99c519b2bb"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t338/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t338/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/kiorky/croniter base=https://github.com/kiorky/croniter/commit/40920bc724f7e27a6973bbd49bc43ebf57f16aa1 fix=99bf300473a60b9c3a7b8594b58121748e171676"
+}
