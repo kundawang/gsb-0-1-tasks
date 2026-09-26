@@ -1,0 +1,37 @@
+{
+  "task_id": "T262",
+  "title": "mongodb/mongo-python-driver 缺陷修复：PYTHON-5014 Fix handling of async socket errors in kms reque",
+  "created_at": "2026-09-26T23:37:37",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 mongodb/mongo-python-driver @ 6c9a20a49d",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t262/base",
+    "sha": "f9a4573c55274c1affba8842e3985e799b78b9cf",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/f9a4573c55274c1affba8842e3985e799b78b9cf"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t262/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t262/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/mongodb/mongo-python-driver base=https://github.com/mongodb/mongo-python-driver/commit/6c9a20a49d37bff2f2163011d1ccd686f83555a6 fix=493fc2ab3e237c2155fde4400002ed2aafe9b2be"
+}
