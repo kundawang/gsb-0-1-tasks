@@ -1,0 +1,94 @@
+[package]
+name = "dbt-common"
+version.workspace = true
+homepage.workspace = true
+repository.workspace = true
+authors.workspace = true
+description.workspace = true
+license.workspace = true
+keywords.workspace = true
+edition.workspace = true
+
+[lints]
+workspace = true
+
+[dependencies]
+dbt-error = { workspace = true }
+dbt-frontend-common = { workspace = true }
+dbt-telemetry = { workspace = true }
+
+# leaf dependencies (depend on little more than std lib)
+dbt-cancel = { workspace = true }
+dbt-proc-macros = { workspace = true }
+
+datafusion = { workspace = true }
+
+clap = { workspace = true, features = ["derive", "env"] }
+counter = { workspace = true }
+dialoguer = { workspace = true }
+int-enum = { workspace = true }
+itertools = { workspace = true }
+regex = { workspace = true }
+unicode-segmentation = { version = "1.12" }
+uuid = { workspace = true }
+
+arrow = { workspace = true }
+arrow-schema = { workspace = true }
+chrono = { workspace = true }
+comfy-table = { workspace = true }
+console = { workspace = true }
+dashmap = { workspace = true }
+dbt-serde_yaml = { workspace = true }
+humantime = { workspace = true }
+minijinja = { workspace = true }
+prost = { workspace = true }
+
+schemars = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+strum = { workspace = true }
+strum_macros = { workspace = true }
+term_size = { workspace = true }
+
+
+arc-swap = { workspace = true }
+tokio = { workspace = true, features = ["fs"] }
+
+pathdiff = { workspace = true }
+
+indicatif = { workspace = true }
+log = { workspace = true }
+rust-embed = { workspace = true }
+
+# Tracing
+tracing = { workspace = true }
+tracing-log = { workspace = true } # temporary until we migrate to tracing exclusively
+tracing-subscriber = { workspace = true }
+
+# Optional embedded OTLP exporter for traces
+opentelemetry = { workspace = true, optional = true }
+opentelemetry-otlp = { workspace = true, optional = true }
+opentelemetry-semantic-conventions = { workspace = true, optional = true }
+opentelemetry_sdk = { workspace = true, optional = true }
+
+[features]
+default = []
+otlp = [
+  "opentelemetry",
+  "opentelemetry_sdk",
+  "opentelemetry-semantic-conventions",
+  "opentelemetry-otlp",
+]
+
+[target.'cfg(windows)'.dependencies]
+dunce = "1.0.5"
+powershell_script = "1.1.0"
+
+[dev-dependencies]
+indoc = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }
+
+[lib]
+name = "dbt_common"
+path = "src/mod.rs"
+doctest = false
