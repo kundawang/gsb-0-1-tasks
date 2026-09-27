@@ -1,0 +1,37 @@
+{
+  "task_id": "T353",
+  "title": "temporalio/sdk-python 缺陷修复：Fix interceptor contract inconsistency for start_update_with",
+  "created_at": "2026-09-27T17:23:59",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 temporalio/sdk-python @ 24badcfd80",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t353/base",
+    "sha": "225fae4dc772f66f60b69f45bf7547788683daa1",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/225fae4dc772f66f60b69f45bf7547788683daa1"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t353/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t353/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/temporalio/sdk-python base=https://github.com/temporalio/sdk-python/commit/24badcfd8095312a67269c4b31fee09897ac4d79 fix=b9b2cc31db8fd85b23a81dd065da70a8bbab2616"
+}
