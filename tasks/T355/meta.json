@@ -1,0 +1,37 @@
+{
+  "task_id": "T355",
+  "title": "dbt-labs/dbt-core 缺陷修复：Implement correct state:modified behavior for changed macros",
+  "created_at": "2026-09-27T17:24:37",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 dbt-labs/dbt-core @ 6737ed27e1",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t355/base",
+    "sha": "85aa4726583f4c13f19ac8718dbc5c0509dfadd2",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/85aa4726583f4c13f19ac8718dbc5c0509dfadd2"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t355/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t355/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/dbt-labs/dbt-core base=https://github.com/dbt-labs/dbt-core/commit/6737ed27e1b6f3a33578b7f571ccf772e70322c7 fix=9362e62672edc5021afd94fc8cc2b9ba831bed72"
+}
