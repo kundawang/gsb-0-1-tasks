@@ -1,0 +1,37 @@
+{
+  "task_id": "T350",
+  "title": "temporalio/sdk-python 缺陷修复：Fix repeated Deep Agents tool calls with identical arguments",
+  "created_at": "2026-09-27T17:23:27",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 temporalio/sdk-python @ a6a8b572a0",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t350/base",
+    "sha": "ebbaf516ae7705a7f2985af02b65fa58e18a90c2",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/ebbaf516ae7705a7f2985af02b65fa58e18a90c2"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t350/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t350/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/temporalio/sdk-python base=https://github.com/temporalio/sdk-python/commit/a6a8b572a007904a36a11a2b75f42089067a10b2 fix=ab25ed693f7ec77589346e66c98db299a8c9c9fe"
+}
