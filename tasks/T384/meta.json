@@ -1,0 +1,37 @@
+{
+  "task_id": "T384",
+  "title": "sqlfluff/sqlfluff 缺陷修复：[BUGFIX] Changing cwd temporarily on manifest load as dbt is",
+  "created_at": "2026-09-27T17:36:18",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 sqlfluff/sqlfluff @ e233d8a317",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t384/base",
+    "sha": "197261902762c594a0fa4dd3513a23004a616683",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/197261902762c594a0fa4dd3513a23004a616683"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t384/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t384/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/sqlfluff/sqlfluff base=https://github.com/sqlfluff/sqlfluff/commit/e233d8a317a4d8992c3ba0151a75dd387b700dad fix=172dafea124fbba1251ccbf36fbb545ff725d707"
+}
