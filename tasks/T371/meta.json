@@ -1,0 +1,37 @@
+{
+  "task_id": "T371",
+  "title": "celery/celery 缺陷修复：fix: prevent graceful shutdown regression in connection reco",
+  "created_at": "2026-09-27T17:33:51",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 celery/celery @ c701811017",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t371/base",
+    "sha": "5eb67befe233cf10a92a6925223218df61e90d65",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/5eb67befe233cf10a92a6925223218df61e90d65"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t371/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t371/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/celery/celery base=https://github.com/celery/celery/commit/c7018110173e8cfa3b2cc507608250c69a81132a fix=feb789accf0dcbbe1323ab59148b9e8b1e363bdd"
+}
