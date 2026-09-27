@@ -1,0 +1,135 @@
+# YML test files are auto-generated from SQL files and should not be edited by
+# hand. To help enforce this, the "hash" field in the file must match a hash
+# computed by SQLFluff when running the tests. Please run
+# `python test/generate_parse_fixture_yml.py`  to generate them after adding or
+# altering SQL files.
+_hash: e49b6d2bea54dae9c4a29e63e5f8dbc165525e0b9b91100b981a377ab6dfa1c1
+file:
+  statement:
+    select_statement:
+      select_clause:
+      - keyword: SELECT
+      - select_clause_element:
+          array_literal:
+            start_square_bracket: '['
+            end_square_bracket: ']'
+      - comma: ','
+      - select_clause_element:
+          array_literal:
+            start_square_bracket: '['
+            boolean_literal: 'false'
+            end_square_bracket: ']'
+      - comma: ','
+      - select_clause_element:
+          array_literal:
+            keyword: ARRAY
+            start_angle_bracket: <
+            data_type:
+              data_type_identifier: BOOLEAN
+            end_angle_bracket: '>'
+            start_square_bracket: '['
+            boolean_literal: 'false'
+            end_square_bracket: ']'
+      - comma: ','
+      - select_clause_element:
+          array_literal:
+            start_square_bracket: '['
+            quoted_literal: "'a'"
+            end_square_bracket: ']'
+          alias_expression:
+            keyword: AS
+            naked_identifier: strcol1
+      - comma: ','
+      - select_clause_element:
+          array_literal:
+            keyword: ARRAY
+            start_angle_bracket: <
+            data_type:
+              data_type_identifier: string
+            end_angle_bracket: '>'
+            start_square_bracket: '['
+            quoted_literal: "'b'"
+            end_square_bracket: ']'
+          alias_expression:
+            keyword: AS
+            naked_identifier: strcol2
+      - comma: ','
+      - select_clause_element:
+          array_literal:
+            start_square_bracket: '['
+            numeric_literal: '1.0'
+            end_square_bracket: ']'
+          alias_expression:
+            keyword: AS
+            naked_identifier: numcol1
+      - comma: ','
+      - select_clause_element:
+          array_literal:
+            keyword: ARRAY
+            start_angle_bracket: <
+            data_type:
+              data_type_identifier: NUMERIC
+            end_angle_bracket: '>'
+            start_square_bracket: '['
+            numeric_literal: '1.4'
+            end_square_bracket: ']'
+          alias_expression:
+            keyword: AS
+            naked_identifier: numcol2
+      - comma: ','
+      - select_clause_element:
+          array_literal:
+            start_square_bracket: '['
+            expression:
+              typeless_struct:
+                keyword: STRUCT
+                bracketed:
+                - start_bracket: (
+                - quoted_literal: '"Rudisha"'
+                - alias_expression:
+                    keyword: AS
+                    naked_identifier: name
+                - comma: ','
+                - array_literal:
+                  - start_square_bracket: '['
+                  - numeric_literal: '23.4'
+                  - comma: ','
+                  - numeric_literal: '26.3'
+                  - comma: ','
+                  - numeric_literal: '26.4'
+                  - comma: ','
+                  - numeric_literal: '26.1'
+                  - end_square_bracket: ']'
+                - alias_expression:
+                    keyword: AS
+                    naked_identifier: splits
+                - end_bracket: )
+            end_square_bracket: ']'
+          alias_expression:
+            keyword: AS
+            naked_identifier: struct1
+      - comma: ','
+      - select_clause_element:
+          expression:
+            column_reference:
+            - naked_identifier: col1
+            - dot: .
+            - naked_identifier: obj1
+            array_accessor:
+              start_square_bracket: '['
+              expression:
+                function:
+                  function_name:
+                    function_name_identifier: safe_offset
+                  bracketed:
+                    start_bracket: (
+                    expression:
+                      numeric_literal: '1'
+                    end_bracket: )
+              end_square_bracket: ']'
+            semi_structured_expression:
+              dot: .
+              naked_identifier: a
+          alias_expression:
+            keyword: AS
+            naked_identifier: struct_safe_offset

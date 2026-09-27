@@ -1,0 +1,70 @@
+# YML test files are auto-generated from SQL files and should not be edited by
+# hand. To help enforce this, the "hash" field in the file must match a hash
+# computed by SQLFluff when running the tests. Please run
+# `python test/generate_parse_fixture_yml.py`  to generate them after adding or
+# altering SQL files.
+_hash: 9e5c3e91429466790bf4c4d3c4b401d13c502e5383a2a24e2b9d7bf14a7a95ea
+file:
+  statement:
+    select_statement:
+      select_clause:
+      - keyword: SELECT
+      - select_clause_element:
+          function:
+            function_name:
+              function_name_identifier: DATE
+            bracketed:
+            - start_bracket: (
+            - expression:
+                column_reference:
+                - naked_identifier: zendesk
+                - dot: .
+                - naked_identifier: created_at
+            - comma: ','
+            - expression:
+                quoted_literal: "'America/New_York'"
+            - end_bracket: )
+          alias_expression:
+            keyword: AS
+            naked_identifier: date
+      - comma: ','
+      - select_clause_element:
+          function:
+            function_name:
+              function_name_identifier: COUNT
+            bracketed:
+              start_bracket: (
+              expression:
+                case_expression:
+                - keyword: CASE
+                - when_clause:
+                  - keyword: WHEN
+                  - expression:
+                      column_reference:
+                      - naked_identifier: zendesk
+                      - dot: .
+                      - naked_identifier: support_team
+                      keyword: IN
+                      bracketed:
+                      - start_bracket: (
+                      - quoted_literal: "'tech support'"
+                      - comma: ','
+                      - quoted_literal: "'taskus'"
+                      - comma: ','
+                      - quoted_literal: "'onc'"
+                      - end_bracket: )
+                  - keyword: THEN
+                  - expression:
+                      numeric_literal: '1'
+                - keyword: END
+              end_bracket: )
+          alias_expression:
+            keyword: AS
+            naked_identifier: tech_support
+      from_clause:
+        keyword: FROM
+        from_expression:
+          from_expression_element:
+            table_expression:
+              table_reference:
+                naked_identifier: zendesk

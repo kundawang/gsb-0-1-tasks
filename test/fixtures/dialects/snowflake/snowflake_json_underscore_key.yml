@@ -1,0 +1,31 @@
+# YML test files are auto-generated from SQL files and should not be edited by
+# hand. To help enforce this, the "hash" field in the file must match a hash
+# computed by SQLFluff when running the tests. Please run
+# `python test/generate_parse_fixture_yml.py`  to generate them after adding or
+# altering SQL files.
+_hash: 086b545c01f2b427fc396b6127f0b9edfb33c01818dc97ff5ece225dbd3529cf
+file:
+  statement:
+    select_statement:
+      select_clause:
+        keyword: select
+        select_clause_element:
+          expression:
+            column_reference:
+            - naked_identifier: x
+            - dot: .
+            - naked_identifier: y
+            snowflake_semi_structured_expression:
+              colon: ':'
+              semi_structured_element: _z
+            cast_expression:
+              casting_operator: '::'
+              data_type:
+                data_type_identifier: string
+      from_clause:
+        keyword: from
+        from_expression:
+          from_expression_element:
+            table_expression:
+              table_reference:
+                naked_identifier: x
