@@ -1,0 +1,194 @@
+name: Release
+on:
+  push:
+    tags: ["*.*.*"]
+env:
+  dists-artifact-name: python-package-distributions
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+permissions: {}
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read # check out the tagged source
+      id-token: write # sign attestations with the workflow identity
+      attestations: write # store the SBOM and provenance attestations
+      artifact-metadata: write # record the attested artifacts
+    steps:
+      - name: Audit outbound network traffic
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        with:
+          egress-policy: audit
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          enable-cache: false
+          cache-dependency-glob: "pyproject.toml"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Python
+        run: uv python install 3.14
+      - name: Pin build timestamps to the release commit for reproducible artifacts
+        run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> "$GITHUB_ENV"
+      - name: Build sdist and wheel
+        run: uv build --python 3.14 --python-preference only-managed --sdist --wheel . --out-dir dist
+      - name: Extract the SBOM the wheel build embedded
+        run: python -m zipfile -e dist/*.whl sbom-extract/ && cp sbom-extract/*.dist-info/sboms/virtualenv.cdx.json .
+      - name: Attest the SBOM against the sdist and wheel
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: dist/*
+          sbom-path: virtualenv.cdx.json
+      - name: Build zipapp
+        run: uv tool run --with tox-uv tox r -e zipapp
+      - name: Attest provenance for the zipapp
+        id: attest
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: virtualenv.pyz
+      - name: Rename provenance bundle to the release asset name
+        env:
+          BUNDLE_PATH: ${{ steps.attest.outputs.bundle-path }}
+        run: cp "$BUNDLE_PATH" virtualenv.pyz.intoto.jsonl
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: ${{ env.dists-artifact-name }}
+          path: dist/*
+      - name: Store the SBOM
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: virtualenv-sbom
+          path: virtualenv.cdx.json
+      - name: Store the zipapp
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: virtualenv-zipapp
+          path: |
+            virtualenv.pyz
+            virtualenv.pyz.intoto.jsonl
+  publish:
+    name: Publish
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: release
+      url: https://pypi.org/project/virtualenv/${{ github.ref_name }}
+    permissions:
+      contents: write # create the GitHub release
+      id-token: write # authenticate to PyPI with trusted publishing
+    steps:
+      - name: Audit outbound network traffic
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        with:
+          egress-policy: audit
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Download all the dists
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: ${{ env.dists-artifact-name }}
+          path: dist/
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          attestations: true
+      - name: Download the zipapp
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: virtualenv-zipapp
+      - name: Create GitHub Release
+        run: gh release create "$GITHUB_REF_NAME" virtualenv.pyz virtualenv.pyz.intoto.jsonl --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Update get-virtualenv
+        env:
+          GH_TOKEN: ${{ secrets.GH_RELEASE_TOKEN }}
+        run: |
+          git clone https://x-access-token:${GH_TOKEN}@github.com/pypa/get-virtualenv.git
+          cp virtualenv.pyz get-virtualenv/public/virtualenv.pyz
+          echo -n "${GITHUB_REF_NAME}" > get-virtualenv/public/version.txt
+          cd get-virtualenv
+          user_info=$(gh api /user)
+          git config user.name "$(echo "$user_info" | jq -r '.name // .login')"
+          git config user.email "$(echo "$user_info" | jq -r '.id')+$(echo "$user_info" | jq -r '.login')@users.noreply.github.com"
+          git add public/virtualenv.pyz public/version.txt
+          git commit -m "update virtualenv to ${GITHUB_REF_NAME}"
+          git push origin main
+  verify:
+    name: Verify
+    needs: publish
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read # download the published zipapp from the release
+      attestations: read # verify the zipapp provenance
+    steps:
+      - name: Install uv
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
+        with:
+          enable-cache: false
+      - name: Download expected distributions
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: ${{ env.dists-artifact-name }}
+          path: expected/
+      - name: Download and verify published distributions
+        run: |
+          mkdir published
+          curl --fail --silent --show-error --retry 5 --retry-all-errors \
+            "https://pypi.org/pypi/virtualenv/$GITHUB_REF_NAME/json" --output release.json
+          for expected in expected/*.whl expected/*.tar.gz; do
+            filename="$(basename "$expected")"
+            url="$(jq --exit-status --raw-output --arg filename "$filename" \
+              '.urls[] | select(.filename == $filename) | .url' release.json)"
+            curl --fail --silent --show-error --retry 5 --retry-all-errors --output "published/$filename" -- "$url"
+            cmp "$expected" "published/$filename"
+            uvx pypi-attestations verify pypi --repository https://github.com/pypa/virtualenv "published/$filename"
+          done
+      - name: Download and verify published zipapp
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "$GITHUB_REF_NAME" --repo pypa/virtualenv \
+            --pattern virtualenv.pyz --pattern virtualenv.pyz.intoto.jsonl --dir published
+          gh attestation verify published/virtualenv.pyz --repo pypa/virtualenv \
+            --bundle published/virtualenv.pyz.intoto.jsonl \
+            --signer-workflow pypa/virtualenv/.github/workflows/release.yaml \
+            --source-ref "$GITHUB_REF" --source-digest "$GITHUB_SHA" --deny-self-hosted-runners
+      - name: Create environments from verified distributions
+        run: |
+          uv python install 3.14
+          for artifact in published/*.whl published/*.tar.gz; do
+            installation="$RUNNER_TEMP/$(basename "$artifact")"
+            uv venv --python 3.14 "$installation"
+            uv pip install --no-cache --python "$installation/bin/python" "$artifact"
+            "$installation/bin/python" -I -m virtualenv --no-download --no-periodic-update "$installation/created"
+            "$installation/created/bin/python" -I -m pip --version
+          done
+          uv run --no-project --python 3.14 python -I published/virtualenv.pyz \
+            --no-download --no-periodic-update "$RUNNER_TEMP/zipapp-created"
+          "$RUNNER_TEMP/zipapp-created/bin/python" -I -m pip --version
+  recovery:
+    name: Recovery
+    if: ${{ always() && needs.build.result == 'success' && needs.publish.result == 'failure' }}
+    needs:
+      - build
+      - publish
+    runs-on: ubuntu-24.04
+    permissions: {}
+    steps:
+      - name: Report partial publication
+        run: |
+          echo "::error::Publication failed. Inspect PyPI, the GitHub release, and get-virtualenv before retrying."
+          echo "Publication may have succeeded on some destinations. Keep the release tag and commit." >> "$GITHUB_STEP_SUMMARY"
+          echo "Follow the partial-publication recovery instructions in docs/development.rst." >> "$GITHUB_STEP_SUMMARY"
