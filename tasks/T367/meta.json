@@ -1,0 +1,37 @@
+{
+  "task_id": "T367",
+  "title": "streamlit/streamlit 缺陷修复：[fix] Prevent upload hang when middleware reads the body fir",
+  "created_at": "2026-09-27T17:48:21",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 streamlit/streamlit @ 913f77c7ce",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t367/base",
+    "sha": "505cf95c36f01be283a14694f9989cf33b7a341d",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/505cf95c36f01be283a14694f9989cf33b7a341d"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t367/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t367/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/streamlit/streamlit base=https://github.com/streamlit/streamlit/commit/913f77c7ceedcde6b2433e1640db54d1d64cdd23 fix=a0394068b6230c821ae93c5790d688f83da69154"
+}
