@@ -1,0 +1,37 @@
+{
+  "task_id": "T365",
+  "title": "PrefectHQ/prefect 缺陷修复：Fix inconsistent work queue handling by agent when cancellin",
+  "created_at": "2026-09-27T17:29:16",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 PrefectHQ/prefect @ 6185549ca6",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t365/base",
+    "sha": "62d5d6c4658f18864ec1743240d9d959157c1e67",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/62d5d6c4658f18864ec1743240d9d959157c1e67"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t365/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t365/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/PrefectHQ/prefect base=https://github.com/PrefectHQ/prefect/commit/6185549ca64a967b83da6370c874ef2522e6deed fix=55269f90e9cd5be4b3f71be4ad54b465132fd3f8"
+}
