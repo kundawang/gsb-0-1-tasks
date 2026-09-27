@@ -1,0 +1,37 @@
+#[cfg(test)]
+mod tests {
+    use crate::sql_types::SATypeOpsImpl;
+    use crate::typed_adapter::ConcreteAdapter;
+    use dbt_common::adapter::AdapterType;
+
+    use dbt_schemas::schemas::relations::SNOWFLAKE_RESOLVED_QUOTING;
+
+    use std::collections::BTreeMap;
+    use std::sync::Arc;
+
+    use crate::AdapterTyping;
+
+    #[test]
+    fn test_adapter_type() {
+        let adapter = ConcreteAdapter::new_mock(
+            AdapterType::Snowflake,
+            BTreeMap::new(),
+            SNOWFLAKE_RESOLVED_QUOTING,
+            Box::new(SATypeOpsImpl::new(AdapterType::Snowflake)),
+            Arc::new(crate::stmt_splitter::NaiveStmtSplitter),
+        );
+        assert_eq!(adapter.adapter_type(), AdapterType::Snowflake);
+    }
+
+    #[test]
+    fn test_quote() {
+        let adapter = ConcreteAdapter::new_mock(
+            AdapterType::Snowflake,
+            BTreeMap::new(),
+            SNOWFLAKE_RESOLVED_QUOTING,
+            Box::new(SATypeOpsImpl::new(AdapterType::Snowflake)),
+            Arc::new(crate::stmt_splitter::NaiveStmtSplitter),
+        );
+        assert_eq!(adapter.quote("abc"), "\"abc\"");
+    }
+}

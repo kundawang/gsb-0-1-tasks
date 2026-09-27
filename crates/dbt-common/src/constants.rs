@@ -1,0 +1,121 @@
+// ----------------------------------------------------------------------------------------------
+// DBT FUSION
+pub const DBT_FUSION: &str = "dbt-fusion";
+pub const DBT_SA_CLI: &str = "dbt-sa-cli";
+
+// ----------------------------------------------------------------------------------------------
+// dbt inputs
+pub const DBT_MIN_SUPPORTED_VERSION: &str = "1.8.0";
+// (versusfacit): Load state from catalogs.yml. We only permit a single
+// catalogs.yml. A possible future direction will be to move this to
+// ~/.dbt directory. This depends on read catalog and Xplat decisions.
+pub const DBT_CONFIG_DIR: &str = ".dbt";
+pub const DBT_CATALOGS_YML: &str = "catalogs.yml";
+pub const DBT_PROJECT_YML: &str = "dbt_project.yml";
+pub const DBT_PROFILES_YML: &str = "profiles.yml";
+pub const DBT_CLOUD_YML: &str = "dbt_cloud.yml";
+
+// ----------------------------------------------------------------------------------------------
+// dbt outputs
+
+//   target/
+//   ├── compiled/
+//   │   ├── model_fs_example.sql
+//   │   └── other_files.sql
+//   ├── run/
+//   │   ├── model_fs_example.sql
+//   │   └── other_files.sql
+//   ├── generic_tests/
+//   │   ├── test.sql
+//   ├── manifest.json
+//   ├── catalog.json
+//   └── logs/
+//       └── fs_run_log.txt
+//   └── db/
+//       └── database/schema/table.parquet
+pub const DBT_TARGET_DIR_NAME: &str = "target";
+pub const DBT_PACKAGES_DIR_NAME: &str = "dbt_packages";
+pub const DBT_INTERNAL_PACKAGES_DIR_NAME: &str = "dbt_internal_packages";
+pub const DBT_MANIFEST_JSON: &str = "manifest.json";
+pub const DBT_MANIFEST_INFO: &str = "manifest.info";
+pub const DBT_SEMANTIC_MANIFEST_JSON: &str = "semantic_manifest.json";
+pub const DBT_CATALOG_JSON: &str = "catalog.json";
+pub const DBT_COMPILED_DIR_NAME: &str = "compiled";
+pub const DBT_METADATA_DIR_NAME: &str = "metadata";
+pub const DBT_EPHEMERAL_DIR_NAME: &str = "ephemeral";
+pub const DBT_HOOKS_DIR_NAME: &str = "hooks";
+pub const DBT_CTE_PREFIX: &str = "__dbt__cte__";
+pub const DBT_RUN_DIR_NAME: &str = "run";
+pub const DBT_DB_DIR_NAME: &str = "db";
+pub const DBT_LOG_DIR_NAME: &str = "logs";
+pub const DBT_STATE_DIR_NAME: &str = "state";
+pub const DBT_DEFAULT_LOG_FILE_NAME: &str = "dbt.log";
+pub const DBT_DEFAULT_QUERY_LOG_FILE_NAME: &str = "query_log.sql";
+pub const DBT_DEFAULT_LOG_FILE_MAX_BYTES: u64 = 10 * 1024 * 1024;
+pub const DBT_DEFAULT_LOG_FILE_BACKUP_COUNT: usize = 5;
+pub const DBT_ROOT_PACKAGE_VAR_PREFIX: &str = "__root__";
+pub const DBT_GENERIC_TESTS_DIR_NAME: &str = "generic_tests";
+pub const DBT_SNAPSHOTS_DIR_NAME: &str = "snapshots";
+// ----------------------------------------------------------------------------------------------
+pub const DBT_MODELS_DIR_NAME: &str = "models";
+pub const DBT_SELECTORS_YML: &str = "selectors.yml";
+
+// ----------------------------------------------------------------------------------------------
+// dbt packages
+pub const DBT_PACKAGES_LOCK_FILE: &str = "package-lock.yml";
+pub const DBT_PACKAGES_YML: &str = "packages.yml";
+pub const DBT_DEPENDENCIES_YML: &str = "dependencies.yml";
+
+// ----------------------------------------------------------------------------------------------
+// aggregated generic tests
+pub const DBT_AGGREGATED_GENERIC_TEST_CONTEXT: &str = "aggregated_test_skip_column_names";
+
+// ----------------------------------------------------------------------------------------------
+// dbt console output
+pub const ERROR: &str = "error:";
+pub const WARNING: &str = "warning:";
+pub const PANIC: &str = "panic:";
+
+// ----------------------------------------------------------------------------------------------
+// actions in order of appearance
+
+pub const ANALYZING: &str = " Analyzing";
+pub const LOADING: &str = "   Loading";
+pub const FETCHING: &str = "  Fetching";
+pub const INSTALLING: &str = "Installing";
+pub const RESOLVING: &str = " Resolving";
+pub const PARSING: &str = "   Parsing";
+// not being issued right now
+pub const SCHEDULING: &str = "Scheduling";
+//
+pub const RENDERING: &str = " Rendering";
+pub const HYDRATING: &str = "  Hydrating";
+pub const RUNNING: &str = "   Running";
+pub const COMPARING: &str = "   Comparing";
+pub const CLONING: &str = "   Cloning";
+pub const SUCCEEDED: &str = " Succeeded";
+pub const PASSED: &str = "    Passed";
+pub const WARNED: &str = "    Warned";
+pub const FAILED: &str = "    Failed";
+pub const REUSED: &str = "    Reused";
+pub const SKIPPED: &str = "   Skipped";
+pub const RENDERED: &str = "  Rendered";
+
+// debug command
+pub const VALIDATING: &str = "Validating";
+pub const DEBUGGED: &str = "  Debugged";
+
+// other
+pub const NOOP: &str = "noop";
+
+// cas/node read/write
+
+pub const CAS_RD: &str = "   Reading";
+pub const CAS_WR: &str = "   Writing";
+pub const NODES_RD: &str = "   Reading";
+pub const NODES_WR: &str = "   Writing";
+pub const COLUMNS_RD: &str = "   Reading";
+pub const COLUMNS_WR: &str = "   Writing";
+pub const COLUMN_LINEAGE_WR: &str = "   Writing";
+
+pub const DBT_CDN_URL: &str = "https://public.cdn.getdbt.com/fs";

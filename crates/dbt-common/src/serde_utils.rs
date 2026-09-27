@@ -1,0 +1,505 @@
+use std::collections::BTreeMap;
+use std::{fmt, marker::PhantomData};
+
+use crate::dashmap::DashMap;
+use indexmap::IndexMap;
+use minijinja::value::ValueMap;
+use serde::{
+    Deserialize, Deserializer, Serialize,
+    de::{Visitor, value::UnitDeserializer},
+};
+
+type YmlValue = dbt_yaml::Value;
+
+/// Converts a [dbt_yaml::Value] to a [minijinja::Value]
+fn convert_yml_value(yml: YmlValue) -> minijinja::Value {
+    match yml {
+        YmlValue::Mapping(map, _) => {
+            let mut value_map = BTreeMap::new();
+            for (k, v) in map {
+                value_map.insert(
+                    k.as_str().expect("key is not a string").to_string(),
+                    convert_yml_value(v),
+                );
+            }
+            minijinja::Value::from(value_map)
+        }
+        YmlValue::Sequence(arr, _) => {
+            minijinja::Value::from_iter(arr.into_iter().map(convert_yml_value))
+        }
+        YmlValue::Null(_) => minijinja::Value::from(None::<()>),
+        _ => minijinja::Value::from_serialize(yml),
+    }
+}
+
+/// Converts a [dbt_yaml::Value] to a [BTreeMap<String, Value>]
+pub fn convert_yml_to_map(yml: YmlValue) -> BTreeMap<String, minijinja::Value> {
+    match yml {
+        YmlValue::Mapping(map, _) => {
+            let mut value_map = BTreeMap::new();
+            for (k, v) in map {
+                value_map.insert(
+                    k.as_str().expect("key is not a string").to_string(),
+                    convert_yml_value(v),
+                );
+            }
+            value_map
+        }
+        _ => {
+            let mut map = BTreeMap::new();
+            map.insert("value".to_string(), convert_yml_value(yml));
+            map
+        }
+    }
+}
+
+/// Converts a [dbt_yaml::Value] to a [DashMap<String, Value>]
+pub fn convert_yml_to_dash_map(yml: YmlValue) -> DashMap<String, minijinja::Value> {
+    match yml {
+        YmlValue::Mapping(map, _) => {
+            let value_map = DashMap::default();
+            for (k, v) in map {
+                value_map.insert(
+                    k.as_str().expect("key is not a string").to_string(),
+                    convert_yml_value(v),
+                );
+            }
+            value_map
+        }
+        _ => {
+            let map = DashMap::default();
+            map.insert("value".to_string(), convert_yml_value(yml));
+            map
+        }
+    }
+}
+
+/// Converts a [dbt_yaml::Value] to a [minijinja::Value], preserving order of keys if the value is a mapping
+// TODO(anna): This now converts to an ordered map by using `ValueMap`, with the assertion that the key is a string.
+// But as I mentioned below, if we implement Object for IndexMap<String, minijinja::Value>, then we don't have to wrap the
+// key in a value.
+// TODO: We are losing span info for error reporting
+fn convert_yml_value_ordered(yml: YmlValue) -> minijinja::Value {
+    match yml {
+        YmlValue::Mapping(map, _) => {
+            let mut value_map = ValueMap::new();
+            for (k, v) in map {
+                value_map.insert(
+                    minijinja::Value::from(k.as_str().expect("key is not a string").to_string()),
+                    convert_yml_value(v),
+                );
+            }
+            minijinja::Value::from_object(value_map)
+        }
+        YmlValue::Sequence(arr, _) => {
+            minijinja::Value::from_iter(arr.into_iter().map(convert_yml_value))
+        }
+        YmlValue::Null(_) => minijinja::Value::from(None::<()>),
+        _ => minijinja::Value::from_serialize(yml),
+    }
+}
+
+/// Converts a dbt_yaml::Value to an order-preserving minijinja::ValueMap, only converting the first level to a map
+// See: https://docs.rs/minijinja/2.5.0/minijinja/value/trait.Object.html#foreign-impls
+pub fn convert_yml_to_value_map(yml: YmlValue) -> IndexMap<String, minijinja::Value> {
+    match yml {
+        YmlValue::Mapping(map, _) => {
+            let mut value_map = IndexMap::with_capacity(map.len());
+            for (k, v) in map {
+                value_map.insert(
+                    k.as_str().expect("key is not a string").to_string(),
+                    convert_yml_value_ordered(v),
+                );
+            }
+            value_map
+        }
+        _ => {
+            let mut map = IndexMap::new();
+            map.insert("value".to_string(), convert_yml_value_ordered(yml));
+            map
+        }
+    }
+}
+
+/// A wrapper around a value that can be either present or omitted.
+///
+/// This is a counterpart to the `Option` type, intended for use in
+/// deserialization scenarios where explicit `null` values should be treated as
+/// distinct from omitted values.
+#[derive(Default, Debug)]
+pub enum Omissible<T> {
+    /// The value is present and valid.
+    Present(T),
+
+    #[default]
+    /// The value is omitted.
+    Omitted,
+}
+
+impl<T> Clone for Omissible<T>
+where
+    T: Clone,
+{
+    fn clone(&self) -> Self {
+        match self {
+            Omissible::Present(value) => Omissible::Present(value.clone()),
+            Omissible::Omitted => Omissible::Omitted,
+        }
+    }
+}
+
+impl<T> PartialEq for Omissible<T>
+where
+    T: PartialEq,
+{
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Omissible::Present(a), Omissible::Present(b)) => a == b,
+            (Omissible::Omitted, Omissible::Omitted) => true,
+            _ => false,
+        }
+    }
+}
+
+impl<T> Eq for Omissible<T> where T: Eq {}
+
+impl<T> PartialOrd for Omissible<T>
+where
+    T: PartialOrd,
+{
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        match (self, other) {
+            (Omissible::Present(a), Omissible::Present(b)) => a.partial_cmp(b),
+            (Omissible::Omitted, Omissible::Omitted) => Some(std::cmp::Ordering::Equal),
+            _ => None,
+        }
+    }
+}
+
+impl<T> Ord for Omissible<T>
+where
+    T: Ord,
+{
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        match (self, other) {
+            (Omissible::Present(a), Omissible::Present(b)) => a.cmp(b),
+            (Omissible::Omitted, Omissible::Omitted) => std::cmp::Ordering::Equal,
+            _ => std::cmp::Ordering::Less,
+        }
+    }
+}
+
+impl<T> std::hash::Hash for Omissible<T>
+where
+    T: std::hash::Hash,
+{
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        match self {
+            Omissible::Present(value) => value.hash(state),
+            Omissible::Omitted => state.write_u8(0),
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+struct OmissibleVisitor<T> {
+    marker: PhantomData<T>,
+}
+
+impl<'de, T> Visitor<'de> for OmissibleVisitor<T>
+where
+    T: Deserialize<'de>,
+{
+    type Value = Omissible<T>;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("omissible value")
+    }
+
+    #[inline]
+    fn visit_unit<E>(self) -> Result<Self::Value, E>
+    where
+        E: serde::de::Error,
+    {
+        // This function is called by the dbt_yaml deserializers for
+        // explicit null values
+        T::deserialize(UnitDeserializer::new()).map(Omissible::Present)
+    }
+
+    #[inline]
+    fn visit_none<E>(self) -> Result<Self::Value, E>
+    where
+        E: serde::de::Error,
+    {
+        // This function is called by the "missing_field" handler generated by
+        // serde_derive
+        Ok(Omissible::Omitted)
+    }
+
+    #[inline]
+    fn visit_some<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        T::deserialize(deserializer).map(Omissible::Present)
+    }
+}
+
+impl<'de, T> Deserialize<'de> for Omissible<T>
+where
+    T: Deserialize<'de>,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_option(OmissibleVisitor {
+            marker: PhantomData,
+        })
+    }
+}
+
+impl<T> Serialize for Omissible<T>
+where
+    T: Serialize,
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match self {
+            Omissible::Present(value) => value.serialize(serializer),
+            Omissible::Omitted => serializer.serialize_none(),
+        }
+    }
+}
+
+impl<T> schemars::JsonSchema for Omissible<T>
+where
+    T: schemars::JsonSchema,
+{
+    fn schema_name() -> String {
+        T::schema_name()
+    }
+
+    fn json_schema(generator: &mut schemars::r#gen::SchemaGenerator) -> schemars::schema::Schema {
+        T::json_schema(generator)
+    }
+
+    fn is_referenceable() -> bool {
+        T::is_referenceable()
+    }
+
+    fn schema_id() -> std::borrow::Cow<'static, str> {
+        T::schema_id()
+    }
+
+    #[doc(hidden)]
+    fn _schemars_private_non_optional_json_schema(
+        generator: &mut schemars::r#gen::SchemaGenerator,
+    ) -> schemars::schema::Schema {
+        T::_schemars_private_non_optional_json_schema(generator)
+    }
+
+    #[doc(hidden)]
+    fn _schemars_private_is_option() -> bool {
+        true
+    }
+}
+
+impl<T> Omissible<T> {
+    /// Returns `true` if the value is present.
+    pub fn is_present(&self) -> bool {
+        matches!(self, Omissible::Present(_))
+    }
+
+    /// Returns `true` if the value is omitted.
+    pub fn is_omitted(&self) -> bool {
+        matches!(self, Omissible::Omitted)
+    }
+
+    /// Returns a reference to the value if it is present.
+    pub fn as_ref(&self) -> Option<&T> {
+        match self {
+            Omissible::Present(value) => Some(value),
+            Omissible::Omitted => None,
+        }
+    }
+
+    /// Returns a mutable reference to the value if it is present.
+    pub fn as_mut(&mut self) -> Option<&mut T> {
+        match self {
+            Omissible::Present(value) => Some(value),
+            Omissible::Omitted => None,
+        }
+    }
+
+    /// Returns the value if it is present, or the provided default value if it is omitted.
+    pub fn unwrap_or(self, default: T) -> T {
+        match self {
+            Omissible::Present(value) => value,
+            Omissible::Omitted => default,
+        }
+    }
+
+    /// Returns the value if it is present, or the result of the provided function if it is omitted.
+    pub fn unwrap_or_else<F>(self, f: F) -> T
+    where
+        F: FnOnce() -> T,
+    {
+        match self {
+            Omissible::Present(value) => value,
+            Omissible::Omitted => f(),
+        }
+    }
+
+    /// Converts the `Omissible` value into an `Option<T>`.
+    pub fn into_inner(self) -> Option<T> {
+        match self {
+            Omissible::Present(value) => Some(value),
+            Omissible::Omitted => None,
+        }
+    }
+}
+
+impl<T> From<T> for Omissible<T> {
+    fn from(value: T) -> Self {
+        Omissible::Present(value)
+    }
+}
+
+impl<T> From<Option<T>> for Omissible<T> {
+    fn from(value: Option<T>) -> Self {
+        match value {
+            Some(v) => Omissible::Present(v),
+            None => Omissible::Omitted,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use dbt_test_primitives::assert_contains;
+    use dbt_yaml::JsonSchema;
+    use indoc::indoc;
+    use schemars::schema_for;
+
+    #[test]
+    fn test_omissible() {
+        #[derive(Deserialize, Serialize, Debug, PartialEq, JsonSchema)]
+        struct TestStruct {
+            field: Omissible<String>,
+        }
+
+        let yaml = r#"
+            field: "value"
+        "#;
+        let value: TestStruct = dbt_yaml::from_str(yaml).unwrap();
+        let expected = TestStruct {
+            field: Omissible::Present("value".to_string()),
+        };
+        assert_eq!(value, expected);
+
+        let yaml = r#"
+        "#;
+        let value: TestStruct = dbt_yaml::from_str(yaml).unwrap();
+        let expected = TestStruct {
+            field: Omissible::Omitted,
+        };
+        assert_eq!(value, expected);
+
+        let yaml = r#"
+            field: 
+        "#;
+        let err = dbt_yaml::from_str::<TestStruct>(yaml).unwrap_err();
+        assert_contains!(
+            err.to_string(),
+            "invalid type: unit value, expected a string"
+        );
+
+        let yaml = r#"
+            field: null
+        "#;
+        let err = dbt_yaml::from_str::<TestStruct>(yaml).unwrap_err();
+        assert_contains!(
+            err.to_string(),
+            "invalid type: unit value, expected a string"
+        );
+    }
+
+    #[test]
+    fn test_omissible_option() {
+        #[derive(Deserialize, Serialize, Debug, PartialEq, JsonSchema)]
+        struct TestStruct {
+            field: Omissible<Option<String>>,
+        }
+        let yaml = r#"
+            field: "value"
+        "#;
+        let value: TestStruct = dbt_yaml::from_str(yaml).unwrap();
+        let expected = TestStruct {
+            field: Omissible::Present(Some("value".to_string())),
+        };
+        assert_eq!(value, expected);
+
+        let yaml = r#"
+        "#;
+        let value: TestStruct = dbt_yaml::from_str(yaml).unwrap();
+        let expected = TestStruct {
+            field: Omissible::Omitted,
+        };
+        assert_eq!(value, expected);
+
+        let yaml = r#"
+            field: 
+        "#;
+        let value: TestStruct = dbt_yaml::from_str(yaml).unwrap();
+        let expected = TestStruct {
+            field: Omissible::Present(None),
+        };
+        assert_eq!(value, expected);
+
+        let yaml = r#"
+            field: null
+        "#;
+        let value: TestStruct = dbt_yaml::from_str(yaml).unwrap();
+        let expected = TestStruct {
+            field: Omissible::Present(None),
+        };
+        assert_eq!(value, expected);
+    }
+
+    #[test]
+    fn test_omissible_jsonschema() {
+        #[derive(Deserialize, Serialize, Debug, PartialEq, JsonSchema)]
+        struct TestStruct {
+            required_field: String,
+            omissible_field: Omissible<String>,
+            omissible_option_field: Omissible<Option<String>>,
+        }
+        let schema = schema_for!(TestStruct);
+        let schema_str = dbt_yaml::to_string(&schema).unwrap();
+        println!("{schema_str}");
+        assert_eq!(
+            schema_str,
+            indoc! {"
+$schema: http://json-schema.org/draft-07/schema#
+title: TestStruct
+type: object
+required:
+- required_field
+properties:
+  omissible_field:
+    type: string
+  omissible_option_field:
+    type:
+    - string
+    - 'null'
+  required_field:
+    type: string
+"}
+        );
+    }
+}

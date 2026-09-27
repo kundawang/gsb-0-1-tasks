@@ -1,0 +1,279 @@
+use dbt_common::cancellation::CancellationToken;
+use dbt_common::io_args::IoArgs;
+use dbt_common::tracing::emit::emit_warn_log_message;
+use dbt_common::{ErrorCode, FsResult, fs_err, stdfs};
+use dbt_jinja_utils::jinja_environment::JinjaEnv;
+use dbt_schemas::schemas::packages::{
+    DbtPackageLock, DbtPackages, DbtPackagesLock, GitPackageLock, HubPackageLock, LocalPackageLock,
+    PackageVersion, PrivatePackageLock, TarballPackageLock,
+};
+use std::collections::{BTreeMap, HashSet};
+
+use crate::{
+    github_client::download_git_like_package,
+    package_listing::UnpinnedPackage,
+    tarball_client::download_tarball_package,
+    types::{GitPinnedPackage, LocalPinnedPackage, PrivatePinnedPackage, TarballPinnedPackage},
+    utils::{fusion_sha1_hash_packages, read_and_validate_dbt_project},
+};
+
+use crate::{hub_client::HubClient, package_listing::PackageListing};
+
+use super::load_dbt_packages;
+
+#[allow(clippy::too_many_arguments)]
+pub async fn compute_package_lock(
+    io: &IoArgs,
+    vars: &BTreeMap<String, dbt_yaml::Value>,
+    jinja_env: &JinjaEnv,
+    hub_registry: &HubClient,
+    dbt_packages: &DbtPackages,
+    version_check: bool,
+    skip_private_deps: bool,
+    token: &CancellationToken,
+) -> FsResult<DbtPackagesLock> {
+    let sha1_hash = fusion_sha1_hash_packages(&dbt_packages.packages);
+    // First step, is to flatten into a single list of packages
+    let mut dbt_packages_lock = DbtPackagesLock::default();
+    let mut package_listing =
+        PackageListing::new(io.clone(), vars.clone()).with_skip_private_deps(skip_private_deps);
+    package_listing.hydrate_dbt_packages(dbt_packages, jinja_env)?;
+    let mut final_listing =
+        PackageListing::new(io.clone(), vars.clone()).with_skip_private_deps(skip_private_deps);
+    resolve_packages(
+        io,
+        vars,
+        hub_registry,
+        &mut final_listing,
+        &mut package_listing,
+        jinja_env,
+        version_check,
+        token,
+    )
+    .await?;
+    for package in final_listing.packages.values() {
+        match package {
+            UnpinnedPackage::Hub(hub_unpinned_package) => {
+                let pinned_package = hub_unpinned_package.resolved(hub_registry).await?;
+                dbt_packages_lock
+                    .packages
+                    .push(DbtPackageLock::Hub(HubPackageLock {
+                        package: pinned_package.package,
+                        name: pinned_package.name,
+                        version: PackageVersion::String(pinned_package.version),
+                    }));
+            }
+            UnpinnedPackage::Git(git_unpinned_package) => {
+                let pinned_package: GitPinnedPackage = git_unpinned_package.clone().try_into()?;
+                dbt_packages_lock
+                    .packages
+                    .push(DbtPackageLock::Git(GitPackageLock {
+                        // Using the original entry to ensure that we preserve the original git url
+                        // to be stored in the `package-lock.yml` file (despite this being horrible practice)
+                        git: git_unpinned_package.original_entry.git.clone(),
+                        name: pinned_package.name,
+                        revision: pinned_package.revision,
+                        warn_unpinned: pinned_package.warn_unpinned,
+                        subdirectory: pinned_package.subdirectory,
+                        __unrendered__: pinned_package.unrendered,
+                    }));
+            }
+            UnpinnedPackage::Local(local_package) => {
+                let pinned_package: LocalPinnedPackage = local_package.clone().try_into()?;
+                dbt_packages_lock
+                    .packages
+                    .push(DbtPackageLock::Local(LocalPackageLock {
+                        name: pinned_package.name,
+                        local: stdfs::diff_paths(&local_package.local, &io.in_dir)?,
+                    }));
+            }
+            UnpinnedPackage::Private(private_unpinned_package) => {
+                let pinned_package: PrivatePinnedPackage =
+                    private_unpinned_package.clone().try_into()?;
+                dbt_packages_lock
+                    .packages
+                    .push(DbtPackageLock::Private(PrivatePackageLock {
+                        // Using the original entry to ensure that we preserve the original git url
+                        // to be stored in the `package-lock.yml` file (despite this being horrible practice)
+                        private: private_unpinned_package.original_entry.private.clone(),
+                        name: pinned_package.name,
+                        provider: pinned_package.provider,
+                        revision: pinned_package.revision,
+                        warn_unpinned: pinned_package.warn_unpinned,
+                        subdirectory: pinned_package.subdirectory,
+                        __unrendered__: pinned_package.unrendered,
+                    }));
+            }
+            UnpinnedPackage::Tarball(tarball_unpinned_package) => {
+                let pinned_package: TarballPinnedPackage =
+                    tarball_unpinned_package.clone().try_into()?;
+                let mut unrendered = pinned_package.unrendered;
+                // We remove the 'name' from unrendered so that we don't
+                // end up with two 'name' fields in the package lock.
+                unrendered.remove("name");
+                dbt_packages_lock
+                    .packages
+                    .push(DbtPackageLock::Tarball(TarballPackageLock {
+                        tarball: tarball_unpinned_package.original_entry.tarball.clone(),
+                        name: pinned_package.name,
+                        __unrendered__: unrendered,
+                    }));
+            }
+        }
+    }
+    dbt_packages_lock.sha1_hash = sha1_hash;
+    // Note: This is currently sorting by package name, but there's more to do here
+    dbt_packages_lock.packages.sort_by_key(|a| a.package_name());
+    // Deduplicate packages with the same project name, keeping only the first occurrence.
+    // This handles cases where packages from different sources (e.g., calogica/dbt_date and
+    // godatadriven/dbt_date) resolve to the same project name. dbt-core allows this and
+    // deduplicates during resolution. We do the same here by removing duplicates.
+    // Note: We intentionally do NOT error on duplicate package names here.
+    // dbt-core handles duplicate package names by merging them during resolution
+    // via the incorporate() method in the PackageListing. It only checks for
+    // duplicate *project* names after fetching metadata, not duplicate package names.
+    let mut seen = HashSet::new();
+    dbt_packages_lock.packages.retain(|package| {
+        let lookup_name = package.package_name();
+        if seen.contains(&lookup_name) {
+            // Warn about duplicate package - keeping the first occurrence
+            emit_warn_log_message(
+                ErrorCode::DependencyWarning,
+                format!(
+                    "Duplicate package name '{}' found in dependencies. Keeping the first occurrence. \
+                     This will be an error in a future version of Fusion.",
+                    lookup_name
+                ),
+                io.status_reporter.as_ref(),
+            );
+            false
+        } else {
+            seen.insert(lookup_name);
+            true
+        }
+    });
+    Ok(dbt_packages_lock)
+}
+
+#[allow(clippy::too_many_arguments)]
+async fn resolve_packages(
+    io: &IoArgs,
+    vars: &BTreeMap<String, dbt_yaml::Value>,
+    hub_registry: &HubClient,
+    final_listing: &mut PackageListing,
+    package_listing: &mut PackageListing,
+    jinja_env: &JinjaEnv,
+    version_check: bool,
+    token: &CancellationToken,
+) -> FsResult<()> {
+    let mut next_listing = PackageListing::new(io.clone(), vars.clone())
+        .with_skip_private_deps(package_listing.skip_private_deps);
+    for unpinned_package in package_listing.packages.values_mut() {
+        token.check_cancellation()?;
+        match unpinned_package {
+            UnpinnedPackage::Hub(hub_unpinned_package) => {
+                let pinned_package = hub_unpinned_package.resolved(hub_registry).await?;
+                let hub_package = hub_registry
+                    .get_hub_package(&pinned_package.package)
+                    .await?;
+                hub_registry.check_package_deprecation(&package_listing.io_args, &hub_package);
+                let metadata = hub_package
+                    .versions
+                    .get(&pinned_package.version)
+                    .expect("Version should exist in package metadata");
+
+                if std::env::var("NEXTEST").is_err() && version_check {
+                    hub_registry.check_require_dbt_version(
+                        &package_listing.io_args,
+                        &hub_package.name,
+                        metadata,
+                    );
+                }
+                next_listing.update_from(&metadata.packages, jinja_env)?;
+            }
+            UnpinnedPackage::Git(git_unpinned_package) => {
+                // tempdir() is fine here: resolution only reads from this directory (project name,
+                // packages list) and never moves anything out of it, so no cross-device rename
+                // can occur. The directory is dropped at the end of this block.
+                let tmp_dir = tempfile::tempdir()
+                    .map_err(|e| fs_err!(ErrorCode::IoError, "Failed to create temp dir: {}", e))?;
+                let download_dir = tmp_dir.path().join("git_pkg");
+                let (checkout_path, commit_sha) = download_git_like_package(
+                    &git_unpinned_package.git,
+                    &git_unpinned_package.revisions,
+                    &git_unpinned_package.subdirectory,
+                    git_unpinned_package.warn_unpinned.unwrap_or_default(),
+                    &download_dir,
+                )
+                .await?;
+                git_unpinned_package.revisions = vec![commit_sha];
+                let dbt_project =
+                    read_and_validate_dbt_project(io, &checkout_path, true, jinja_env, vars)?;
+                git_unpinned_package.name = Some(dbt_project.name);
+                if let Some(dbt_packages) = load_dbt_packages(io, &checkout_path)?.0 {
+                    next_listing.update_from(&dbt_packages.packages, jinja_env)?;
+                }
+            }
+            UnpinnedPackage::Local(local_unpinned_package) => {
+                let (dbt_packages, _) = load_dbt_packages(io, &local_unpinned_package.local)?;
+                if let Some(dbt_packages) = dbt_packages {
+                    next_listing.update_from(&dbt_packages.packages, jinja_env)?;
+                }
+            }
+            UnpinnedPackage::Private(private_unpinned_package) => {
+                // tempdir() is fine here: resolution only reads from this directory (project name,
+                // packages list) and never moves anything out of it, so no cross-device rename
+                // can occur. The directory is dropped at the end of this block.
+                let tmp_dir = tempfile::tempdir()
+                    .map_err(|e| fs_err!(ErrorCode::IoError, "Failed to create temp dir: {}", e))?;
+                let download_dir = tmp_dir.path().join("git_pkg");
+                let (checkout_path, commit_sha) = download_git_like_package(
+                    &private_unpinned_package.private,
+                    &private_unpinned_package.revisions,
+                    &private_unpinned_package.subdirectory,
+                    private_unpinned_package.warn_unpinned.unwrap_or_default(),
+                    &download_dir,
+                )
+                .await?;
+                private_unpinned_package.revisions = vec![commit_sha];
+                let dbt_project =
+                    read_and_validate_dbt_project(io, &checkout_path, true, jinja_env, vars)?;
+                private_unpinned_package.name = Some(dbt_project.name);
+                if let Some(dbt_packages) = load_dbt_packages(io, &checkout_path)?.0 {
+                    next_listing.update_from(&dbt_packages.packages, jinja_env)?;
+                }
+            }
+            UnpinnedPackage::Tarball(tarball_unpinned_package) => {
+                let tmp_dir = tempfile::tempdir().map_err(|e| {
+                    fs_err!(ErrorCode::IoError, "Failed to create temp dir: {}", e,)
+                })?;
+                let download_dir = tmp_dir.path().join("package");
+
+                let checkout_path =
+                    download_tarball_package(&tarball_unpinned_package.tarball, &download_dir)
+                        .await?;
+                let dbt_project =
+                    read_and_validate_dbt_project(io, &checkout_path, true, jinja_env, vars)?;
+                tarball_unpinned_package.name = Some(dbt_project.name);
+                if let Some(dbt_packages) = load_dbt_packages(io, &checkout_path)?.0 {
+                    next_listing.update_from(&dbt_packages.packages, jinja_env)?;
+                }
+            }
+        }
+        final_listing.incorporate_unpinned_package(unpinned_package)?;
+    }
+    if !next_listing.packages.is_empty() {
+        Box::pin(resolve_packages(
+            io,
+            vars,
+            hub_registry,
+            final_listing,
+            &mut next_listing,
+            jinja_env,
+            version_check,
+            token,
+        ))
+        .await?;
+    }
+    Ok(())
+}

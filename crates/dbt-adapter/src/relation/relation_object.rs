@@ -1,0 +1,580 @@
+use dbt_common::adapter::AdapterType;
+use dbt_common::{FsError, FsResult};
+use dbt_schemas::dbt_types::RelationType;
+use dbt_schemas::filter::RunFilter;
+use dbt_schemas::schemas::common::{DbtQuoting, ResolvedQuoting};
+use dbt_schemas::schemas::relations::base::{BaseRelation, Policy, RelationPath, TableFormat};
+use dbt_schemas::schemas::serde::minijinja_value_to_typed_struct;
+use dbt_schemas::schemas::{InternalDbtNodeAttributes, InternalDbtNodeWrapper};
+use minijinja::arg_utils::ArgsIter;
+use minijinja::value::{Enumerator, Object, ValueKind};
+use minijinja::{State, Value, listener::RenderingEventListener};
+use serde::Deserialize;
+
+use crate::relation::bigquery::*;
+use crate::relation::databricks::{DatabricksRelation, typed_constraint::TypedConstraint};
+use crate::relation::duckdb_should_include_database;
+use crate::relation::fabric::FabricRelation;
+use crate::relation::postgres::PostgresRelation;
+use crate::relation::redshift::RedshiftRelation;
+use crate::relation::salesforce::SalesforceRelation;
+use crate::relation::snowflake::SnowflakeRelation;
+
+use std::sync::Arc;
+use std::{fmt, ops::Deref};
+
+/// A Wrapper type for BaseRelation
+/// for any concrete Relation type to be used as Object in Jinja
+#[derive(Clone)]
+pub struct RelationObject {
+    relation: Arc<dyn BaseRelation>,
+    run_filter: Option<RunFilter>,
+    event_time: Option<String>,
+}
+
+impl RelationObject {
+    pub fn new(relation: Arc<dyn BaseRelation>) -> Self {
+        Self {
+            relation,
+            run_filter: None,
+            event_time: None,
+        }
+    }
+
+    pub fn new_with_filter(
+        relation: Arc<dyn BaseRelation>,
+        run_filter: RunFilter,
+        event_time: Option<String>,
+    ) -> Self {
+        Self {
+            relation,
+            run_filter: Some(run_filter),
+            event_time,
+        }
+    }
+
+    pub fn into_value(self) -> Value {
+        Value::from_object(self)
+    }
+
+    pub fn inner(&self) -> Arc<dyn BaseRelation> {
+        self.relation.clone()
+    }
+
+    /// Create a new RelationObject with a run filter applied.
+    ///
+    /// This is used for microbatch execution to filter refs by event_time.
+    pub fn with_filter(&self, run_filter: RunFilter, event_time: Option<String>) -> Self {
+        Self {
+            relation: self.relation.clone(),
+            run_filter: Some(run_filter),
+            event_time,
+        }
+    }
+
+    /// Check if this relation has a filter applied.
+    pub fn has_filter(&self) -> bool {
+        self.run_filter.is_some()
+    }
+
+    /// Get the event_time column name if configured.
+    pub fn event_time(&self) -> Option<&str> {
+        self.event_time.as_deref()
+    }
+
+    /// Databricks: enrich relation with constraints (for get_column_and_constraints_sql)
+    fn relation_enrich(self: &Arc<Self>, args: &[Value]) -> Result<Value, minijinja::Error> {
+        let dbx = self
+            .relation
+            .as_any()
+            .downcast_ref::<DatabricksRelation>()
+            .ok_or_else(|| {
+                minijinja::Error::new(
+                    minijinja::ErrorKind::InvalidOperation,
+                    "enrich is only available for Databricks relations",
+                )
+            })?;
+        let constraints_val = args.first().cloned().unwrap_or_default();
+        let constraints: Vec<TypedConstraint> = constraints_val
+            .try_iter()
+            .map_err(|e| {
+                minijinja::Error::new(
+                    minijinja::ErrorKind::InvalidOperation,
+                    format!("enrich constraints must be iterable: {e}"),
+                )
+            })?
+            .map(|v| {
+                minijinja_value_to_typed_struct::<TypedConstraint>(v).map_err(|e| {
+                    minijinja::Error::new(
+                        minijinja::ErrorKind::SerdeDeserializeError,
+                        format!("enrich constraint item: {e}"),
+                    )
+                })
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        let enriched = dbx.enrich(&constraints);
+        Ok(RelationObject::new(Arc::new(enriched)).into_value())
+    }
+
+    /// Databricks: render constraints DDL for CREATE TABLE
+    fn relation_render_constraints_for_create(self: &Arc<Self>) -> Result<Value, minijinja::Error> {
+        let dbx = self
+            .relation
+            .as_any()
+            .downcast_ref::<DatabricksRelation>()
+            .ok_or_else(|| {
+                minijinja::Error::new(
+                    minijinja::ErrorKind::InvalidOperation,
+                    "render_constraints_for_create is only available for Databricks relations",
+                )
+            })?;
+        Ok(Value::from(dbx.render_constraints_for_create()))
+    }
+
+    /// Databricks: get create_constraints for get_column_and_constraints_sql
+    fn relation_create_constraints(self: &Arc<Self>) -> Option<Value> {
+        let dbx = self
+            .relation
+            .as_any()
+            .downcast_ref::<DatabricksRelation>()?;
+        Some(Value::from_serialize(&dbx.create_constraints))
+    }
+}
+
+impl fmt::Debug for RelationObject {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.render_self().expect("could not render self"))
+    }
+}
+
+impl Deref for RelationObject {
+    type Target = dyn BaseRelation;
+
+    fn deref(&self) -> &Self::Target {
+        self.relation.as_ref()
+    }
+}
+
+impl From<Arc<dyn BaseRelation>> for RelationObject {
+    fn from(relation: Arc<dyn BaseRelation>) -> Self {
+        RelationObject::new(relation)
+    }
+}
+
+impl From<Box<dyn BaseRelation>> for RelationObject {
+    fn from(relation: Box<dyn BaseRelation>) -> Self {
+        RelationObject::new(Arc::from(relation))
+    }
+}
+
+impl Object for RelationObject {
+    fn call_method(
+        self: &Arc<Self>,
+        state: &State,
+        name: &str,
+        args: &[Value],
+        _listeners: &[std::rc::Rc<dyn RenderingEventListener>],
+    ) -> Result<Value, minijinja::Error> {
+        match name {
+            "create_from" => self.create_from(state, args),
+            "replace_path" => self.replace_path(args),
+            "get" => self.get(args),
+            "render" => self.render_self(),
+            "without_identifier" => self.without_identifier(args),
+            "include" => self.include(args),
+            "quote" => self.quote(args),
+            "incorporate" => self.incorporate(args),
+            "information_schema" => self.information_schema(args),
+            "relation_max_name_length" => self.relation_max_name_length(args),
+            // Below are available for Snowflake
+            "get_ddl_prefix_for_create" => self.get_ddl_prefix_for_create(args),
+            "get_ddl_prefix_for_alter" => self.get_ddl_prefix_for_alter(),
+            "needs_to_drop" => self.needs_to_drop(args),
+            "get_iceberg_ddl_options" => self.get_iceberg_ddl_options(args),
+            "dynamic_table_config_changeset" => self.dynamic_table_config_changeset(args),
+            "from_config" => self.from_config(args),
+            // Below are available for Snowflake
+            "is_iceberg_format" => Ok(self.is_iceberg_format()),
+            // Below are available for Databricks
+            "is_hive_metastore" => Ok(self.is_hive_metastore()),
+            "enrich" => self.relation_enrich(args),
+            "render_constraints_for_create" => self.relation_render_constraints_for_create(),
+            // Below are available for BigQuery and Redshift
+            "materialized_view_config_changeset" => self.materialized_view_config_changeset(args),
+            _ => Err(minijinja::Error::new(
+                minijinja::ErrorKind::UnknownMethod,
+                format!("Unknown method on BaseRelationObject: '{name}'"),
+            )),
+        }
+    }
+
+    fn get_value(self: &Arc<Self>, key: &Value) -> Option<Value> {
+        match key.as_str() {
+            Some("database") => Some(self.database()),
+            Some("schema") => Some(self.schema()),
+            Some("identifier") | Some("name") | Some("table") => Some(self.identifier()),
+
+            Some("is_table") => Some(Value::from(self.is_table())),
+            Some("is_delta") => Some(Value::from(self.is_delta())),
+            Some("create_constraints") => self.relation_create_constraints(),
+            Some("is_view") => Some(Value::from(self.is_view())),
+            Some("is_materialized_view") => Some(Value::from(self.is_materialized_view())),
+            Some("is_streaming_table") => Some(Value::from(self.is_streaming_table())),
+            Some("is_dynamic_table") => Some(Value::from(self.is_dynamic_table())),
+            Some("is_cte") => Some(Value::from(self.is_cte())),
+            Some("is_pointer") => Some(Value::from(self.is_pointer())),
+            Some("temporary") => Some(Value::from(self.is_temporary())),
+            Some("type") => Some(self.relation_type_as_value()),
+            Some("can_be_renamed") => Some(Value::from(self.can_be_renamed())),
+            Some("can_be_replaced") => Some(Value::from(self.can_be_replaced())),
+            Some("MaterializedView") => {
+                Some(Value::from(RelationType::MaterializedView.to_string()))
+            }
+            Some("Table") => Some(Value::from(RelationType::Table.to_string())),
+            Some("DynamicTable") => Some(Value::from(RelationType::DynamicTable.to_string())),
+            Some("StreamingTable") => Some(Value::from(RelationType::StreamingTable.to_string())),
+            // BigQuery
+            Some("location") => Some(self.location()),
+            Some("project") => Some(self.database()),
+            Some("dataset") => Some(self.schema()),
+            _ => None,
+        }
+    }
+
+    fn enumerate(self: &Arc<Self>) -> Enumerator {
+        Enumerator::Str(&[
+            "database",
+            "schema",
+            "identifier",
+            "is_table",
+            "is_view",
+            "is_materialized_view",
+            "is_streaming_table",
+            "is_cte",
+            "is_pointer",
+            "can_be_renamed",
+            "can_be_replaced",
+            "name",
+        ])
+    }
+
+    fn render(self: &Arc<Self>, f: &mut fmt::Formatter<'_>) -> fmt::Result
+    where
+        Self: Sized + 'static,
+    {
+        let rendered = match self.run_filter {
+            Some(ref run_filter) if run_filter.enabled() => self
+                .render_with_run_filter(run_filter, &self.event_time)
+                .expect("could not render self with run rilter"),
+            _ => self.render_self().expect("could not render self"),
+        };
+
+        write!(f, "{}", rendered)
+    }
+}
+
+/// Creates a relation based on the adapter type
+///
+/// Unlike [internal_create_relation]
+/// This is supposed to be used in places that are invoked by the Jinja rendering process
+pub fn do_create_relation(
+    adapter_type: AdapterType,
+    database: String,
+    schema: String,
+    identifier: Option<String>,
+    relation_type: Option<RelationType>,
+    custom_quoting: ResolvedQuoting,
+) -> Result<Box<dyn BaseRelation>, minijinja::Error> {
+    let relation = match adapter_type {
+        AdapterType::Postgres | AdapterType::Sidecar => Box::new(PostgresRelation::try_new(
+            Some(database),
+            Some(schema),
+            identifier,
+            relation_type,
+            custom_quoting,
+        )?) as Box<dyn BaseRelation>,
+        AdapterType::DuckDB => {
+            // Local DuckDB uses schema.table; attached catalogs need database.schema.table.
+            let include_policy = Policy::new(
+                duckdb_should_include_database(Some(database.as_str())),
+                true,
+                true,
+            );
+            Box::new(PostgresRelation::try_new_with_policy(
+                RelationPath {
+                    database: Some(database).filter(|s| !s.is_empty()),
+                    schema: Some(schema),
+                    identifier,
+                },
+                relation_type,
+                include_policy,
+                custom_quoting,
+            )?) as Box<dyn BaseRelation>
+        }
+        AdapterType::Snowflake => Box::new(SnowflakeRelation::new(
+            Some(database),
+            Some(schema),
+            identifier,
+            relation_type,
+            TableFormat::Default,
+            custom_quoting,
+        )) as Box<dyn BaseRelation>,
+        AdapterType::Bigquery => Box::new(BigqueryRelation::new(
+            Some(database),
+            Some(schema),
+            identifier,
+            relation_type,
+            None,
+            custom_quoting,
+        )) as Box<dyn BaseRelation>,
+        AdapterType::Redshift => Box::new(RedshiftRelation::new(
+            Some(database),
+            Some(schema),
+            identifier,
+            relation_type,
+            None,
+            custom_quoting,
+        )) as Box<dyn BaseRelation>,
+        AdapterType::Databricks | AdapterType::Spark => Box::new(DatabricksRelation::new(
+            adapter_type,
+            Some(database),
+            Some(schema),
+            identifier,
+            relation_type,
+            None,
+            custom_quoting,
+            None,
+            false,
+            false,
+        )) as Box<dyn BaseRelation>,
+        AdapterType::Salesforce => Box::new(SalesforceRelation::new(
+            Some(database),
+            Some(schema),
+            identifier,
+            relation_type,
+        )) as Box<dyn BaseRelation>,
+        AdapterType::Fabric => Box::new(FabricRelation::new(
+            Some(database),
+            Some(schema),
+            identifier,
+            relation_type,
+            custom_quoting,
+        )) as Box<dyn BaseRelation>,
+        AdapterType::ClickHouse => todo!("ClickHouse"),
+        AdapterType::Starburst => todo!("Starburst"),
+        AdapterType::Athena => todo!("Athena"),
+        AdapterType::Trino => todo!("Trino"),
+        AdapterType::Dremio => todo!("Dremio"),
+        AdapterType::Oracle => todo!("Oracle"),
+    };
+    Ok(relation)
+}
+
+/// Creates a relation based on the adapter type
+///
+/// This is a wrapper around the [create_relation] function
+/// that is supposed to be used outside the context of Jinja
+pub fn create_relation(
+    adapter_type: AdapterType,
+    database: String,
+    schema: String,
+    identifier: Option<String>,
+    relation_type: Option<RelationType>,
+    custom_quoting: ResolvedQuoting,
+) -> FsResult<Box<dyn BaseRelation>> {
+    let result = do_create_relation(
+        adapter_type,
+        database,
+        schema,
+        identifier,
+        relation_type,
+        custom_quoting,
+    )
+    .map_err(|e| FsError::from_jinja_err(e, "Failed to create relation"))?;
+    Ok(result)
+}
+
+pub fn create_relation_from_node(
+    adapter_type: AdapterType,
+    node: &dyn InternalDbtNodeAttributes,
+    _sample_config: Option<RunFilter>,
+) -> FsResult<Box<dyn BaseRelation>> {
+    create_relation(
+        adapter_type,
+        node.database(),
+        node.schema(),
+        Some(node.base().alias.clone()), // all identifiers are consolidated to alias in InternalDbtNode
+        Some(RelationType::from(node.materialized())),
+        node.quoting(),
+    )
+}
+
+/// A Wrapper type for StaticBaseRelation
+/// for any concrete StaticBaseRelation type to be used as Object in Jinja
+/// to expose static methods via api.Relation
+#[derive(Debug, Clone)]
+pub struct StaticBaseRelationObject(Arc<dyn StaticBaseRelation>);
+
+impl StaticBaseRelationObject {
+    pub fn new(relation: Arc<dyn StaticBaseRelation>) -> Self {
+        Self(relation)
+    }
+}
+
+impl Deref for StaticBaseRelationObject {
+    type Target = dyn StaticBaseRelation;
+
+    fn deref(&self) -> &Self::Target {
+        self.0.as_ref()
+    }
+}
+
+impl Object for StaticBaseRelationObject {
+    fn call_method(
+        self: &Arc<Self>,
+        _state: &State,
+        name: &str,
+        args: &[Value],
+        _listeners: &[std::rc::Rc<dyn RenderingEventListener>],
+    ) -> Result<Value, minijinja::Error> {
+        match name {
+            "create" => self.create(args),
+            "scd_args" => self.scd_args(args),
+            // // The following is required by BigQuery materialized_views
+            "materialized_view_from_relation_config" => {
+                // TODO(serramatutu): find out how to use new AdapterType enum here
+                if self.0.get_adapter_type() == AdapterType::Bigquery.as_ref() {
+                    let iter = ArgsIter::new(
+                        "Relation.materialized_view_from_relation_config",
+                        &["relation_config"],
+                        args,
+                    );
+                    let relation_config_arg = iter.next_arg::<&Value>()?;
+                    iter.finish()?;
+
+                    let config_wrapper = minijinja_value_to_typed_struct::<InternalDbtNodeWrapper>(relation_config_arg.clone())
+                        .map_err(|e| {
+                            minijinja::Error::new(
+                                minijinja::ErrorKind::SerdeDeserializeError,
+                                format!("get_table_options: Failed to deserialize InternalDbtNodeWrapper: {e}"),
+                            )
+                        })?;
+
+                    let model = match config_wrapper {
+                        InternalDbtNodeWrapper::Model(model) => model,
+                        _ => {
+                            return Err(minijinja::Error::new(
+                                minijinja::ErrorKind::InvalidOperation,
+                                "Expected a model node",
+                            ));
+                        }
+                    };
+
+                    let mv_config = BigqueryMaterializedViewConfigObject::new(
+                        <dyn BigqueryMaterializedViewConfig>::try_from_model(Arc::new(*model))
+                        .map_err(|e| {
+                            minijinja::Error::new(
+                                minijinja::ErrorKind::SerdeDeserializeError,
+                                format!("materialized_view_from_relation_config: Failed to deserialize BigqueryMaterializedViewConfig: {e}")
+                            )
+                        })?
+                    );
+
+                    Ok(Value::from_object(mv_config))
+                } else {
+                    Err(minijinja::Error::new(
+                        minijinja::ErrorKind::InvalidOperation,
+                        "'materialized_view_from_relation_config' can only be invoked using the BigQuery adapter",
+                    ))
+                }
+            }
+            _ => Err(minijinja::Error::new(
+                minijinja::ErrorKind::UnknownMethod,
+                format!("Unknown method on StaticBaseRelationObject: '{name}'"),
+            )),
+        }
+    }
+}
+
+/// Trait for static methods on relations
+pub trait StaticBaseRelation: fmt::Debug + Send + Sync {
+    /// Create a new relation from the given arguments
+    fn try_new(
+        &self,
+        database: Option<String>,
+        schema: Option<String>,
+        identifier: Option<String>,
+        relation_type: Option<RelationType>,
+        custom_quoting: Option<ResolvedQuoting>,
+        temporary: Option<bool>,
+    ) -> Result<Value, minijinja::Error>;
+
+    fn get_adapter_type(&self) -> String;
+
+    /// Create a new relation from the given arguments
+    /// impl for api.Relation.create
+    fn create(&self, args: &[Value]) -> Result<Value, minijinja::Error> {
+        let iter = ArgsIter::new("Relation.create", &[], args);
+        let database = iter.next_kwarg::<Option<String>>("database")?;
+        let schema = iter.next_kwarg::<Option<String>>("schema")?;
+        let identifier = iter.next_kwarg::<Option<String>>("identifier")?;
+        let relation_type = iter.next_kwarg::<Option<Value>>("type")?;
+        let custom_quoting = iter.next_kwarg::<Option<Value>>("quote_policy")?;
+        let temporary = iter.next_kwarg::<Option<bool>>("temporary")?;
+        iter.finish()?;
+
+        // error is intentionally silenced
+        let custom_quoting = custom_quoting
+            .and_then(|v| DbtQuoting::deserialize(v).ok())
+            // when missing, defaults to be non-quoted
+            .map(|v| ResolvedQuoting {
+                database: v.database.unwrap_or_default(),
+                identifier: v.identifier.unwrap_or_default(),
+                schema: v.schema.unwrap_or_default(),
+            });
+
+        self.try_new(
+            database,
+            schema,
+            identifier,
+            relation_type.and_then(|v: Value| {
+                if v.is_none() || v.is_undefined() {
+                    None
+                } else {
+                    Some(RelationType::from(v.as_str().unwrap_or_default()))
+                }
+            }),
+            custom_quoting,
+            temporary,
+        )
+    }
+
+    /// Get the SCD arguments for the relation
+    fn scd_args(&self, args: &[Value]) -> Result<Value, minijinja::Error> {
+        let iter = ArgsIter::new("Relation.scd_args", &[], args);
+        let primary_key = iter.next_kwarg::<Value>("primary_key")?;
+        let updated_at = iter.next_kwarg::<String>("updated_at")?;
+        iter.finish()?;
+
+        let mut scd_args = vec![];
+        // Check if minijinja value is a vector
+        match primary_key.kind() {
+            ValueKind::Seq => {
+                scd_args.extend(primary_key.try_iter()?.enumerate().map(|s| s.1.to_string()));
+            }
+            ValueKind::String => {
+                scd_args.push(primary_key.as_str().unwrap().to_string());
+            }
+            _ => {
+                return Err(minijinja::Error::new(
+                    minijinja::ErrorKind::InvalidOperation,
+                    format!(
+                        "'primary_key' has a wrong type in StaticBaseRelationObject: '{primary_key}'"
+                    ),
+                ));
+            }
+        }
+        scd_args.push(updated_at);
+        Ok(Value::from(scd_args))
+    }
+}

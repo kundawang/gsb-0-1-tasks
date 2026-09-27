@@ -1,0 +1,328 @@
+//! This module contains the scope guard for resolving models.
+
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    sync::Arc,
+};
+
+use chrono::TimeZone;
+use chrono_tz::{Europe::London, Tz};
+use dbt_adapter::{AdapterType, load_store::ResultStore};
+use dbt_common::io_args::StaticAnalysisKind;
+use dbt_common::serde_utils::convert_yml_to_dash_map;
+use dbt_common::{dashmap::DashMap, serde_utils::convert_yml_to_value_map};
+use dbt_schemas::{
+    schemas::{InternalDbtNodeAttributes, telemetry::NodeType},
+    state::{DbtRuntimeConfig, NodeResolverTracker, ResolverState},
+};
+use minijinja::{
+    Value as MinijinjaValue,
+    constants::{
+        CURRENT_EXECUTION_PHASE, CURRENT_PATH, CURRENT_SPAN, TARGET_PACKAGE_NAME, TARGET_UNIQUE_ID,
+    },
+    machinery::Span,
+};
+use minijinja_contrib::modules::{py_datetime::datetime::PyDateTime, pytz::PytzTimezone};
+
+use crate::phases::MacroLookupContext;
+use crate::phases::compile_and_run_context::{FunctionFunction, SourceFunction};
+use dbt_schemas::schemas::project::ConfigKeys;
+
+use super::super::compile_and_run_context::RefFunction;
+use super::compile_config::CompileConfig;
+
+/// The name of the repl model
+pub const REPL_MODEL_NAME: &str = "__repl__";
+
+/// Build a compile model context (wrapper for build_compile_node_context_inner)
+#[allow(clippy::type_complexity, clippy::too_many_arguments)]
+pub fn build_compile_node_context<T>(
+    model: &T,
+    resolver_state: &ResolverState,
+    base_context: &BTreeMap<String, MinijinjaValue>,
+    skip_ref_validation: bool,
+) -> (
+    BTreeMap<String, MinijinjaValue>,
+    Arc<DashMap<String, MinijinjaValue>>,
+)
+where
+    T: InternalDbtNodeAttributes + ?Sized,
+{
+    build_compile_node_context_inner(
+        model,
+        resolver_state.adapter_type,
+        base_context,
+        &resolver_state.root_project_name,
+        resolver_state.node_resolver.clone(),
+        resolver_state.runtime_config.clone(),
+        skip_ref_validation,
+    )
+}
+
+/// Build a compile model context
+/// Returns a context and the current relation
+#[allow(clippy::type_complexity, clippy::too_many_arguments)]
+pub fn build_compile_node_context_inner<T>(
+    model: &T,
+    adapter_type: AdapterType,
+    base_context: &BTreeMap<String, MinijinjaValue>,
+    root_project_name: &str,
+    node_resolver: Arc<dyn NodeResolverTracker>,
+    runtime_config: Arc<DbtRuntimeConfig>,
+    skip_ref_validation: bool,
+) -> (
+    BTreeMap<String, MinijinjaValue>,
+    Arc<DashMap<String, MinijinjaValue>>,
+)
+where
+    T: InternalDbtNodeAttributes + ?Sized,
+{
+    let mut base_builtins = if let Some(builtins) = base_context.get("builtins") {
+        builtins
+            .as_object()
+            .unwrap()
+            .downcast_ref::<BTreeMap<String, MinijinjaValue>>()
+            .unwrap()
+            .clone()
+    } else {
+        BTreeMap::new()
+    };
+    let mut ctx = base_context.clone();
+
+    let this_relation = match model.resource_type() {
+        NodeType::UnitTest => {
+            let ref_name = model
+                .base()
+                .refs
+                .first()
+                .cloned()
+                .map(|r| r.name)
+                .expect("Unit test must have a dependency");
+            let (_, this_relation, _, _) = node_resolver
+                .lookup_ref(
+                    &Some(model.common().package_name.clone()),
+                    &ref_name,
+                    &None,
+                    &None,
+                )
+                .expect("Ref must exist");
+            this_relation
+        }
+        NodeType::Model => {
+            let ref_name = model.common().name.clone();
+            // for repl, we use the just create a relation on spot using model passed in.
+            if ref_name == REPL_MODEL_NAME {
+                dbt_adapter::relation::do_create_relation(
+                    adapter_type,
+                    model.base().database.clone(),
+                    model.base().schema.clone(),
+                    Some(model.base().alias.clone()),
+                    None,
+                    model.base().quoting,
+                )
+                .unwrap()
+                .as_value()
+            } else {
+                let (_, this_relation, _, deferred_relation) = node_resolver
+                    .lookup_ref(
+                        &Some(model.common().package_name.clone()),
+                        &ref_name,
+                        &model.version().map(|v| v.to_string()),
+                        &Some(model.common().package_name.clone()),
+                    )
+                    .expect("Ref must exist");
+
+                if let Some(deferred_relation_value) = deferred_relation
+                    && (matches!(*model.base().static_analysis, StaticAnalysisKind::Unsafe)
+                        || model.introspection().is_unsafe())
+                {
+                    deferred_relation_value
+                } else {
+                    this_relation
+                }
+            }
+        }
+        _ => dbt_adapter::relation::do_create_relation(
+            adapter_type,
+            model.base().database.clone(),
+            model.base().schema.clone(),
+            Some(model.base().alias.clone()),
+            None,
+            model.base().quoting,
+        )
+        .unwrap()
+        .as_value(),
+    };
+    ctx.insert("this".to_owned(), this_relation);
+    ctx.insert(
+        "database".to_owned(),
+        MinijinjaValue::from(model.base().database.to_string()),
+    );
+    ctx.insert(
+        "schema".to_owned(),
+        MinijinjaValue::from(model.base().schema.to_string()),
+    );
+    ctx.insert(
+        "identifier".to_owned(),
+        MinijinjaValue::from(model.base().alias.clone()),
+    );
+
+    let config_map = Arc::new(convert_yml_to_dash_map(model.serialized_config()));
+
+    // Get valid config keys based on resource type
+    let valid_keys = match model.resource_type() {
+        NodeType::Model => dbt_schemas::schemas::project::ModelConfig::valid_field_names(),
+        NodeType::Seed => dbt_schemas::schemas::project::SeedConfig::valid_field_names(),
+        NodeType::Test => dbt_schemas::schemas::project::DataTestConfig::valid_field_names(),
+        NodeType::Snapshot => dbt_schemas::schemas::project::SnapshotConfig::valid_field_names(),
+        NodeType::Source => dbt_schemas::schemas::project::SourceConfig::valid_field_names(),
+        NodeType::UnitTest => dbt_schemas::schemas::project::UnitTestConfig::valid_field_names(),
+        NodeType::Function => dbt_schemas::schemas::project::FunctionConfig::valid_field_names(),
+        _ => {
+            // For other types, use an empty set to avoid warnings
+            std::collections::HashSet::new()
+        }
+    };
+
+    let compile_config = CompileConfig {
+        config: config_map.clone(),
+        valid_keys,
+    };
+
+    ctx.insert(
+        "config".to_owned(),
+        MinijinjaValue::from_object(compile_config.clone()),
+    );
+    base_builtins.insert(
+        "config".to_string(),
+        MinijinjaValue::from_object(compile_config),
+    );
+
+    // Create validated ref function with dependency checking
+    let allowed_dependencies: Arc<BTreeSet<String>> =
+        Arc::new(model.base().depends_on.nodes.iter().cloned().collect());
+
+    let ref_function = RefFunction::new_with_validation(
+        node_resolver.clone(),
+        model.common().package_name.clone(),
+        runtime_config.clone(),
+        allowed_dependencies.clone(),
+        skip_ref_validation,
+        model.common().unique_id.clone(),
+    );
+
+    let ref_value = MinijinjaValue::from_object(ref_function);
+    ctx.insert("ref".to_string(), ref_value.clone());
+    base_builtins.insert("ref".to_string(), ref_value);
+
+    // Create validated function function with dependency checking
+    let function_function = FunctionFunction::new_with_validation(
+        node_resolver.clone(),
+        model.common().package_name.clone(),
+        runtime_config.clone(),
+        allowed_dependencies,
+        skip_ref_validation,
+    );
+
+    let function_value = MinijinjaValue::from_object(function_function);
+    ctx.insert("function".to_string(), function_value.clone());
+    base_builtins.insert("function".to_string(), function_value);
+
+    // Recreate source function with the node's package_name (not root project's)
+    let source_function =
+        SourceFunction::new(node_resolver.clone(), model.common().package_name.clone());
+    let source_value = MinijinjaValue::from_object(source_function);
+    ctx.insert("source".to_string(), source_value.clone());
+    base_builtins.insert("source".to_string(), source_value);
+
+    // Register builtins as a global
+    ctx.insert(
+        "builtins".to_owned(),
+        MinijinjaValue::from_object(base_builtins),
+    );
+    let mut model_map = convert_yml_to_value_map(model.serialize());
+    model_map.insert(
+        "batch".to_owned(),
+        MinijinjaValue::from_object(init_batch_context()),
+    );
+    ctx.insert(
+        "model".to_owned(),
+        MinijinjaValue::from_serialize(MinijinjaValue::from_object(model_map)),
+    );
+
+    let result_store = ResultStore::default();
+    ctx.insert(
+        "store_result".to_owned(),
+        MinijinjaValue::from_function(result_store.store_result()),
+    );
+    ctx.insert(
+        "load_result".to_owned(),
+        MinijinjaValue::from_function(result_store.load_result()),
+    );
+    ctx.insert(
+        "store_raw_result".to_owned(),
+        MinijinjaValue::from_function(result_store.store_raw_result()),
+    );
+    ctx.insert(
+        TARGET_PACKAGE_NAME.to_owned(),
+        MinijinjaValue::from(&model.common().package_name),
+    );
+    ctx.insert(
+        TARGET_UNIQUE_ID.to_owned(),
+        MinijinjaValue::from(&model.common().unique_id),
+    );
+
+    let mut packages = runtime_config
+        .dependencies
+        .keys()
+        .cloned()
+        .collect::<BTreeSet<String>>();
+    packages.insert(root_project_name.to_string());
+
+    ctx.insert(
+        "context".to_owned(),
+        MinijinjaValue::from_object(MacroLookupContext {
+            root_project_name: root_project_name.to_string(),
+            current_project_name: None,
+            packages,
+        }),
+    );
+
+    ctx.insert(
+        CURRENT_PATH.to_string(),
+        MinijinjaValue::from(model.common().original_file_path.clone().to_string_lossy()),
+    );
+    ctx.insert(
+        CURRENT_SPAN.to_string(),
+        MinijinjaValue::from_serialize(Span::default()),
+    );
+
+    ctx.insert(
+        CURRENT_EXECUTION_PHASE.to_string(),
+        MinijinjaValue::from("render"),
+    );
+    (ctx, config_map)
+}
+
+fn init_batch_context() -> BTreeMap<String, MinijinjaValue> {
+    // TODO: batch map should have valid event_time_start and event_time_end
+    // for now, we are just using now
+    let datetime = London.with_ymd_and_hms(2025, 1, 1, 1, 1, 1).unwrap();
+    let mut batch_map = BTreeMap::new();
+    batch_map.insert("id".to_string(), MinijinjaValue::from(""));
+    batch_map.insert(
+        "event_time_start".to_string(),
+        MinijinjaValue::from_object(PyDateTime::new_aware(
+            datetime,
+            Some(PytzTimezone::new(Tz::UTC)),
+        )),
+    );
+    batch_map.insert(
+        "event_time_end".to_string(),
+        MinijinjaValue::from_object(PyDateTime::new_aware(
+            datetime,
+            Some(PytzTimezone::new(Tz::UTC)),
+        )),
+    );
+    batch_map
+}

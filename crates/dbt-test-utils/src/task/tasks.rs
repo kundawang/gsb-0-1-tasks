@@ -1,0 +1,1093 @@
+//! Core tasks.
+
+use std::{
+    io::Write,
+    path::{Path, PathBuf},
+    process::Command,
+    sync::{Arc, Mutex, atomic::AtomicI32},
+};
+
+use arrow::record_batch::RecordBatch;
+use async_trait::async_trait;
+use dbt_common::{
+    ErrorCode, FsError, FsResult,
+    constants::{DBT_INTERNAL_PACKAGES_DIR_NAME, DBT_LOG_DIR_NAME, DBT_TARGET_DIR_NAME},
+    err, stdfs,
+};
+use dbt_telemetry::TelemetryRecord;
+use dbt_test_primitives::is_update_golden_files_mode;
+use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
+
+use crate::task::{
+    goldie::{OutputNormalizer, TextualPatch, compare_or_update, diff_goldie},
+    utils::{
+        maybe_normalize_schema_name, maybe_normalize_tmp_paths, normalize_inline_sql_files,
+        normalize_version,
+    },
+};
+
+use super::{
+    ProjectEnv, Task, TestEnv, TestError, TestResult, goldie::execute_and_compare,
+    task_seq::CommandFn,
+};
+
+/// Common helper function to prepare command vector with standard DBT paths and options
+pub fn prepare_command_vec(
+    mut cmd_vec: Vec<String>,
+    project_env: &ProjectEnv,
+    test_env: &TestEnv,
+    filter_brackets: bool,
+) -> Vec<String> {
+    let project_dir = &project_env.absolute_project_dir;
+    let target_dir = &test_env.temp_dir.join(DBT_TARGET_DIR_NAME);
+    let logs_dir = &test_env.temp_dir.join(DBT_LOG_DIR_NAME);
+    let internal_packages_install_path = &test_env.temp_dir.join(DBT_INTERNAL_PACKAGES_DIR_NAME);
+
+    // Filter command arguments if requested (for ExecuteAndCompare)
+    if filter_brackets {
+        cmd_vec = cmd_vec
+            .iter()
+            .map(|cmd| {
+                if cmd.starts_with('{') && cmd.ends_with('}') {
+                    cmd[1..cmd.len() - 1].to_string()
+                } else {
+                    cmd.to_string()
+                }
+            })
+            .collect();
+    }
+
+    // Redirect logs unless it is already specified
+    if !cmd_vec.iter().any(|s| s.starts_with("--log-path")) {
+        cmd_vec.push(format!("--log-path={}", logs_dir.display()));
+    }
+
+    // Add standard DBT flags (allow thetest to fail if caller added them manually)
+    cmd_vec.push(format!("--target-path={}", target_dir.display()));
+    cmd_vec.push(format!("--project-dir={}", project_dir.display()));
+    cmd_vec.push(format!(
+        "--internal-packages-install-path={}",
+        internal_packages_install_path.display()
+    ));
+
+    cmd_vec
+}
+
+/// A task that executes a command without comparing output to goldie files and captures stdout and stderr.
+pub struct ExecuteOnly {
+    name: String,
+    cmd_vec: Vec<String>,
+    func: Arc<CommandFn>,
+    redirect_outputs: bool,
+    allow_failure: bool,
+    stdout_name: Arc<Mutex<Option<String>>>,
+    stderr_name: Arc<Mutex<Option<String>>>,
+    stdout: Arc<Mutex<String>>,
+    stderr: Arc<Mutex<String>>,
+    exit_code: AtomicI32,
+}
+
+impl ExecuteOnly {
+    /// Construct a new execute only task.
+    ///
+    /// If `redirect_outputs` is true, `target-path`, `project-dir`, and `log-path`
+    /// will be added to the command vector automatically.
+    pub fn new(
+        name: String,
+        cmd_vec: Vec<String>,
+        func: Arc<CommandFn>,
+        redirect_outputs: bool,
+    ) -> Self {
+        Self {
+            name,
+            cmd_vec,
+            func,
+            redirect_outputs,
+            allow_failure: false,
+            stdout_name: Arc::new(Mutex::new(None)),
+            stderr_name: Arc::new(Mutex::new(None)),
+            stdout: Arc::new(Mutex::new(String::default())),
+            stderr: Arc::new(Mutex::new(String::default())),
+            exit_code: AtomicI32::new(0),
+        }
+    }
+
+    pub fn with_allow_failure(mut self, allow_failure: bool) -> Self {
+        self.allow_failure = allow_failure;
+        self
+    }
+
+    pub fn get_exit_code(&self) -> i32 {
+        self.exit_code.load(std::sync::atomic::Ordering::SeqCst)
+    }
+
+    pub fn get_stdout(&self) -> String {
+        self.stdout.lock().expect("Lock is poisoned").clone()
+    }
+
+    pub fn get_stderr(&self) -> String {
+        self.stderr.lock().expect("Lock is poisoned").clone()
+    }
+
+    pub fn get_stdout_name(&self) -> Option<String> {
+        self.stdout_name.lock().expect("Lock is poisoned").clone()
+    }
+
+    pub fn get_stderr_name(&self) -> Option<String> {
+        self.stderr_name.lock().expect("Lock is poisoned").clone()
+    }
+}
+
+#[async_trait]
+impl Task for ExecuteOnly {
+    async fn run(
+        &self,
+        project_env: &ProjectEnv,
+        test_env: &TestEnv,
+        task_index: usize,
+    ) -> TestResult<()> {
+        let mut cmd_vec = self.cmd_vec.clone();
+
+        let mut target_dir = project_env.absolute_project_dir.join(DBT_TARGET_DIR_NAME);
+        // Prepare cli command using the common helper if `redirect_outputs` is true
+        if self.redirect_outputs {
+            cmd_vec = prepare_command_vec(
+                cmd_vec,
+                project_env,
+                test_env,
+                false, // don't filter brackets for ExecuteOnly
+            );
+            target_dir = test_env.temp_dir.join(DBT_TARGET_DIR_NAME);
+        }
+
+        // Create stdout and stderr files
+        let task_suffix = if task_index > 0 {
+            format!("_{task_index}")
+        } else {
+            "".to_string()
+        };
+        let stdout_name = format!("{}{}.stdout", self.name, task_suffix);
+        let stderr_name = format!("{}{}.stderr", self.name, task_suffix);
+        *self.stdout_name.lock().unwrap() = Some(stdout_name.clone());
+        *self.stderr_name.lock().unwrap() = Some(stderr_name.clone());
+        let stdout_path = test_env.temp_dir.join(stdout_name);
+        let stderr_path = test_env.temp_dir.join(stderr_name);
+
+        let stdout_file = stdfs::File::create(&stdout_path)?;
+        let stderr_file = stdfs::File::create(&stderr_path)?;
+
+        // Execute the command
+        let res = (self.func)(
+            cmd_vec,
+            project_env.absolute_project_dir.clone(),
+            target_dir,
+            stdout_file,
+            stderr_file,
+            test_env.get_tracing_handle(),
+        )
+        .await;
+
+        // Store stdout and stderr contents in the struct for later access if needed
+        *self.stdout.lock().unwrap() = stdfs::read_to_string(&stdout_path)?;
+        *self.stderr.lock().unwrap() = stdfs::read_to_string(&stderr_path)?;
+
+        let res = match res {
+            Ok(()) => Ok(0),
+            Err(err) => match err.exit_status() {
+                Some(code) => Ok(code),
+                None => Err(err),
+            },
+        };
+        match res {
+            Ok(exit_code) => {
+                self.exit_code
+                    .store(exit_code, std::sync::atomic::Ordering::SeqCst);
+                Ok(())
+            }
+            Err(_e) if self.allow_failure => {
+                // We still want access to captured stdout/stderr even if the command failed.
+                self.exit_code.store(1, std::sync::atomic::Ordering::SeqCst);
+                Ok(())
+            }
+            Err(e) => Err(e.into()),
+        }
+    }
+
+    fn is_counted(&self) -> bool {
+        true
+    }
+}
+
+#[async_trait]
+impl Task for Arc<ExecuteOnly> {
+    async fn run(
+        &self,
+        project_env: &ProjectEnv,
+        test_env: &TestEnv,
+        task_index: usize,
+    ) -> TestResult<()> {
+        self.as_ref().run(project_env, test_env, task_index).await
+    }
+
+    fn is_counted(&self) -> bool {
+        true
+    }
+}
+
+/// Compare stdout/stderr captured by `ExecuteOnly` against golden files.
+///
+/// Use this when you need to inspect captured output or run intermediate tasks
+/// before the snapshot comparison. If you only need run+compare with the
+/// standard normalization, prefer `ExecuteAndCompare`.
+pub struct CompareStdoutStderr {
+    name: String,
+    execute_task: Arc<ExecuteOnly>,
+    extra_normalizers: Vec<OutputNormalizer>,
+}
+
+impl CompareStdoutStderr {
+    pub fn new(
+        name: impl Into<String>,
+        execute_task: Arc<ExecuteOnly>,
+        extra_normalizers: Vec<OutputNormalizer>,
+    ) -> Self {
+        let name = name.into();
+        Self {
+            name,
+            execute_task,
+            extra_normalizers,
+        }
+    }
+}
+
+#[async_trait]
+impl Task for CompareStdoutStderr {
+    async fn run(
+        &self,
+        _project_env: &ProjectEnv,
+        test_env: &TestEnv,
+        _task_index: usize,
+    ) -> TestResult<()> {
+        if self.name != self.execute_task.name {
+            return Err(TestError::new(format!(
+                "CompareStdoutStderr name '{}' must match ExecuteOnly name '{}'",
+                self.name, self.execute_task.name,
+            )));
+        }
+
+        let stdout_name = self.execute_task.get_stdout_name().ok_or_else(|| {
+            TestError::new(
+                "ExecuteOnly did not record stdout file name. Ensure ExecuteOnly runs before CompareStdoutStderr.",
+            )
+        })?;
+        let stderr_name = self.execute_task.get_stderr_name().ok_or_else(|| {
+            TestError::new(
+                "ExecuteOnly did not record stderr file name. Ensure ExecuteOnly runs before CompareStdoutStderr.",
+            )
+        })?;
+
+        let stdout_path = test_env.temp_dir.join(&stdout_name);
+        let stderr_path = test_env.temp_dir.join(&stderr_name);
+        if !stdout_path.exists() || !stderr_path.exists() {
+            return Err(TestError::new(format!(
+                "CompareStdoutStderr expected ExecuteOnly outputs at '{}' and '{}'. \
+Ensure ExecuteOnly completed before comparison.",
+                stdout_path.display(),
+                stderr_path.display(),
+            )));
+        }
+
+        let goldie_stdout_path = test_env.golden_dir.join(stdout_name);
+        let goldie_stderr_path = test_env.golden_dir.join(stderr_name);
+        let patches = compare_or_update(
+            is_update_golden_files_mode(),
+            false,
+            stderr_path,
+            goldie_stderr_path,
+            stdout_path,
+            goldie_stdout_path,
+            &self.extra_normalizers,
+        )?;
+
+        if patches.is_empty() {
+            Ok(())
+        } else {
+            Err(TestError::GoldieMismatch(patches))
+        }
+    }
+
+    fn is_counted(&self) -> bool {
+        false
+    }
+}
+
+pub struct ExecuteAndCompare {
+    name: String,
+    cmd_vec: Vec<String>,
+    threads: usize,
+    use_recording: bool,
+    func: Arc<CommandFn>,
+    normalizers: Vec<OutputNormalizer>,
+}
+
+impl ExecuteAndCompare {
+    /// Construct a new sequential execute and compare task
+    pub fn new(
+        name: String,
+        mut cmd_vec: Vec<String>,
+        func: Arc<CommandFn>,
+        use_recording: bool,
+    ) -> Self {
+        cmd_vec.push("--threads=1".to_string());
+        if !cmd_vec.iter().any(|s| *s == "--log-format") {
+            cmd_vec.push("--log-format=text".to_string());
+        }
+
+        Self {
+            name,
+            cmd_vec,
+            threads: 1,
+            use_recording,
+            func,
+            normalizers: vec![],
+        }
+    }
+
+    /// Construct a new parallel execute and compare task
+    pub fn new_parallel(
+        name: String,
+        mut cmd_vec: Vec<String>,
+        func: Arc<CommandFn>,
+        threads: usize,
+    ) -> Self {
+        cmd_vec.push(format!("--threads={threads}"));
+        if !cmd_vec.iter().any(|s| *s == "--log-format") {
+            cmd_vec.push("--log-format=text".to_string());
+        }
+
+        Self {
+            name,
+            cmd_vec,
+            // Cannot use recording in parallel mode since order of events is
+            // not deterministic
+            threads,
+            use_recording: false,
+            func,
+            normalizers: vec![],
+        }
+    }
+
+    /// Set extra output normalizers applied before golden comparison.
+    pub fn with_normalizers(mut self, normalizers: Vec<OutputNormalizer>) -> Self {
+        self.normalizers = normalizers;
+        self
+    }
+}
+
+#[async_trait]
+impl Task for ExecuteAndCompare {
+    async fn run(
+        &self,
+        project_env: &ProjectEnv,
+        test_env: &TestEnv,
+        task_index: usize,
+    ) -> TestResult<()> {
+        // Prepare cli command using the common helper
+        let mut cmd_vec = prepare_command_vec(
+            self.cmd_vec.clone(),
+            project_env,
+            test_env,
+            true, // filter brackets for ExecuteAndCompare
+        );
+
+        // Add recording flag if needed
+        if self.use_recording {
+            cmd_vec.push(format!(
+                "--dbt-replay={}",
+                test_env
+                    .golden_dir
+                    .join(format!("recording_{task_index}.json"))
+                    .display()
+            ));
+        }
+
+        match execute_and_compare(
+            &self.name,
+            cmd_vec.as_slice(),
+            project_env,
+            test_env,
+            task_index,
+            self.threads != 1,
+            self.func.clone(),
+            &self.normalizers,
+        )
+        .await
+        {
+            Ok(patches) if patches.is_empty() => Ok(()),
+            Ok(patches) => Err(TestError::GoldieMismatch(patches)),
+            Err(e) => Err(e.into()),
+        }
+    }
+
+    fn is_counted(&self) -> bool {
+        true
+    }
+}
+
+type TelemetryArrowDeserializer =
+    fn(&RecordBatch) -> Result<Vec<TelemetryRecord>, Box<dyn std::error::Error>>;
+
+pub struct ExecuteAndCompareTelemetry {
+    name: String,
+    cmd_vec: Vec<String>,
+    func: Arc<CommandFn>,
+    telemetry_deserializer: TelemetryArrowDeserializer,
+}
+
+impl ExecuteAndCompareTelemetry {
+    const OTEL_JSONL_FILE_NAME: &str = "otel.jsonl";
+    const OTEL_PARQUET_FILE_NAME: &str = "otel.parquet";
+    const TELEMETRY_INVOCATION_ID: &str = "424242424242";
+
+    pub fn new(
+        name: String,
+        mut cmd_vec: Vec<String>,
+        func: Arc<CommandFn>,
+        telemetry_deserializer: TelemetryArrowDeserializer,
+    ) -> Self {
+        Self::assert_flag_absent(
+            &cmd_vec,
+            "--otel-file-name",
+            "ExecuteAndCompareTelemetry sets --otel-file-name automatically",
+        );
+        Self::assert_flag_absent(
+            &cmd_vec,
+            "--otel-parquet-file-name",
+            "ExecuteAndCompareTelemetry sets --otel-parquet-file-name automatically",
+        );
+        Self::assert_flag_absent(
+            &cmd_vec,
+            "--invocation-id",
+            "ExecuteAndCompareTelemetry sets --invocation-id automatically",
+        );
+        Self::assert_flag_absent(
+            &cmd_vec,
+            "--threads",
+            "ExecuteAndCompareTelemetry forces --threads=1",
+        );
+
+        cmd_vec.push("--threads=1".to_string());
+        cmd_vec.push(format!("--otel-file-name={}", Self::OTEL_JSONL_FILE_NAME));
+        cmd_vec.push(format!(
+            "--otel-parquet-file-name={}",
+            Self::OTEL_PARQUET_FILE_NAME
+        ));
+        cmd_vec.push(format!("--invocation-id={}", Self::TELEMETRY_INVOCATION_ID));
+
+        Self {
+            name,
+            cmd_vec,
+            func,
+            telemetry_deserializer,
+        }
+    }
+
+    fn assert_flag_absent(cmd_vec: &[String], flag: &str, message: &str) {
+        if cmd_vec.iter().any(|arg| arg.contains(flag)) {
+            panic!("{message}");
+        }
+    }
+
+    /// Compare telemetry outputs (JSONL and parquet formats) against golden snapshots.
+    /// Processes both telemetry formats and returns any differences found.
+    fn compare_telemetry(
+        &self,
+        cmd_vec: &[String],
+        project_env: &ProjectEnv,
+        test_env: &TestEnv,
+        task_index: usize,
+    ) -> FsResult<Vec<TextualPatch>> {
+        // Resolve actual output directories from command flags or defaults
+        let log_dir = Self::resolve_path(
+            Self::extract_flag_value(cmd_vec, "--log-path"),
+            &project_env.absolute_project_dir,
+            test_env.temp_dir.join(DBT_LOG_DIR_NAME),
+        );
+        let target_dir = Self::resolve_path(
+            Self::extract_flag_value(cmd_vec, "--target-path"),
+            &project_env.absolute_project_dir,
+            test_env.temp_dir.join(DBT_TARGET_DIR_NAME),
+        );
+
+        let task_suffix = Self::task_suffix(task_index);
+
+        // Path to native JSONL telemetry output (written directly by the CLI)
+        let actual_jsonl_path = log_dir.join(Self::OTEL_JSONL_FILE_NAME);
+        // Path to parquet telemetry output (written to target/metadata by the CLI)
+        let actual_parquet_path = target_dir
+            .join("metadata")
+            .join(Self::OTEL_PARQUET_FILE_NAME);
+
+        // Golden snapshot paths: separate files for native JSONL and parquet-derived JSONL
+        let golden_jsonl_path = test_env
+            .golden_dir
+            .join(format!("{}{}.otel.jsonl", self.name, task_suffix));
+        let golden_parquet_jsonl_path = test_env
+            .golden_dir
+            .join(format!("{}{}.otel.parquet.jsonl", self.name, task_suffix));
+
+        // Verify native JSONL output exists
+        if !actual_jsonl_path.exists() {
+            return err!(
+                ErrorCode::FileNotFound,
+                "expected telemetry jsonl file at {} but it was not produced",
+                actual_jsonl_path.display()
+            );
+        }
+
+        // Read and postprocess native JSONL telemetry
+        let actual_jsonl_content =
+            Self::postprocess_jsonl(stdfs::read_to_string(&actual_jsonl_path)?);
+
+        // Verify parquet output exists
+        if !actual_parquet_path.exists() {
+            return err!(
+                ErrorCode::FileNotFound,
+                "expected telemetry parquet file at {} but it was not produced",
+                actual_parquet_path.display()
+            );
+        }
+
+        // Deserialize parquet to records, then serialize to JSONL with postprocessing
+        let actual_parquet_bytes = stdfs::read(&actual_parquet_path)?;
+        let actual_parquet_as_jsonl = self.parquet_to_jsonl(actual_parquet_bytes)?;
+
+        if is_update_golden_files_mode() {
+            // Update golden snapshots: native JSONL and parquet-derived JSONL
+            stdfs::write(&golden_jsonl_path, actual_jsonl_content)?;
+            stdfs::write(&golden_parquet_jsonl_path, actual_parquet_as_jsonl)?;
+            return Ok(vec![]);
+        }
+
+        // Compare native JSONL telemetry against its snapshot
+        let patches = diff_goldie(
+            "jsonl telemetry",
+            actual_jsonl_content,
+            false, // single backslash is JSON is not a path separator, so avoid the default normalization
+            &golden_jsonl_path,
+            Self::postprocess_jsonl,
+        )
+        .into_iter()
+        // Compare parquet-derived JSONL against its snapshot
+        .chain(diff_goldie(
+            "parquet telemetry",
+            actual_parquet_as_jsonl,
+            false, // single backslash is JSON is not a path separator, so avoid the default normalization
+            &golden_parquet_jsonl_path,
+            Self::postprocess_jsonl,
+        ))
+        .collect::<Vec<_>>();
+
+        Ok(patches)
+    }
+
+    /// Convert parquet bytes to JSONL format with postprocessing applied.
+    /// Deserializes parquet to telemetry records, serializes each to JSON, and applies normalization.
+    fn parquet_to_jsonl(&self, parquet_bytes: Vec<u8>) -> FsResult<String> {
+        // Deserialize parquet to telemetry records
+        let records = Self::read_parquet_to_records(parquet_bytes, self.telemetry_deserializer)?;
+
+        // Convert each record to a JSON line
+        let jsonl_lines: Result<Vec<String>, _> = records
+            .into_iter()
+            .map(|record| {
+                serde_json::to_string(&record).map_err(|err| {
+                    Box::new(FsError::new(
+                        ErrorCode::SerializationError,
+                        format!("failed to serialize telemetry record to json: {err}"),
+                    ))
+                })
+            })
+            .collect();
+        let jsonl_lines = jsonl_lines?;
+
+        // Join lines and apply postprocessing to normalize volatile fields
+        let jsonl = jsonl_lines.join("\n");
+        Ok(Self::postprocess_jsonl(jsonl))
+    }
+
+    /// Read and deserialize parquet bytes into telemetry records using the provided deserializer.
+    fn read_parquet_to_records(
+        parquet_bytes: Vec<u8>,
+        deserializer: TelemetryArrowDeserializer,
+    ) -> FsResult<Vec<TelemetryRecord>> {
+        let reader =
+            ParquetRecordBatchReaderBuilder::try_new(bytes::Bytes::from_owner(parquet_bytes))
+                .map_err(|err| {
+                    FsError::new(
+                        ErrorCode::ParquetError,
+                        format!("failed to construct parquet reader: {err}"),
+                    )
+                })?
+                .build()
+                .map_err(|err| {
+                    FsError::new(
+                        ErrorCode::ParquetError,
+                        format!("failed to build parquet batch reader: {err}"),
+                    )
+                })?;
+
+        let mut records = Vec::new();
+        for batch in reader {
+            let batch = batch.map_err(|err| {
+                FsError::new(
+                    ErrorCode::ParquetError,
+                    format!("failed to read parquet batch: {err}"),
+                )
+            })?;
+            let mut batch_records = deserializer(&batch).map_err(|err| {
+                FsError::new(
+                    ErrorCode::ParquetError,
+                    format!("failed to deserialize telemetry records: {err}"),
+                )
+            })?;
+            records.append(&mut batch_records);
+        }
+
+        Ok(records)
+    }
+
+    /// Resolve a path from command flag value, making it absolute if relative to project dir.
+    fn resolve_path(maybe_path: Option<String>, project_dir: &Path, default: PathBuf) -> PathBuf {
+        match maybe_path {
+            Some(value) => {
+                let candidate = PathBuf::from(value);
+                if candidate.is_relative() {
+                    project_dir.join(candidate)
+                } else {
+                    candidate
+                }
+            }
+            None => default,
+        }
+    }
+
+    /// Generate a suffix string for golden file names based on task index (e.g., "_1" or "").
+    fn task_suffix(task_index: usize) -> String {
+        if task_index > 0 {
+            format!("_{task_index}")
+        } else {
+            String::new()
+        }
+    }
+
+    /// Extract the value of a command-line flag from the command vector.
+    fn extract_flag_value(cmd_vec: &[String], flag: &str) -> Option<String> {
+        let prefix = format!("{flag}=");
+        let iter = cmd_vec.iter().enumerate();
+        for (idx, arg) in iter {
+            if arg == flag {
+                return cmd_vec.get(idx + 1).cloned();
+            }
+            if arg.starts_with(&prefix) {
+                return Some(arg[prefix.len()..].to_string());
+            }
+        }
+        None
+    }
+
+    /// Navigate a JSON value by path and apply a transformation to the found value.
+    fn apply_by_path<F>(value: &mut serde_json::Value, key: &str, mut transform: F)
+    where
+        F: FnMut(&mut serde_json::Value),
+    {
+        let parts: Vec<&str> = key.split('.').collect();
+
+        fn apply_by_path_inner<F: FnMut(&mut serde_json::Value)>(
+            value: &mut serde_json::Value,
+            path: &[&str],
+            mut transform: F,
+        ) {
+            if path.is_empty() {
+                return;
+            }
+            if let Some(obj) = value.as_object_mut() {
+                if path.len() == 1 {
+                    if let Some(v) = obj.get_mut(path[0]) {
+                        transform(v);
+                    }
+                } else if let Some(next) = obj.get_mut(path[0]) {
+                    apply_by_path_inner(next, &path[1..], transform);
+                }
+            }
+        }
+
+        apply_by_path_inner(value, parts.as_slice(), &mut transform);
+    }
+
+    /// Normalize a JSON value by replacing it with a type-appropriate default.
+    fn normalize_value(v: &mut serde_json::Value) {
+        if v.is_string() {
+            *v = serde_json::Value::String("<normalized>".to_string());
+        } else if v.is_number() {
+            *v = serde_json::Value::Number(serde_json::Number::from(0));
+        } else if v.is_array() {
+            *v = serde_json::Value::Array(vec![]);
+        } else if v.is_object() {
+            *v = serde_json::Value::Object(serde_json::Map::new());
+        } else if v.is_boolean() {
+            *v = serde_json::Value::Bool(false);
+        } else if v.is_null() {
+            // do nothing
+        }
+    }
+
+    fn find_key_and_normalize(value: &mut serde_json::Value, key: &str) {
+        if let Some(obj) = value.as_object_mut() {
+            if let Some(v) = obj.get_mut(key) {
+                Self::normalize_value(v);
+            } else {
+                for (_k, v) in obj.iter_mut() {
+                    Self::find_key_and_normalize(v, key);
+                }
+            }
+        } else if let Some(arr) = value.as_array_mut() {
+            for v in arr.iter_mut() {
+                Self::find_key_and_normalize(v, key);
+            }
+        }
+    }
+
+    /// Normalize environment-dependent keys in JSONL content to make tests reproducible.
+    fn normalize_volatile_keys(content: String) -> String {
+        const KEYS: &[&str] = &[
+            // Keys that contain timestamps in nanoseconds since epoch
+            "time_unix_nano",
+            "start_time_unix_nano",
+            "end_time_unix_nano",
+            // durations
+            "duration_ms",
+            // raw command includes local paths
+            "raw_command",
+            // Keys with absolute paths
+            "log_path",
+            "project_dir",
+            "target_path",
+            // sql hash is different during recording due to random schema
+            "sql_hash",
+            // these are obviously environment-dependent
+            "host_os",
+            "host_arch",
+            // dbt version changes frequently and it's embedded in process & invocation spans
+            "version",
+        ];
+
+        // Keys to normalize with regex patterns, format: (key_path, regex_pattern, replacement)
+        const REGEX_KEYS: &[(&str, &str, &str)] = &[(
+            "attributes.target",
+            r"\d+\.\d+\.\d+(-[a-zA-Z]+\.\d+)?",
+            "dbt-fusion-version",
+        )];
+
+        content
+            .lines()
+            .map(|line| {
+                if line.trim().is_empty() {
+                    return String::new();
+                }
+
+                let mut json: serde_json::Value = serde_json::from_str(line)
+                    .unwrap_or_else(|_| panic!("Failed to parse jsonl line: {line}"));
+
+                // Normalize unconditional keys
+                for key in KEYS {
+                    Self::find_key_and_normalize(&mut json, key);
+                }
+
+                // Apply regex-based normalization
+                for (key_path, pattern, replacement) in REGEX_KEYS {
+                    let re = regex::Regex::new(pattern)
+                        .unwrap_or_else(|_| panic!("Invalid regex pattern: {pattern}"));
+                    Self::apply_by_path(&mut json, key_path, |v| {
+                        if let Some(s) = v.as_str() {
+                            *v = serde_json::Value::String(
+                                re.replace_all(s, *replacement).to_string(),
+                            );
+                        }
+                    });
+                }
+
+                serde_json::to_string(&json).expect("Failed to serialize modified jsonl line")
+            })
+            .collect::<Vec<_>>()
+            .join("\n")
+    }
+
+    /// Remove keys from JSONL that cannot be replayed (e.g., query_id from warehouse responses).
+    fn strip_non_replayable_keys(content: String) -> String {
+        // Keys whose values we strip because the replay mechanism cannot reproduce them
+        const KEYS: &[&str] = &["attributes.query_id"];
+
+        content
+            .lines()
+            .map(|line| {
+                if line.trim().is_empty() {
+                    return String::new();
+                }
+
+                let mut json: serde_json::Value = serde_json::from_str(line)
+                    .unwrap_or_else(|_| panic!("Failed to parse jsonl line: {line}"));
+
+                for key in KEYS {
+                    Self::apply_by_path(&mut json, key, |v| *v = serde_json::Value::Null);
+                }
+
+                serde_json::to_string(&json).expect("Failed to serialize modified jsonl line")
+            })
+            .collect::<Vec<_>>()
+            .join("\n")
+    }
+
+    /// Normalize path separators in JSON strings to make Windows/Unix tests compatible.
+    /// On Windows, replaces slashes with '|' to ignore separator differences; no-op on other platforms.
+    fn json_safe_normalize_slashes(output: String) -> String {
+        #[cfg(windows)]
+        {
+            output.replace("\\\\", "|").replace("/", "|")
+        }
+        #[cfg(not(windows))]
+        {
+            output
+        }
+    }
+
+    /// Apply all normalization transforms to JSONL content for stable golden file comparison.
+    fn postprocess_jsonl(content: String) -> String {
+        [
+            maybe_normalize_schema_name,
+            maybe_normalize_tmp_paths,
+            Self::normalize_unrendered_config_in_model_strings,
+            Self::normalize_volatile_keys,
+            Self::strip_non_replayable_keys,
+            Self::json_safe_normalize_slashes,
+            normalize_version,
+            normalize_inline_sql_files,
+        ]
+        .iter()
+        .fold(content, |acc, transform| transform(acc))
+    }
+
+    /// Strip `unrendered_config` from the debug-printed node representation that appears in
+    /// some dev trace telemetry records.
+    ///
+    /// These strings are not a stable schema contract (they're a Python-ish dict dump), and
+    /// adding new internal fields to nodes (like `unrendered_config`) should not churn telemetry
+    /// goldens.
+    fn normalize_unrendered_config_in_model_strings(output: String) -> String {
+        output
+            // common case: `..., 'unrendered_config': {}, ...`
+            .replace(", 'unrendered_config': {}, ", ", ")
+            // if it appears at the end (no trailing comma)
+            .replace(", 'unrendered_config': {}", "")
+    }
+}
+
+#[async_trait]
+impl Task for ExecuteAndCompareTelemetry {
+    async fn run(
+        &self,
+        project_env: &ProjectEnv,
+        test_env: &TestEnv,
+        task_index: usize,
+    ) -> TestResult<()> {
+        // Prepare the remaining cli command using the common helper
+        let cmd_vec = prepare_command_vec(self.cmd_vec.clone(), project_env, test_env, true);
+
+        let mut patches = match execute_and_compare(
+            &self.name,
+            cmd_vec.as_slice(),
+            project_env,
+            test_env,
+            task_index,
+            false,
+            self.func.clone(),
+            &[],
+        )
+        .await
+        {
+            Ok(patches) => patches,
+            Err(e) => return Err(e.into()),
+        };
+
+        let mut telemetry_patches =
+            self.compare_telemetry(&cmd_vec, project_env, test_env, task_index)?;
+        patches.append(&mut telemetry_patches);
+
+        if patches.is_empty() {
+            Ok(())
+        } else {
+            Err(TestError::GoldieMismatch(patches))
+        }
+    }
+
+    fn is_counted(&self) -> bool {
+        true
+    }
+}
+
+#[async_trait]
+impl Task for Arc<ExecuteAndCompareTelemetry> {
+    async fn run(
+        &self,
+        project_env: &ProjectEnv,
+        test_env: &TestEnv,
+        task_index: usize,
+    ) -> TestResult<()> {
+        self.as_ref().run(project_env, test_env, task_index).await
+    }
+
+    fn is_counted(&self) -> bool {
+        true
+    }
+}
+
+pub struct NopTask;
+
+#[async_trait]
+impl Task for NopTask {
+    async fn run(
+        &self,
+        _project_env: &ProjectEnv,
+        _test_env: &TestEnv,
+        _task_index: usize,
+    ) -> TestResult<()> {
+        Ok(())
+    }
+
+    fn is_counted(&self) -> bool {
+        true
+    }
+}
+
+pub struct FnTask<F> {
+    func: F,
+    counted: bool,
+}
+
+impl<F> FnTask<F> {
+    pub fn new(func: F) -> Self {
+        Self {
+            func,
+            counted: false,
+        }
+    }
+
+    pub fn counted(mut self) -> Self {
+        self.counted = true;
+        self
+    }
+}
+
+#[async_trait]
+impl<F> Task for FnTask<F>
+where
+    F: Fn(&ProjectEnv, &TestEnv, usize) -> TestResult<()> + Send + Sync,
+{
+    async fn run(
+        &self,
+        project_env: &ProjectEnv,
+        test_env: &TestEnv,
+        task_index: usize,
+    ) -> TestResult<()> {
+        (self.func)(project_env, test_env, task_index)
+    }
+
+    fn is_counted(&self) -> bool {
+        self.counted
+    }
+}
+
+/// Task to execute any sh command.
+pub struct ShExecute {
+    name: String,
+    cmd_vec: Vec<String>,
+}
+
+impl ShExecute {
+    pub fn new(name: String, raw_cmd: Vec<String>) -> Self {
+        Self {
+            name,
+            cmd_vec: raw_cmd,
+        }
+    }
+}
+
+#[async_trait]
+impl Task for ShExecute {
+    async fn run(
+        &self,
+        project_env: &ProjectEnv,
+        test_env: &TestEnv,
+        task_index: usize,
+    ) -> TestResult<()> {
+        let boxed_fn: Arc<CommandFn> = Arc::new(|cmd_vec, dir, _, stdout, stderr, _| {
+            Box::pin(exec_sh(cmd_vec, dir, stdout, stderr))
+        });
+
+        match execute_and_compare(
+            &self.name,
+            self.cmd_vec.as_slice(),
+            project_env,
+            test_env,
+            task_index,
+            false,
+            boxed_fn,
+            &[],
+        )
+        .await
+        {
+            Ok(patches) if patches.is_empty() => Ok(()),
+            Ok(patches) => Err(TestError::GoldieMismatch(patches)),
+            Err(e) => Err(e.into()),
+        }
+    }
+
+    fn is_counted(&self) -> bool {
+        true
+    }
+}
+
+// Util function to execute sh commands
+async fn exec_sh(
+    cmd_vec: Vec<String>,
+    project_dir: PathBuf,
+    stdout_file: std::fs::File,
+    stderr_file: std::fs::File,
+) -> FsResult<()> {
+    let status = Command::new(&cmd_vec[0])
+        .args(&cmd_vec[1..])
+        .stdout(
+            stdout_file
+                .try_clone()
+                .expect("Could not clone stdout_file"),
+        )
+        .stderr(
+            stderr_file
+                .try_clone()
+                .expect("Could not clone stderr_file"),
+        )
+        .current_dir(project_dir)
+        .spawn();
+
+    match status {
+        Ok(mut child) => {
+            child.wait().expect("Could not wait on process");
+            Ok(())
+        }
+        Err(e) => {
+            writeln!(&stderr_file, "Error spawning command: {cmd_vec:?} {e}")
+                .expect("Could not write");
+            Err(FsError::exit_with_status(1))
+        }
+    }
+}
