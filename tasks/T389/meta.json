@@ -1,0 +1,37 @@
+{
+  "task_id": "T389",
+  "title": "strawberry-graphql/strawberry 缺陷修复：Fix unclear error when missing dependencies (#3511)",
+  "created_at": "2026-09-27T17:37:18",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 strawberry-graphql/strawberry @ 61f9e3a1ba",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t389/base",
+    "sha": "c09e0578ffe4435d81d1ed1800a092278459896b",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/c09e0578ffe4435d81d1ed1800a092278459896b"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t389/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t389/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/strawberry-graphql/strawberry base=https://github.com/strawberry-graphql/strawberry/commit/61f9e3a1baf557dab7ce14f6104f74cdebeafd76 fix=dd4c343da5a01ea6178bda46f0432abf7d172f15"
+}
