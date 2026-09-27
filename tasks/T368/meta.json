@@ -1,0 +1,37 @@
+{
+  "task_id": "T368",
+  "title": "streamlit/streamlit 缺陷修复：[fix] iframe and html change in default width when no width ",
+  "created_at": "2026-09-27T17:50:02",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 streamlit/streamlit @ ca1485a557",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t368/base",
+    "sha": "13b0a50071e905dc28bfeeacc189d07eb662cb97",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/13b0a50071e905dc28bfeeacc189d07eb662cb97"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t368/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t368/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/streamlit/streamlit base=https://github.com/streamlit/streamlit/commit/ca1485a557791f43ce9a8c13474ccae09c4877ba fix=dd6b8497c4e65e90a62d5ae99be52f350f11dd4f"
+}
