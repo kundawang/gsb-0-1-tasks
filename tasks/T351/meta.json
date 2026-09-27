@@ -1,0 +1,37 @@
+{
+  "task_id": "T351",
+  "title": "temporalio/sdk-python 缺陷修复：Fix pdb / breakpoint() hang in workflow code (#1104) (#1568)",
+  "created_at": "2026-09-27T17:23:39",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 temporalio/sdk-python @ 7ab0e9d8e7",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t351/base",
+    "sha": "10bfb4583c00c45ab7f0983b18ab35d8039079be",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/10bfb4583c00c45ab7f0983b18ab35d8039079be"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t351/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t351/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/temporalio/sdk-python base=https://github.com/temporalio/sdk-python/commit/7ab0e9d8e7ae864d378ec511bac021060dc9fbd0 fix=29dc19c2ea3f3a5a218b775a0883d5bdca2f9e7b"
+}
