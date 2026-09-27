@@ -1,0 +1,37 @@
+{
+  "task_id": "T352",
+  "title": "temporalio/sdk-python 缺陷修复：Add WorkflowUpdateRPCTimeoutOrCancelledError (#548)",
+  "created_at": "2026-09-27T17:23:50",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 temporalio/sdk-python @ 4f646c20bd",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t352/base",
+    "sha": "14eb3fadd5c1bd4dad1aef8c29586ba7c2dc726c",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/14eb3fadd5c1bd4dad1aef8c29586ba7c2dc726c"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t352/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t352/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/temporalio/sdk-python base=https://github.com/temporalio/sdk-python/commit/4f646c20bd63e9f727f8407b44766052cc067bf0 fix=2331aa4617dc20dd711944fed52e43afb06ec557"
+}
