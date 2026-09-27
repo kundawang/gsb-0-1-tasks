@@ -1,0 +1,37 @@
+{
+  "task_id": "T398",
+  "title": "aiogram/aiogram 缺陷修复：Fail redis and mongo tests if incorrect URI provided + some ",
+  "created_at": "2026-09-27T17:42:04",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 aiogram/aiogram @ 7760ab1d0d",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t398/base",
+    "sha": "b37b076249bb65512d87980f4f0bf0d33181f40a",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/b37b076249bb65512d87980f4f0bf0d33181f40a"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t398/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t398/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/aiogram/aiogram base=https://github.com/aiogram/aiogram/commit/7760ab1d0d7fdd367824a33eed50ad7f3bf1671a fix=1df3adaba1889ac95f12b8cce702ff37fc387e14"
+}
