@@ -1,0 +1,157 @@
+# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2026)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from typing_extensions import assert_type
+
+# Perform some "type checking testing"; mypy should flag any assignments that are
+# incorrect.
+if TYPE_CHECKING:
+    from enum import Enum
+
+    from streamlit.elements.widgets.multiselect import MultiSelectMixin
+
+    multiselect = MultiSelectMixin().multiselect
+
+    class Alfred(Enum):
+        HITCHCOCK = 1
+        WALLACE = 2
+        GREENE = 3
+
+    # Basic type tests without accept_new_options
+    assert_type(multiselect("foo", [1, 2, 3]), list[int])
+    assert_type(multiselect("foo", [1, 2, 3], default=None), list[int])
+    assert_type(multiselect("foo", [1.0, 2.0, 3.0]), list[float])
+    assert_type(multiselect("foo", [1.0, 2.0, 3.0], default=None), list[float])
+    assert_type(multiselect("foo", [1.0, 2, 3.0]), list[float])
+    assert_type(multiselect("foo", [1.0, 2, 3.0], default=None), list[float])
+    assert_type(multiselect("foo", ["foo", "bar"]), list[str])
+    assert_type(multiselect("foo", ["foo", "bar"], default=None), list[str])
+    assert_type(multiselect("foo", Alfred), list[Alfred])
+    assert_type(multiselect("foo", [Alfred.HITCHCOCK, Alfred.GREENE]), list[Alfred])
+    # ty infers `list[int | Alfred | str]` rather than `list[object]`.
+    assert_type(multiselect("foo", [1, Alfred.HITCHCOCK, "five"]), list[object])  # ty: ignore[type-assertion-failure]
+
+    # Tests with accept_new_options=True
+    assert_type(multiselect("foo", [1, 2, 3], accept_new_options=True), list[int | str])
+    assert_type(
+        multiselect("foo", [1, 2, 3], default=None, accept_new_options=True),
+        list[int | str],
+    )
+    assert_type(
+        multiselect("foo", [1.0, 2.0, 3.0], accept_new_options=True),
+        list[float | str],
+    )
+    assert_type(multiselect("foo", ["foo", "bar"], accept_new_options=True), list[str])
+    assert_type(multiselect("foo", Alfred, accept_new_options=True), list[Alfred | str])
+    assert_type(
+        multiselect("foo", [Alfred.HITCHCOCK, Alfred.GREENE], accept_new_options=True),
+        list[Alfred | str],
+    )
+
+    # Tests with default values
+    assert_type(multiselect("foo", [1, 2, 3], default=[1]), list[int])
+    assert_type(multiselect("foo", [1, 2, 3], default=1), list[int])
+    assert_type(multiselect("foo", ["foo", "bar"], default=["foo"]), list[str])
+    assert_type(multiselect("foo", ["foo", "bar"], default="foo"), list[str])
+    assert_type(multiselect("foo", Alfred, default=[Alfred.HITCHCOCK]), list[Alfred])
+    assert_type(multiselect("foo", Alfred, default=Alfred.HITCHCOCK), list[Alfred])
+
+    # Tests with default values and accept_new_options
+    assert_type(
+        multiselect("foo", [1, 2, 3], default=[1], accept_new_options=True),
+        list[int | str],
+    )
+    assert_type(
+        multiselect("foo", [1, 2, 3], default=1, accept_new_options=True),
+        list[int | str],
+    )
+    assert_type(
+        multiselect("foo", ["foo", "bar"], default=["foo"], accept_new_options=True),
+        list[str],
+    )
+    assert_type(
+        multiselect("foo", ["foo", "bar"], default="foo", accept_new_options=True),
+        list[str],
+    )
+    assert_type(
+        multiselect("foo", Alfred, default=[Alfred.HITCHCOCK], accept_new_options=True),
+        list[Alfred | str],
+    )
+    assert_type(
+        multiselect("foo", Alfred, default=Alfred.HITCHCOCK, accept_new_options=True),
+        list[Alfred | str],
+    )
+    assert_type(
+        multiselect("foo", ["foo", "bar"], filter_mode="contains"),
+        list[str],
+    )
+    assert_type(multiselect("foo", ["foo", "bar"], filter_mode=None), list[str])
+
+    # Check bind parameter
+    assert_type(multiselect("foo", ["a", "b"], bind="query-params"), list[str])
+    assert_type(multiselect("foo", [1, 2, 3], bind="query-params"), list[int])
+    assert_type(multiselect("foo", ["a", "b"], bind=None), list[str])
+    assert_type(
+        multiselect("foo", ["a", "b"], bind="query-params", accept_new_options=True),
+        list[str],
+    )
+
+    # Check wrap parameter
+    assert_type(multiselect("foo", ["a", "b"], wrap=True), list[str])
+    assert_type(multiselect("foo", ["a", "b"], wrap=False), list[str])
+    assert_type(multiselect("foo", ["a", "b"], wrap=None), list[str])
+
+    # Check select_all parameter
+    assert_type(multiselect("foo", ["a", "b"], select_all=True), list[str])
+    assert_type(multiselect("foo", ["a", "b"], select_all=False), list[str])
+    assert_type(multiselect("foo", ["a", "b"], select_all=1000), list[str])
+
+    def on_multiselect_change(prefix: str) -> None: ...
+
+    # Non-literal accept_new_options returns the union of both result types.
+    accept_new_options: bool = True
+    # ty infers `list[int | str]` rather than the union of both overloads.
+    assert_type(  # ty: ignore[type-assertion-failure]
+        multiselect("foo", [1, 2, 3], accept_new_options=accept_new_options),
+        list[int] | list[int | str],
+    )
+
+    # Common parameters combined
+    assert_type(
+        multiselect(
+            "foo",
+            [1, 2, 3],
+            format_func=lambda value: f"Option {value}",
+            key="numbers",
+            help="Choose numbers",
+            on_change=on_multiselect_change,
+            args=("selected",),
+            kwargs={},
+            max_selections=2,
+            placeholder="Choose up to two",
+            disabled=False,
+            label_visibility="visible",
+            width=400,
+            persist_state="session",
+            select_all=False,
+        ),
+        list[int],
+    )
+
+    # Invalid select_all type
+    multiselect("foo", ["a", "b"], select_all="yes")  # type: ignore[call-overload]  # ty: ignore[no-matching-overload]

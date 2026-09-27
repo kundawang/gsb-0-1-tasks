@@ -1,0 +1,254 @@
+# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2026)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import io
+from pathlib import Path
+from unittest.mock import patch
+
+import pytest
+from parameterized import parameterized
+
+from streamlit.elements.lib.subtitle_utils import (
+    _handle_bytes_data,
+    _handle_stream_data,
+    _handle_string_or_path_data,
+    _is_srt,
+    _srt_to_vtt,
+    process_subtitle_data,
+)
+from streamlit.errors import (
+    StreamlitAPIException,
+    StreamlitInvalidParameterTypeError,
+    StreamlitValueError,
+)
+from tests.delta_generator_test_case import DeltaGeneratorTestCase
+
+SRT_DATA_EN = """
+1
+00:01:47,250 --> 00:01:50,500
+This blade has a dark past.
+
+2
+00:01:51,800 --> 00:01:55,800
+It has shed much innocent blood.
+
+3
+00:01:58,000 --> 00:02:01,450
+You're a fool for traveling alone,
+so completely unprepared.
+"""
+
+VTT_DATA_EN = (
+    b"WEBVTT\n\n\n1\n00:01:47.250 --> 00:01:50.500\nThis blade has a dark past."
+    b"\n\n2\n00:01:51.800 --> 00:01:55.800\nIt has shed much innocent blood.\n\n"
+    b"3\n00:01:58.000 --> 00:02:01.450\nYou're a fool for traveling alone,\nso co"
+    b"mpletely unprepared."
+)
+
+SRT_DATA_FR = """
+1
+00:01:47,250 --> 00:01:50,500
+Cette lame a un sombre passé.
+
+2
+00:01:51,800 --> 00:01:55,800
+Elle a fait couler bien du sang innocent.
+
+3
+00:01:58,000 --> 00:02:01,450
+Tu es bien idiote de voyager seule
+sans la moindre préparation.
+
+4
+00:02:01,750 --> 00:02:04,800
+Tu as de la chance que ton sang coule encore
+dans tes veines.
+
+5
+00:02:05,250 --> 00:02:06,300
+Merci.
+"""
+
+VTT_DATA_FR = (
+    b"WEBVTT\n\n\n1\n00:01:47.250 --> 00:01:50.500\nCette lame a un sombre pass"
+    b"\xc3\xa9.\n\n2\n00:01:51.800 --> 00:01:55.800\nElle a fait couler bien du "
+    b"sang innocent.\n\n3\n00:01:58.000 --> 00:02:01.450\nTu es bien idiote de voy"
+    b"ager seule\nsans la moindre pr\xc3\xa9paration.\n\n4\n00:02:01.750 --> 00:"
+    b"02:04.800\nTu as de la chance que ton sang coule encore\ndans tes veines.\n"
+    b"\n5\n00:02:05.250 --> 00:02:06.300\nMerci."
+)
+
+SRT_DATA_INVALID = """HELLO WORLD!"""
+
+
+class SubtitleUtilsTest(DeltaGeneratorTestCase):
+    def test_is_srt(self):
+        """Test is_srt function."""
+
+        assert _is_srt(SRT_DATA_EN)
+        assert _is_srt(SRT_DATA_FR)
+        assert not _is_srt(SRT_DATA_INVALID)
+
+    @parameterized.expand(
+        [
+            (SRT_DATA_EN, VTT_DATA_EN),
+            (SRT_DATA_FR, VTT_DATA_FR),
+        ]
+    )
+    def test_srt_vtt(self, srt_string: str, expected: bytes):
+        """Test srt to vtt format transition."""
+
+        assert _srt_to_vtt(srt_string) == expected, (
+            f"Expected {srt_string} to be transformed into {expected!s}."
+        )
+
+    def test_srt_vtt_bytes(self):
+        """Test srt to vtt format transition with bytes."""
+        assert _srt_to_vtt(SRT_DATA_EN.encode("utf-8")) == VTT_DATA_EN, (
+            f"Expected {SRT_DATA_EN} to be transformed into {VTT_DATA_EN!s}."
+        )
+
+    def test_process_subtitle_data(self):
+        """Test process_subtitle_data function."""
+        url = process_subtitle_data("[0, 0]", SRT_DATA_EN, "English")
+        file_id = url.split("/")[-1].split(".")[0]
+        media_file = self.media_file_storage.get_file(file_id)
+        assert media_file is not None
+        assert media_file.content == _srt_to_vtt(SRT_DATA_EN.strip())
+        assert media_file.mimetype == "text/vtt"
+
+    def test_srt_to_vtt_with_invalid_type_raises_error(self):
+        """Test _srt_to_vtt raises StreamlitInvalidParameterTypeError for invalid input type."""
+        with pytest.raises(StreamlitInvalidParameterTypeError) as exc:
+            _srt_to_vtt(12345)  # type: ignore[arg-type]
+
+        assert exc.value.exec_kwargs["parameter"] == "subtitles"
+
+    def test_srt_to_vtt_with_invalid_utf8_bytes(self):
+        """Test _srt_to_vtt raises StreamlitAPIException for non-UTF-8 bytes."""
+        # Invalid UTF-8 byte sequence
+        invalid_bytes = b"\x80\x81\x82"
+
+        with pytest.raises(
+            StreamlitAPIException, match="Could not decode the input stream as UTF-8"
+        ):
+            _srt_to_vtt(invalid_bytes)
+
+    def test_handle_stream_data_with_srt(self):
+        """Test _handle_stream_data converts SRT stream to VTT."""
+        srt_stream = io.BytesIO(SRT_DATA_EN.encode("utf-8"))
+        result = _handle_stream_data(srt_stream)
+
+        assert result == VTT_DATA_EN
+
+    def test_handle_stream_data_with_vtt(self):
+        """Test _handle_stream_data returns VTT stream unchanged."""
+        vtt_content = b"WEBVTT\n\n00:00:00.000 --> 00:00:05.000\nHello World"
+        vtt_stream = io.BytesIO(vtt_content)
+        result = _handle_stream_data(vtt_stream)
+
+        assert result == vtt_content
+
+    def test_handle_bytes_data_with_srt(self):
+        """Test _handle_bytes_data converts SRT bytes to VTT."""
+        result = _handle_bytes_data(SRT_DATA_EN.encode("utf-8"))
+        assert result == VTT_DATA_EN
+
+    def test_handle_bytes_data_with_vtt(self):
+        """Test _handle_bytes_data returns VTT bytes unchanged."""
+        vtt_content = b"WEBVTT\n\n00:00:00.000 --> 00:00:05.000\nHello World"
+        result = _handle_bytes_data(vtt_content)
+        assert result == vtt_content
+
+    def test_process_subtitle_data_with_bytes(self):
+        """Test process_subtitle_data with bytes input."""
+        url = process_subtitle_data("[0, 0]", SRT_DATA_EN.encode("utf-8"), "English")
+        file_id = url.split("/")[-1].split(".")[0]
+        media_file = self.media_file_storage.get_file(file_id)
+        assert media_file is not None
+        assert media_file.mimetype == "text/vtt"
+
+    def test_process_subtitle_data_with_stream(self):
+        """Test process_subtitle_data with BytesIO stream input."""
+        stream = io.BytesIO(SRT_DATA_EN.encode("utf-8"))
+        url = process_subtitle_data("[0, 0]", stream, "English")
+        file_id = url.split("/")[-1].split(".")[0]
+        media_file = self.media_file_storage.get_file(file_id)
+        assert media_file is not None
+        assert media_file.mimetype == "text/vtt"
+
+    def test_process_subtitle_data_with_invalid_type_raises_error(self):
+        """Test process_subtitle_data raises StreamlitInvalidParameterTypeError for invalid input type."""
+        with pytest.raises(StreamlitInvalidParameterTypeError) as exc:
+            process_subtitle_data("[0, 0]", 12345, "Test")  # type: ignore[arg-type]
+
+        assert exc.value.exec_kwargs["parameter"] == "subtitles"
+
+
+def test_is_srt_with_invalid_utf8_bytes_returns_false() -> None:
+    """`_is_srt` returns False when the stream cannot be decoded as UTF-8.
+
+    Non-UTF-8 bytes trigger the ``UnicodeDecodeError`` guard, which treats the
+    stream as not being a valid SRT file.
+    """
+    assert _is_srt(b"\xff\xfe\x00\x01\x02\x03") is False
+
+
+def test_handle_string_or_path_data_with_disallowed_extension_raises(
+    tmp_path: Path,
+) -> None:
+    """`_handle_string_or_path_data` rejects on-disk files with unsupported extensions.
+
+    Parameters
+    ----------
+    tmp_path : Path
+        Pytest fixture providing a temporary directory for the fake subtitle file.
+    """
+    bad_file = tmp_path / "subtitles.txt"
+    bad_file.write_text("some subtitle content", encoding="utf-8")
+
+    with pytest.raises(StreamlitValueError, match=r"Got \.txt\."):
+        _handle_string_or_path_data(str(bad_file))
+
+
+def test_handle_string_or_path_data_with_missing_path_raises(tmp_path: Path) -> None:
+    """`_handle_string_or_path_data` raises when given a Path to a nonexistent file.
+
+    Parameters
+    ----------
+    tmp_path : Path
+        Pytest fixture used to construct a path that is guaranteed not to exist.
+    """
+    missing_path = tmp_path / "does_not_exist.vtt"
+
+    with pytest.raises(StreamlitAPIException, match="does not exist"):
+        _handle_string_or_path_data(missing_path)
+
+
+def test_process_subtitle_data_without_runtime_returns_empty_string() -> None:
+    """`process_subtitle_data` returns an empty string when no runtime exists.
+
+    In "raw mode" the ``MediaFileManager`` is unavailable, so the function must
+    short-circuit and return an empty string.
+    """
+    valid_vtt = b"WEBVTT\n\n00:00:00.000 --> 00:00:05.000\nHello World"
+
+    with patch(
+        "streamlit.elements.lib.subtitle_utils.runtime.exists", return_value=False
+    ):
+        result = process_subtitle_data(
+            coordinates="[0, 0]", data=valid_vtt, label="lbl"
+        )
+
+    assert result == ""

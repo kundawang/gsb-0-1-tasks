@@ -1,0 +1,521 @@
+/**
+ * Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022-2026)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { screen, waitFor } from "@testing-library/react"
+
+import { Heading as HeadingProto } from "@streamlit/protobuf"
+
+import IsDialogContext from "~lib/components/core/IsDialogContext"
+import IsSidebarContext from "~lib/components/core/IsSidebarContext"
+import {
+  FlexContext,
+  IFlexContext,
+} from "~lib/components/core/Layout/FlexContext"
+import { Direction } from "~lib/components/core/Layout/utils"
+import { render } from "~lib/test_util"
+
+import Heading, { HeadingProtoProps } from "./Heading"
+
+const getHeadingProps = (
+  elementProps: Partial<HeadingProto> = {}
+): HeadingProtoProps => ({
+  element: HeadingProto.create({
+    anchor: "some-anchor",
+    tag: "h1",
+    body: `hello world
+             this is a new line`,
+    ...elementProps,
+  }),
+})
+
+describe("Heading", () => {
+  beforeAll(async () => {
+    await import("~lib/components/elements/CodeBlock/StreamlitSyntaxHighlighter")
+  }, 30_000)
+
+  it("renders properly after a new line", async () => {
+    const props = getHeadingProps()
+    render(<Heading {...props} />)
+
+    const heading = screen.getByRole("heading")
+    expect(heading).toHaveTextContent("hello world")
+    expect(heading).not.toHaveTextContent("this is a new line")
+
+    await screen.findByText("this is a new line")
+    expect(screen.getAllByTestId("stMarkdownContainer")).toHaveLength(1)
+
+    const headingElement = screen.getByTestId("stHeading")
+    expect(headingElement).toHaveClass("stHeading")
+  })
+
+  it("hides extra body lines when wrap is false", async () => {
+    const props = getHeadingProps({ wrap: false })
+    render(<Heading {...props} />)
+
+    expect(screen.getByRole("heading")).toHaveTextContent("hello world")
+    expect(screen.queryByText("this is a new line")).not.toBeInTheDocument()
+    expect(await screen.findByTitle("hello world")).toBeVisible()
+    expect(screen.queryByTitle(/this is a new line/)).not.toBeInTheDocument()
+  })
+
+  it("exposes the full heading via a native title when wrap is false", async () => {
+    const props = getHeadingProps({ body: "hello world", wrap: false })
+    render(<Heading {...props} />)
+
+    expect(await screen.findByTitle("hello world")).toBeVisible()
+    expect(await screen.findByTitle("hello world")).toHaveStyle({
+      flex: "1",
+    })
+  })
+
+  it("sets a native title when wrap is false, including when help is set", async () => {
+    const props = getHeadingProps({
+      body: "hello world",
+      wrap: false,
+      help: "help text",
+    })
+    render(<Heading {...props} />)
+
+    expect(screen.getByTestId("stTooltipIcon")).toBeVisible()
+    expect(await screen.findByTitle("hello world")).toBeVisible()
+    expect(screen.getByTestId("stTooltipIcon").closest("[title]")).toBeNull()
+  })
+
+  it("clears the native title when wrap becomes true", async () => {
+    const { rerender } = render(
+      <Heading
+        {...getHeadingProps({
+          body: "hello world",
+          wrap: false,
+          help: "help text",
+        })}
+      />
+    )
+
+    expect(await screen.findByTitle("hello world")).toBeVisible()
+
+    rerender(
+      <Heading
+        {...getHeadingProps({
+          body: "hello world",
+          wrap: true,
+          help: "help text",
+        })}
+      />
+    )
+
+    expect(screen.queryByTitle("hello world")).not.toBeInTheDocument()
+    expect(screen.getByTestId("stTooltipIcon")).toBeVisible()
+  })
+
+  it("re-attaches the native title when the heading tag changes", async () => {
+    const { rerender } = render(
+      <Heading {...getHeadingProps({ body: "hello world", wrap: false })} />
+    )
+
+    expect(await screen.findByTitle("hello world")).toBeVisible()
+    expect(screen.getByRole("heading", { level: 1 })).toBeVisible()
+
+    rerender(
+      <Heading
+        {...getHeadingProps({ body: "hello world", wrap: false, tag: "h2" })}
+      />
+    )
+
+    expect(await screen.findByTitle("hello world")).toBeVisible()
+    expect(screen.getByRole("heading", { level: 2 })).toBeVisible()
+    expect(screen.queryByRole("heading", { level: 1 })).not.toBeInTheDocument()
+  })
+
+  it.each([
+    ["sidebar", IsSidebarContext],
+    ["dialog", IsDialogContext],
+  ])("ellipsizes %s headings when wrap is false", async (_name, Context) => {
+    const props = getHeadingProps({ body: "hello world", wrap: false })
+    render(
+      <Context.Provider value={true}>
+        <Heading {...props} />
+      </Context.Provider>
+    )
+
+    expect(
+      screen.getByTestId("stHeadingWithActionElements")
+    ).toBeInTheDocument()
+    expect(await screen.findByTitle("hello world")).toBeVisible()
+    expect(screen.getByRole("heading")).toHaveStyle({
+      overflow: "hidden",
+      display: "flex",
+    })
+    expect(await screen.findByTitle("hello world")).toHaveStyle({
+      flex: "1",
+    })
+  })
+
+  it.each([
+    ["sidebar", IsSidebarContext],
+    ["dialog", IsDialogContext],
+  ])(
+    "keeps the help icon visible for truncated %s headings",
+    async (_name, Context) => {
+      const props = getHeadingProps({
+        body: "hello world",
+        wrap: false,
+        help: "help text",
+      })
+      render(
+        <Context.Provider value={true}>
+          <Heading {...props} />
+        </Context.Provider>
+      )
+
+      expect(
+        screen.getByTestId("stHeadingWithActionElements")
+      ).toBeInTheDocument()
+      expect(screen.getByTestId("stTooltipIcon")).toBeVisible()
+      expect(await screen.findByTitle("hello world")).toBeVisible()
+      expect(screen.getByTestId("stTooltipIcon").closest("[title]")).toBeNull()
+      expect(screen.getByRole("heading")).toHaveStyle({
+        overflow: "hidden",
+        display: "flex",
+      })
+    }
+  )
+
+  it("renders properly without a new line", () => {
+    const props = getHeadingProps({ body: "hello" })
+    render(<Heading {...props} />)
+
+    expect(screen.getByRole("heading")).toHaveTextContent("hello")
+    expect(screen.getAllByTestId("stMarkdownContainer")).toHaveLength(1)
+  })
+
+  it("renders anchor link", () => {
+    const props = getHeadingProps({ body: "hello" })
+    render(<Heading {...props} />)
+
+    const link = screen.getByRole("link")
+    expect(link).toHaveAttribute("href", "#some-anchor")
+    expect(link).toHaveAccessibleName("Link to heading")
+  })
+
+  it("does not render anchor link when it is hidden", () => {
+    const props = getHeadingProps({ body: "hello", hideAnchor: true })
+    render(<Heading {...props} />)
+
+    expect(screen.queryByRole("link")).not.toBeInTheDocument()
+  })
+
+  it("does not render anchor link in sidebar", () => {
+    const props = getHeadingProps()
+    render(
+      <IsSidebarContext.Provider value={true}>
+        <Heading {...props} />
+      </IsSidebarContext.Provider>
+    )
+    expect(screen.queryByRole("link")).not.toBeInTheDocument()
+  })
+
+  it("does not render anchor link in dialog", () => {
+    const props = getHeadingProps()
+    render(
+      <IsDialogContext.Provider value={true}>
+        <Heading {...props} />
+      </IsDialogContext.Provider>
+    )
+    expect(screen.queryByRole("link")).not.toBeInTheDocument()
+  })
+
+  it("renders properly with help text", () => {
+    const props = getHeadingProps({ body: "hello", help: "help text" })
+    render(<Heading {...props} />)
+
+    expect(screen.getByRole("heading")).toHaveTextContent("hello")
+    expect(screen.getAllByTestId("stMarkdownContainer")).toHaveLength(1)
+
+    const tooltip = screen.getByTestId("stTooltipIcon")
+    expect(tooltip).toBeInTheDocument()
+  })
+
+  it("renders properly with help text in sidebar", () => {
+    const props = getHeadingProps({ body: "hello", help: "help text" })
+    render(
+      <IsSidebarContext.Provider value={true}>
+        <Heading {...props} />
+      </IsSidebarContext.Provider>
+    )
+
+    expect(screen.getByRole("heading")).toHaveTextContent("hello")
+    expect(screen.getAllByTestId("stMarkdownContainer")).toHaveLength(1)
+
+    const tooltip = screen.getByTestId("stTooltipIcon")
+    expect(tooltip).toBeInTheDocument()
+  })
+
+  it("renders properly with help text in dialog", () => {
+    const props = getHeadingProps({ body: "hello", help: "help text" })
+    render(
+      <IsDialogContext.Provider value={true}>
+        <Heading {...props} />
+      </IsDialogContext.Provider>
+    )
+
+    expect(screen.getByRole("heading")).toHaveTextContent("hello")
+    expect(screen.getAllByTestId("stMarkdownContainer")).toHaveLength(1)
+
+    const tooltip = screen.getByTestId("stTooltipIcon")
+    expect(tooltip).toBeInTheDocument()
+  })
+
+  it("does not render ol block", () => {
+    const props = getHeadingProps({ body: "1) hello" })
+    render(<Heading {...props} />)
+
+    expect(screen.getByRole("heading")).toHaveTextContent("1) hello")
+    expect(screen.queryByRole("list")).not.toBeInTheDocument()
+  })
+
+  it("does not render ul block", () => {
+    const props = getHeadingProps({ body: "* hello" })
+    render(<Heading {...props} />)
+
+    expect(screen.getByRole("heading")).toHaveTextContent("* hello")
+    expect(screen.queryByRole("list")).not.toBeInTheDocument()
+  })
+
+  it("does not render blockquote with >", () => {
+    const props = getHeadingProps({ body: ">hello" })
+    render(<Heading {...props} />)
+
+    expect(screen.getByRole("heading")).toHaveTextContent(">hello")
+    expect(screen.queryByRole("blockquote")).not.toBeInTheDocument()
+  })
+
+  it("does not render tables", async () => {
+    const props = getHeadingProps({
+      body: `| Syntax | Description |
+           | ----------- | ----------- |
+           | Header      | Title       |
+           | Paragraph   | Text        |`,
+    })
+    render(<Heading {...props} />)
+
+    expect(screen.getByRole("heading")).toHaveTextContent(
+      `| Syntax | Description |`
+    )
+
+    // Wait for lazy-loaded content to render
+    await waitFor(() => {
+      expect(screen.getByTestId("stMarkdownContainer")).toHaveTextContent(
+        "| Syntax | Description | | ----------- | ----------- | | Header | Title | | Paragraph | Text |"
+      )
+    })
+
+    expect(screen.queryByRole("table")).not.toBeInTheDocument()
+    expect(screen.getAllByTestId("stMarkdownContainer")).toHaveLength(1)
+  })
+
+  it("renders no divider by default", () => {
+    const props = getHeadingProps()
+    render(<Heading {...props} />)
+
+    expect(screen.queryByTestId("stHeadingDivider")).not.toBeInTheDocument()
+  })
+
+  it("renders a divider with given color", () => {
+    // correct divider color mapping handled in Block.tsx
+    const props = getHeadingProps({ divider: "#0068c9" })
+    render(<Heading {...props} />)
+
+    const divider = screen.getByTestId("stHeadingDivider")
+    expect(divider).toBeInTheDocument()
+    expect(divider).toHaveStyle("background-color: #0068c9")
+  })
+
+  it("removes heading padding in horizontal layout", () => {
+    const props = getHeadingProps({ body: "hello", tag: "h1" })
+    const horizontalContext: IFlexContext = {
+      direction: Direction.HORIZONTAL,
+      isInHorizontalLayout: true,
+      isDirectlyInColumn: false,
+      isInRoot: false,
+      isInContentWidthContainer: false,
+    }
+
+    render(
+      <FlexContext.Provider value={horizontalContext}>
+        <Heading {...props} />
+      </FlexContext.Provider>
+    )
+
+    const markdownContainer = screen.getByTestId("stMarkdownContainer")
+    expect(markdownContainer).toHaveStyle({ "margin-bottom": "" })
+
+    const heading = screen.getByRole("heading")
+    expect(heading).toHaveStyle({ padding: "0" })
+  })
+
+  it("keeps heading padding in vertical layout", () => {
+    const props = getHeadingProps({ body: "hello", tag: "h1" })
+    const verticalContext: IFlexContext = {
+      direction: Direction.VERTICAL,
+      isInHorizontalLayout: false,
+      isDirectlyInColumn: false,
+      isInRoot: false,
+      isInContentWidthContainer: false,
+    }
+
+    render(
+      <FlexContext.Provider value={verticalContext}>
+        <Heading {...props} />
+      </FlexContext.Provider>
+    )
+
+    const heading = screen.getByRole("heading")
+    expect(heading).not.toHaveStyle({ padding: "0" })
+  })
+
+  it.each([
+    ["by default", undefined],
+    ["when icon is empty string", ""],
+  ])("does not render icon %s", (_label, icon) => {
+    const props = getHeadingProps({ body: "hello", icon })
+    render(<Heading {...props} />)
+
+    expect(screen.queryByTestId("stHeadingIcon")).not.toBeInTheDocument()
+  })
+
+  it("renders emoji icon", () => {
+    const props = getHeadingProps({ body: "hello", icon: "🔥" })
+    render(<Heading {...props} />)
+
+    const icon = screen.getByTestId("stHeadingIcon")
+    expect(icon).toBeVisible()
+    expect(icon).toHaveTextContent("🔥")
+  })
+
+  it("renders material icon", () => {
+    const props = getHeadingProps({
+      body: "hello",
+      icon: ":material/dashboard:",
+    })
+    render(<Heading {...props} />)
+
+    expect(screen.getByTestId("stHeadingIcon")).toBeVisible()
+    expect(screen.getByTestId("stHeadingIcon")).toHaveStyle({
+      fontSize: "1em",
+      width: "1em",
+      height: "1em",
+    })
+  })
+
+  it("renders spinner icon", () => {
+    const props = getHeadingProps({ body: "hello", icon: "spinner" })
+    render(<Heading {...props} />)
+
+    expect(screen.getByTestId("stHeadingIcon")).toBeVisible()
+  })
+
+  it("renders icon together with help and anchor", () => {
+    const props = getHeadingProps({
+      body: "hello",
+      icon: "🚀",
+      help: "help text",
+      anchor: "some-anchor",
+    })
+    render(<Heading {...props} />)
+
+    expect(screen.getByTestId("stHeadingIcon")).toBeVisible()
+    expect(screen.getByTestId("stTooltipIcon")).toBeInTheDocument()
+    expect(screen.getByRole("link")).toHaveAttribute("href", "#some-anchor")
+  })
+
+  it("keeps accessible name as body text when icon is present", () => {
+    // The leading icon is aria-hidden, so the accessible name stays the body
+    // even without aria-labelledby (hideAnchor, no help).
+    const props = getHeadingProps({
+      body: "Dashboard",
+      icon: ":material/dashboard:",
+      hideAnchor: true,
+      help: "",
+    })
+    render(<Heading {...props} />)
+
+    const heading = screen.getByRole("heading", { name: "Dashboard" })
+    expect(heading).toBeVisible()
+    expect(heading).not.toHaveAttribute("aria-labelledby")
+  })
+
+  it("auto-generated anchor ignores the icon", () => {
+    const props = getHeadingProps({
+      body: "My Section",
+      icon: ":material/dashboard:",
+      anchor: "",
+    })
+    render(<Heading {...props} />)
+
+    const heading = screen.getByRole("heading")
+    // Would be "dashboard-my-section" if material ligature text leaked into the slug
+    expect(heading).toHaveAttribute("id", "my-section")
+    expect(screen.getByTestId("stHeadingIcon")).toBeVisible()
+  })
+
+  it("marks body text for accessible name and anchor isolation", () => {
+    const props = getHeadingProps({
+      body: "Dashboard",
+      icon: ":material/dashboard:",
+    })
+    render(<Heading {...props} />)
+
+    const heading = screen.getByRole("heading")
+    expect(heading.querySelector("[data-heading-text]")).toHaveTextContent(
+      "Dashboard"
+    )
+  })
+
+  it("renders the leading icon inline so wrapping matches markdown", () => {
+    const props = getHeadingProps({ body: "hello", icon: "🔥" })
+    render(<Heading {...props} />)
+
+    const heading = screen.getByRole("heading")
+    // wrap=True keeps the heading out of flex so the icon stays in the
+    // inline text flow (wrap=False uses display:flex for truncation).
+    expect(heading).not.toHaveStyle({ display: "flex" })
+    expect(heading).not.toHaveStyle({ display: "inline-flex" })
+    const iconWrapper = screen.getByTestId("stHeadingIconWrapper")
+    expect(iconWrapper).toHaveStyle({
+      display: "inline-flex",
+      verticalAlign: "bottom",
+    })
+  })
+
+  it("keeps the icon as start-chrome when wrap is false", () => {
+    const props = getHeadingProps({
+      body: "hello",
+      icon: "🔥",
+      wrap: false,
+    })
+    render(<Heading {...props} />)
+
+    const heading = screen.getByRole("heading")
+    const iconWrapper = screen.getByTestId("stHeadingIconWrapper")
+    expect(heading).toHaveStyle({ display: "flex" })
+    expect(heading.firstElementChild).toBe(iconWrapper)
+    expect(iconWrapper).toHaveStyle({ flexShrink: "0" })
+    expect(heading.querySelector("[data-heading-text]")).toHaveStyle({
+      flex: "1",
+    })
+  })
+})
