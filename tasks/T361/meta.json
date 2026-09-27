@@ -1,0 +1,37 @@
+{
+  "task_id": "T361",
+  "title": "dbt-labs/dbt-core 缺陷修复：fix(dbt-run-cache): cached state_auth.json takes precedence ",
+  "created_at": "2026-09-27T17:27:52",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 dbt-labs/dbt-core @ 67450d802b",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t361/base",
+    "sha": "725065c193f43035717065f88f6000fe9dede098",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/725065c193f43035717065f88f6000fe9dede098"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t361/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t361/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/dbt-labs/dbt-core base=https://github.com/dbt-labs/dbt-core/commit/67450d802b4ef8e77df226311a7931059f3beb88 fix=0f09e949f1b5b8049b7cbc56ac0e2320ad8d902b"
+}
