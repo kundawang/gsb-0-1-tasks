@@ -1,0 +1,37 @@
+{
+  "task_id": "T358",
+  "title": "dbt-labs/dbt-core 缺陷修复：fix stacktrace for run_operator (#5006)",
+  "created_at": "2026-09-27T17:26:03",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 dbt-labs/dbt-core @ 68a8c15d80",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t358/base",
+    "sha": "1f73f67c709c5fa315f43378479f55cf90aa3c16",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/1f73f67c709c5fa315f43378479f55cf90aa3c16"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t358/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t358/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/dbt-labs/dbt-core base=https://github.com/dbt-labs/dbt-core/commit/68a8c15d80398ef6e168824184a2d1f4791b3b08 fix=088119f8f493b03626458d4c7004bd2a87e178f3"
+}
