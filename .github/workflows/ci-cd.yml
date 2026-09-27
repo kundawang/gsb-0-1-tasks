@@ -1,0 +1,115 @@
+---
+name: CI/CD
+
+permissions: {}
+
+on:
+  merge_group:
+  push:
+    branches:
+    - master
+    tags:
+    - >-
+      [0-9]+.[0-9]+.[0-9]+
+    - >-
+      [0-9]+.[0-9]+.[0-9]+.dev[0-9]+
+  pull_request:
+    branches:
+    - master
+    - >-
+      [0-9].[0-9]+.[0-9]+
+
+env:
+  FORCE_COLOR: 1
+
+jobs:
+  build:
+    uses: ./.github/workflows/reusable-build.yml
+
+  test:
+    # yamllint disable-line rule:line-length
+    name: test${{ '' }}  # zizmor: ignore[obfuscation] nest jobs under the same sidebar category
+    strategy:
+      matrix:
+        python-version:
+        - 3.9
+        - >-
+          3.10
+        - 3.11
+        - 3.12
+        - 3.13
+        os:
+        - ubuntu-24.04
+        - ubuntu-24.04-arm
+        experimental:
+        - false
+        include:
+        - python-version: 3.14
+          os: ubuntu-24.04
+          experimental: true
+        - python-version: 3.14
+          os: ubuntu-24.04-arm
+          experimental: true
+      fail-fast: false
+    uses: ./.github/workflows/reusable-test.yml
+    with:
+      python-version: ${{ matrix.python-version }}
+      os: ${{ matrix.os }}
+      continue-on-error: ${{ matrix.experimental }}
+      enable-cache: ${{ github.ref_type == 'tag' && 'false' || 'auto' }}
+    secrets:
+      codecov-token: ${{ secrets.CODECOV_TOKEN }}
+
+  zizmor:
+    name: 🌈 zizmor
+    permissions:
+      security-events: write
+
+    # yamllint disable-line rule:line-length
+    uses: zizmorcore/workflow/.github/workflows/reusable-zizmor.yml@3bb5e95068d0f44b6d2f3f7e91379bed1d2f96a8
+
+  check:  # This job does nothing and is only used for the branch protection
+    if: always()
+    needs:
+    - build
+    - test
+    - zizmor
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+    - name: Decide whether the needed jobs succeeded or failed
+      # yamllint disable-line rule:line-length
+      uses: re-actors/alls-green@05ac9388f0aebcb5727afa17fcccfecd6f8ec5fe  # v1.2.2
+      with:
+        jobs: ${{ toJSON(needs) }}
+
+  pypi-publish:
+    name: Publish Python 🐍 distribution 📦 to PyPI
+    if: github.ref_type == 'tag'  # only publish on tag pushes
+    needs:
+    - check
+    runs-on: ubuntu-24.04
+    environment:
+      name: pypi
+      url: https://pypi.org/project/aiobotocore/${{ github.ref_name }}
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
+    timeout-minutes: 5
+
+    steps:
+    - name: Download distribution 📦
+      uses: actions/download-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
+    - name: Check if distribution 📦 names match git tag
+      run: |
+        test -f "dist/aiobotocore-${REF_NAME}.tar.gz"
+        test -f "dist/aiobotocore-${REF_NAME}-py3-none-any.whl"
+      env:
+        REF_NAME: ${{ github.ref_name }}
+    - name: Publish distribution 📦 to PyPI
+      # yamllint disable-line rule:line-length
+      uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc  # v1.12.4
