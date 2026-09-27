@@ -1,0 +1,17 @@
+---
+# These are supported funding model platforms
+
+github:
+- aio-libs
+# - jakob-keller
+- thehesiod
+- terrycain
+patreon:
+open_collective: aio-libs
+ko_fi:
+tidelift: pypi/aiobotocore
+community_bridge:
+liberapay:
+issuehunt:
+otechie:
+custom:

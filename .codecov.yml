@@ -1,0 +1,36 @@
+---
+codecov:
+  branch: main
+
+  notify:
+    manual_trigger: true  # prevent notifications until we notify Codecov
+
+coverage:
+  range: "95..100"
+
+  status:
+    project: false
+
+flags:
+  library:
+    paths:
+    - aiobotocore/
+  configs:
+    paths:
+    - requirements/
+    - ".git*"
+    - "*.toml"
+    - "*.yml"
+  changelog:
+    paths:
+    - CHANGES/
+    - CHANGES.rst
+  docs:
+    paths:
+    - docs/
+    - "*.md"
+    - "*.rst"
+    - "*.txt"
+  tests:
+    paths:
+    - tests/
