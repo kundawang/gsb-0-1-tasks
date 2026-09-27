@@ -1,0 +1,510 @@
+use dbt_adapter_core::AdapterType;
+use dbt_cloud_config::ResolvedCloudConfig;
+use dbt_common::io_args::FsCommand;
+use dbt_common::tracing::dbt_emit::{
+    emit_debug_log_message, emit_info_log_message, emit_warn_log_message,
+};
+use dbt_common::tracing::dbt_metrics::{FusionMetricKey, RunCacheServiceMetricKey};
+use dbt_common::tracing::metrics::increment_metric;
+use dbt_common::{ErrorCode, FsResult, fs_err};
+use dbt_schemas::schemas::profiles::Execute;
+use dbt_state::metadata_cache::RunCacheMetadataCache;
+use dbt_state::service_client::{
+    ClientVersionStatus, GrpcRunCacheServiceClient, RunCacheClientMetadata, RunCacheServiceClient,
+    SharedRunCacheServiceClient, format_error_chain, shared_run_cache_service_client,
+    validate_client_version_fail_open,
+};
+use dbt_state::service_config::RunCacheServiceConfig;
+use std::sync::Arc;
+
+use crate::RunTasksArgs;
+
+#[derive(Clone)]
+pub(crate) struct RunCacheServiceLifecycle {
+    pub(crate) requested: bool,
+    pub(crate) config: Option<RunCacheServiceConfig>,
+    pub(crate) client: Option<SharedRunCacheServiceClient>,
+}
+
+#[derive(Clone)]
+pub struct RunCacheLifecycle {
+    pub(crate) service: RunCacheServiceLifecycle,
+    pub(crate) metadata: Arc<RunCacheMetadataCache>,
+}
+
+impl RunCacheLifecycle {
+    pub async fn initialize(
+        arg: &RunTasksArgs,
+        execute: Execute,
+        adapter_type: AdapterType,
+        cloud_config: Option<&ResolvedCloudConfig>,
+    ) -> FsResult<Self> {
+        let service =
+            initialize_run_cache_service(arg, execute, adapter_type, cloud_config).await?;
+        let metadata_ttl_seconds = service
+            .config
+            .as_ref()
+            .map(|config| config.metadata_cache_ttl_seconds)
+            .unwrap_or_default();
+
+        Ok(Self {
+            service,
+            metadata: Arc::new(RunCacheMetadataCache::with_ttl_seconds(
+                metadata_ttl_seconds,
+            )),
+        })
+    }
+
+    pub fn is_requested(&self) -> bool {
+        self.service.requested
+    }
+}
+
+async fn initialize_run_cache_service(
+    arg: &RunTasksArgs,
+    execute: Execute,
+    adapter_type: AdapterType,
+    cloud_config: Option<&ResolvedCloudConfig>,
+) -> FsResult<RunCacheServiceLifecycle> {
+    if !should_initialize_run_cache_service(
+        arg,
+        execute,
+        RunCacheServiceConfig::is_explicitly_requested_from_env(),
+        adapter_type,
+    ) {
+        increment_metric(
+            FusionMetricKey::RunCacheService(RunCacheServiceMetricKey::Disabled),
+            1,
+        );
+        if execute == Execute::Remote && RunCacheServiceConfig::is_explicitly_disabled_from_env() {
+            emit_debug_log_message(
+                "dbt State service disabled by configuration; executing normally",
+            );
+        }
+        return Ok(RunCacheServiceLifecycle {
+            requested: false,
+            config: None,
+            client: None,
+        });
+    }
+
+    let config = match RunCacheServiceConfig::from_env_and_cloud_config(cloud_config) {
+        Ok(config) => config,
+        Err(err) => {
+            increment_metric(
+                FusionMetricKey::RunCacheService(RunCacheServiceMetricKey::Disabled),
+                1,
+            );
+            increment_metric(
+                FusionMetricKey::RunCacheService(RunCacheServiceMetricKey::ClientInitFailure),
+                1,
+            );
+            emit_warn_log_message(
+                ErrorCode::StateServiceWarn,
+                format!(
+                    "dbt State service config failed: {}; executing normally",
+                    format_error_chain(&err)
+                ),
+                None,
+            );
+            return Ok(RunCacheServiceLifecycle {
+                requested: true,
+                config: None,
+                client: None,
+            });
+        }
+    };
+
+    if !config.enabled {
+        increment_metric(
+            FusionMetricKey::RunCacheService(RunCacheServiceMetricKey::Disabled),
+            1,
+        );
+        // User-facing operational signal: the service was explicitly requested but
+        // disabled by config, so visibility into why no caching is happening should
+        // be reachable with `--log-level debug` rather than trace-only.
+        emit_debug_log_message("dbt State service disabled by configuration; executing normally");
+        return Ok(RunCacheServiceLifecycle {
+            requested: false,
+            config: None,
+            client: None,
+        });
+    }
+
+    increment_metric(
+        FusionMetricKey::RunCacheService(RunCacheServiceMetricKey::Enabled),
+        1,
+    );
+
+    // Thread dbt's per-invocation UUID (and the dbt platform run ID when present)
+    // through to the service as request metadata so telemetry can be correlated
+    // back to a single invocation end to end.
+    let metadata = RunCacheClientMetadata {
+        dbt_invocation_id: arg.io.invocation_id.to_string(),
+        ..RunCacheClientMetadata::default()
+    };
+    let client =
+        match GrpcRunCacheServiceClient::connect_with_metadata(config.clone(), metadata).await {
+            Ok(client) => {
+                increment_metric(
+                    FusionMetricKey::RunCacheService(RunCacheServiceMetricKey::ClientInitSuccess),
+                    1,
+                );
+                client
+            }
+            Err(err) => {
+                increment_metric(
+                    FusionMetricKey::RunCacheService(RunCacheServiceMetricKey::ClientInitFailure),
+                    1,
+                );
+                emit_warn_log_message(
+                    ErrorCode::StateServiceWarn,
+                    format!(
+                        "dbt State service client initialization failed: {}; executing normally",
+                        format_error_chain(&err)
+                    ),
+                    None,
+                );
+                return Ok(RunCacheServiceLifecycle {
+                    requested: false,
+                    config: Some(config),
+                    client: None,
+                });
+            }
+        };
+
+    let validation_status = validate_client_version_for_initialization(&client).await?;
+    match validation_status {
+        ClientVersionStatus::Supported => {
+            increment_metric(
+                FusionMetricKey::RunCacheService(RunCacheServiceMetricKey::ValidationSupported),
+                1,
+            );
+            emit_info_log_message(format!(
+                "dbt State is enabled (endpoint {}, defer_to {})",
+                config.endpoint_uri(),
+                config.defer_to
+            ));
+            let shared_client = shared_run_cache_service_client(client);
+            Ok(RunCacheServiceLifecycle {
+                requested: true,
+                config: Some(config),
+                client: Some(shared_client),
+            })
+        }
+        ClientVersionStatus::Unsupported => {
+            increment_metric(
+                FusionMetricKey::RunCacheService(RunCacheServiceMetricKey::ValidationUnsupported),
+                1,
+            );
+            emit_warn_log_message(
+                ErrorCode::StateServiceWarn,
+                "dbt State service does not support this client version; executing normally",
+                None,
+            );
+            Ok(RunCacheServiceLifecycle {
+                requested: true,
+                config: Some(config),
+                client: None,
+            })
+        }
+        ClientVersionStatus::Skipped => {
+            increment_metric(
+                FusionMetricKey::RunCacheService(RunCacheServiceMetricKey::ValidationSkipped),
+                1,
+            );
+            let requested = validation_skipped_service_requested(&client);
+            if requested {
+                emit_warn_log_message(
+                    ErrorCode::StateServiceWarn,
+                    "dbt State service validation was skipped; executing normally",
+                    None,
+                );
+            }
+            Ok(RunCacheServiceLifecycle {
+                requested,
+                config: Some(config),
+                client: None,
+            })
+        }
+    }
+}
+
+fn validation_skipped_service_requested<C>(client: &C) -> bool
+where
+    C: RunCacheServiceClient + ?Sized,
+{
+    !client.is_disabled()
+}
+
+async fn validate_client_version_for_initialization<C>(client: &C) -> FsResult<ClientVersionStatus>
+where
+    C: RunCacheServiceClient + ?Sized,
+{
+    validate_client_version_fail_open(client)
+        .await
+        .map_err(|err| {
+            fs_err!(
+                ErrorCode::AuthFailed,
+                "dbt State client validation failed: {}",
+                format_error_chain(&err)
+            )
+        })
+}
+
+fn should_initialize_run_cache_service(
+    arg: &RunTasksArgs,
+    execute: Execute,
+    env_requested: bool,
+    adapter_type: AdapterType,
+) -> bool {
+    execute == Execute::Remote
+        && adapter_supports_dbt_state(adapter_type)
+        && (arg.run_cache_service || env_requested)
+}
+
+/// Returns true when the adapter is supported by the dbt State service.
+pub fn adapter_supports_dbt_state(adapter_type: AdapterType) -> bool {
+    matches!(
+        adapter_type,
+        AdapterType::Snowflake
+            | AdapterType::Databricks
+            | AdapterType::Spark
+            | AdapterType::Redshift
+            | AdapterType::Bigquery
+    )
+}
+
+pub fn run_cache_auto_defer_command(command: FsCommand) -> bool {
+    matches!(
+        command,
+        FsCommand::Compile
+            | FsCommand::Run
+            | FsCommand::Build
+            | FsCommand::Test
+            | FsCommand::Seed
+            | FsCommand::Snapshot
+    )
+}
+
+#[cfg(test)]
+mod tests {
+    use async_trait::async_trait;
+    use dbt_adapter_core::AdapterType;
+    use dbt_common::ErrorCode;
+    use dbt_schemas::schemas::profiles::Execute;
+    use dbt_state::proto::query_cache::{
+        ConfirmExecutionRequest, ConfirmExecutionResponse, SubmitSqlResponse, SubmitValuesRequest,
+    };
+    use dbt_state::service_client::{
+        ClientVersionStatus, RunCacheServiceClient, RunCacheServiceError,
+    };
+
+    use super::{
+        RunTasksArgs, adapter_supports_dbt_state, should_initialize_run_cache_service,
+        validate_client_version_for_initialization,
+    };
+
+    fn args() -> RunTasksArgs {
+        RunTasksArgs::default()
+    }
+
+    #[test]
+    fn lifecycle_does_not_request_service_without_explicit_request() {
+        assert!(!should_initialize_run_cache_service(
+            &args(),
+            Execute::Remote,
+            false,
+            AdapterType::Snowflake,
+        ));
+    }
+
+    #[test]
+    fn lifecycle_requests_service_from_explicit_env_opt_in() {
+        assert!(should_initialize_run_cache_service(
+            &args(),
+            Execute::Remote,
+            true,
+            AdapterType::Snowflake,
+        ));
+    }
+
+    #[test]
+    fn lifecycle_requests_service_from_cli_flag() {
+        let mut args = args();
+        args.run_cache_service = true;
+
+        assert!(should_initialize_run_cache_service(
+            &args,
+            Execute::Remote,
+            false,
+            AdapterType::Snowflake,
+        ));
+    }
+
+    #[test]
+    fn lifecycle_requires_remote_compute() {
+        assert!(!should_initialize_run_cache_service(
+            &args(),
+            Execute::Sidecar,
+            true,
+            AdapterType::Snowflake,
+        ));
+
+        let mut args = args();
+        args.run_cache_service = true;
+
+        assert!(!should_initialize_run_cache_service(
+            &args,
+            Execute::Sidecar,
+            false,
+            AdapterType::Snowflake,
+        ));
+    }
+
+    #[test]
+    fn lifecycle_requires_supported_adapter() {
+        let mut requested_args = args();
+        requested_args.run_cache_service = true;
+
+        assert!(!should_initialize_run_cache_service(
+            &requested_args,
+            Execute::Remote,
+            false,
+            AdapterType::DuckDB,
+        ));
+        assert!(!should_initialize_run_cache_service(
+            &args(),
+            Execute::Remote,
+            true,
+            AdapterType::DuckDB,
+        ));
+    }
+
+    #[test]
+    fn dbt_state_supported_adapters_are_explicit() {
+        assert!(adapter_supports_dbt_state(AdapterType::Snowflake));
+        assert!(adapter_supports_dbt_state(AdapterType::Databricks));
+        assert!(adapter_supports_dbt_state(AdapterType::Spark));
+        assert!(adapter_supports_dbt_state(AdapterType::Redshift));
+        assert!(adapter_supports_dbt_state(AdapterType::Bigquery));
+
+        assert!(!adapter_supports_dbt_state(AdapterType::DuckDB));
+        assert!(!adapter_supports_dbt_state(AdapterType::Postgres));
+        assert!(!adapter_supports_dbt_state(AdapterType::ClickHouse));
+        assert!(!adapter_supports_dbt_state(AdapterType::Fabric));
+        assert!(!adapter_supports_dbt_state(AdapterType::Salesforce));
+    }
+
+    struct ValidationClient(RunCacheServiceError);
+
+    #[async_trait]
+    impl RunCacheServiceClient for ValidationClient {
+        async fn validate_client_version(
+            &self,
+        ) -> Result<ClientVersionStatus, RunCacheServiceError> {
+            Err(match &self.0 {
+                RunCacheServiceError::Auth(message) => {
+                    RunCacheServiceError::Auth(message.to_string())
+                }
+                RunCacheServiceError::Disabled => RunCacheServiceError::Disabled,
+                _ => unreachable!("validation tests only use Auth and Disabled"),
+            })
+        }
+
+        async fn submit_enriched_sql(
+            &self,
+            _request: dbt_state::proto::query_cache::SubmitEnrichedSqlRequest,
+        ) -> Result<SubmitSqlResponse, RunCacheServiceError> {
+            unreachable!("validation test should not submit SQL")
+        }
+
+        async fn submit_values(
+            &self,
+            _request: SubmitValuesRequest,
+        ) -> Result<SubmitSqlResponse, RunCacheServiceError> {
+            unreachable!("validation test should not submit values")
+        }
+
+        async fn confirm_execution(
+            &self,
+            _request: ConfirmExecutionRequest,
+        ) -> Result<ConfirmExecutionResponse, RunCacheServiceError> {
+            unreachable!("validation test should not confirm execution")
+        }
+    }
+
+    #[tokio::test]
+    async fn initialization_validation_auth_error_fails_closed() {
+        let client = ValidationClient(RunCacheServiceError::Auth("bad credentials".to_string()));
+
+        let err = validate_client_version_for_initialization(&client)
+            .await
+            .unwrap_err();
+
+        assert!(err.to_string().contains("bad credentials"));
+        assert_eq!(err.code, ErrorCode::AuthFailed);
+    }
+
+    #[tokio::test]
+    async fn initialization_validation_non_auth_error_fails_open_to_skipped() {
+        let client = ValidationClient(RunCacheServiceError::Disabled);
+
+        assert_eq!(
+            validate_client_version_for_initialization(&client)
+                .await
+                .unwrap(),
+            ClientVersionStatus::Skipped
+        );
+    }
+
+    struct DisabledValidationClient;
+
+    #[async_trait]
+    impl RunCacheServiceClient for DisabledValidationClient {
+        fn is_disabled(&self) -> bool {
+            true
+        }
+
+        async fn validate_client_version(
+            &self,
+        ) -> Result<ClientVersionStatus, RunCacheServiceError> {
+            unreachable!("service-requested helper should not validate")
+        }
+
+        async fn submit_enriched_sql(
+            &self,
+            _request: dbt_state::proto::query_cache::SubmitEnrichedSqlRequest,
+        ) -> Result<SubmitSqlResponse, RunCacheServiceError> {
+            unreachable!("service-requested helper should not submit SQL")
+        }
+
+        async fn submit_values(
+            &self,
+            _request: SubmitValuesRequest,
+        ) -> Result<SubmitSqlResponse, RunCacheServiceError> {
+            unreachable!("service-requested helper should not submit values")
+        }
+
+        async fn confirm_execution(
+            &self,
+            _request: ConfirmExecutionRequest,
+        ) -> Result<ConfirmExecutionResponse, RunCacheServiceError> {
+            unreachable!("service-requested helper should not confirm execution")
+        }
+    }
+
+    #[test]
+    fn skipped_validation_from_disabled_client_is_no_longer_requested() {
+        assert!(!super::validation_skipped_service_requested(
+            &DisabledValidationClient
+        ));
+    }
+
+    #[test]
+    fn skipped_validation_from_enabled_client_remains_requested() {
+        let client = ValidationClient(RunCacheServiceError::Disabled);
+
+        assert!(super::validation_skipped_service_requested(&client));
+    }
+}

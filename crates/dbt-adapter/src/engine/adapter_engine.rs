@@ -1,0 +1,604 @@
+use std::borrow::Cow;
+use std::collections::{BTreeMap, BTreeSet};
+use std::sync::Arc;
+
+use adbc_core::options::{OptionStatement, OptionValue};
+use arrow::compute::concat_batches;
+use arrow_array::RecordBatch;
+use arrow_schema::Schema;
+use dbt_adapter_sql::statements::is_update_statement;
+use dbt_adbc::bigquery::QUERY_LABELS;
+use dbt_adbc::{Backend, Connection, QueryCtx, Statement};
+use dbt_auth::AdapterConfig;
+use dbt_common::behavior_flags::Behavior;
+use dbt_common::cancellation::CancellationToken;
+use dbt_common::hashing::code_hash;
+use dbt_common::tracing::span_info::{
+    read_current_span_start_info, record_current_span_status_from_attrs,
+};
+use dbt_common::{AdapterError, AdapterErrorKind, AdapterResult, Cancellable, create_debug_span};
+use dbt_schemas::schemas::common::ResolvedQuoting;
+use dbt_sql_utils::snowflake_terminal_flow_statement;
+use dbt_telemetry::{QueryExecuted, QueryOutcome};
+use indexmap::IndexMap;
+use minijinja::State;
+use tracy_client::span;
+
+use crate::AdapterType;
+use crate::cache::RelationCache;
+use crate::engine::query_comment::QueryCommentConfig;
+use crate::engine::sidecar_client::SidecarClient;
+use crate::errors::{adbc_error_to_adapter_error, arrow_error_to_adapter_error};
+use crate::record_batch::{RecordBatchExt, SchemaExt};
+use crate::sql::normalize::strip_sql_comments;
+use crate::sql_types::TypeOps;
+use crate::statement::*;
+use crate::stmt_splitter::StmtSplitter;
+
+pub type Options = Vec<(String, OptionValue)>;
+
+/// Normalize result column names for Snowflake commands whose output schema is
+/// defined as lowercase.
+///
+/// Snowflake `SHOW` and `DESCRIBE` output columns are lowercase, but the ADBC
+/// driver can report them in uppercase. Ordinary query results retain the
+/// driver-reported casing.
+fn normalize_result_column_names(
+    adapter_type: AdapterType,
+    sql: &str,
+    batch: RecordBatch,
+) -> RecordBatch {
+    if adapter_type != AdapterType::Snowflake {
+        return batch;
+    }
+
+    let result_statement = snowflake_terminal_flow_statement(sql);
+    let normalized_sql = strip_sql_comments(result_statement);
+    let first_keyword = normalized_sql.split_whitespace().next();
+    if first_keyword.is_some_and(|keyword| {
+        keyword.eq_ignore_ascii_case("show")
+            || keyword.eq_ignore_ascii_case("describe")
+            || keyword.eq_ignore_ascii_case("desc")
+    }) {
+        batch.lowercase_column_names()
+    } else {
+        batch
+    }
+}
+
+/// A trait abstracting the layer between the adapter layer and database drivers.
+///
+/// Each concrete engine type (XDBC with live/mock/record/replay modes, sidecar)
+/// implements this trait directly. This is the internal adapter service for other
+/// Rust modules in Fusion as the adapter layer interface is forced to abide by
+/// what is expected for consumption from Jinja code.
+pub trait AdapterEngine: Send + Sync {
+    /// Get the adapter type for this engine
+    fn adapter_type(&self) -> AdapterType;
+
+    /// Get the ADBC backend for this engine
+    fn backend(&self) -> Backend;
+
+    /// Get the resolved quoting policy
+    fn quoting(&self) -> ResolvedQuoting;
+
+    /// Get the statement splitter for this engine
+    fn splitter(&self) -> &dyn StmtSplitter;
+
+    /// Get the type operations for this engine
+    fn type_ops(&self) -> &Arc<dyn TypeOps>;
+
+    /// Get the query comment config for this engine
+    fn query_comment(&self) -> &QueryCommentConfig;
+
+    /// Get a config value by key
+    fn config(&self, key: &str) -> Option<Cow<'_, str>>;
+
+    /// Get the full config object
+    fn get_config(&self) -> &AdapterConfig;
+
+    /// Get a reference to the relation cache
+    fn relation_cache(&self) -> &Arc<RelationCache>;
+
+    /// Get the resolved behavior object with user overrides applied
+    fn behavior(&self) -> &Arc<Behavior>;
+
+    /// Get the user overrides for behavior flags
+    fn behavior_flag_overrides(&self) -> &BTreeMap<String, bool>;
+
+    /// Create a new connection to the warehouse.
+    fn new_connection(
+        &self,
+        state: Option<&State>,
+        node_id: Option<String>,
+    ) -> AdapterResult<Box<dyn Connection>>;
+
+    /// Create a new connection to the warehouse with the given config.
+    fn new_connection_with_config(
+        &self,
+        config: &AdapterConfig,
+    ) -> AdapterResult<Box<dyn Connection>>;
+
+    fn has_query_cache(&self) -> bool {
+        false
+    }
+
+    fn new_query_cache_statement(
+        &self,
+        _stmt: Box<dyn Statement>,
+    ) -> AdapterResult<Box<dyn Statement>> {
+        Err(AdapterError::new(
+            AdapterErrorKind::NotSupported,
+            "Query cache not supported",
+        ))
+    }
+
+    fn set_query_cache_reverse_deps(
+        &self,
+        _deps: BTreeMap<String, BTreeSet<String>>,
+    ) -> AdapterResult<()> {
+        Err(AdapterError::new(
+            AdapterErrorKind::NotSupported,
+            "Query cache not supported",
+        ))
+    }
+
+    /// Execute the given SQL query or statement with options.
+    ///
+    /// The default implementation uses ADBC to execute queries. Engines that
+    /// route execution differently (e.g. sidecar) should override this.
+    #[allow(clippy::too_many_arguments)]
+    fn execute_with_options(
+        &self,
+        state: Option<&State>,
+        ctx: &QueryCtx,
+        conn: &'_ mut dyn Connection,
+        sql: &str,
+        options: Options,
+        fetch: bool,
+        token: CancellationToken,
+    ) -> AdapterResult<RecordBatch> {
+        adbc_execute_with_options(self, state, ctx, conn, sql, options, fetch, token)
+    }
+
+    // -- Methods with default implementations ---------------------------------
+
+    /// The `threads` configuration value from the dbt profile.
+    ///
+    /// Used to derive connection concurrency limits in metadata adapters.
+    /// Returns `None` when the setting is not available (mock, sidecar, etc.).
+    fn threads(&self) -> Option<usize> {
+        None
+    }
+
+    fn is_mock(&self) -> bool {
+        false
+    }
+
+    /// Whether this is a sidecar engine (subprocess-based execution)
+    fn is_sidecar(&self) -> bool {
+        false
+    }
+
+    fn is_replay(&self) -> bool {
+        false
+    }
+
+    /// Returns the config fingerprint of this engine's connections.
+    ///
+    /// The connection pool uses this to reuse a connection only among engines
+    /// with an identical connection configuration. Override this in engines
+    /// that create real connections so different configurations are not reused.
+    fn fingerprint(&self) -> u64 {
+        0
+    }
+
+    /// Get the physical execution backend for sidecar engines.
+    ///
+    /// Returns the actual database backend (DuckDB, Snowflake, etc.) that SQL
+    /// will execute against. This differs from [`adapter_type()`] which returns
+    /// the logical adapter type.
+    fn physical_backend(&self) -> Option<Backend> {
+        None
+    }
+
+    /// Get a reference to the sidecar client, if this is a sidecar engine.
+    fn sidecar_client(&self) -> Option<&dyn SidecarClient> {
+        None
+    }
+
+    /// Execute the given SQL query or statement (convenience wrapper).
+    fn execute(
+        &self,
+        state: Option<&State>,
+        conn: &'_ mut dyn Connection,
+        ctx: &QueryCtx,
+        sql: &str,
+        token: CancellationToken,
+    ) -> AdapterResult<RecordBatch> {
+        self.execute_with_options(state, ctx, conn, sql, Options::new(), true, token)
+    }
+
+    fn get_configured_database_name(&self) -> Option<Cow<'_, str>> {
+        self.config("database")
+    }
+}
+
+/// Default ADBC-based execute_with_options implementation.
+///
+/// Used by engines whose connections implement the full ADBC protocol
+/// (AdbcEngine in Live, Record, and Replay modes).
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn adbc_execute_with_options(
+    engine: &(impl AdapterEngine + ?Sized),
+    state: Option<&State>,
+    ctx: &QueryCtx,
+    conn: &'_ mut dyn Connection,
+    sql: &str,
+    options: Options,
+    fetch: bool,
+    token: CancellationToken,
+) -> AdapterResult<RecordBatch> {
+    assert!(!sql.is_empty() || !options.is_empty());
+
+    let maybe_query_comment = state
+        .map(|s| engine.query_comment().resolve_comment(s))
+        .transpose()?;
+
+    let sql = match &maybe_query_comment {
+        Some(comment) => {
+            let sql = engine.query_comment().add_comment(sql, comment);
+            Cow::Owned(sql)
+        }
+        None => Cow::Borrowed(sql),
+    };
+
+    let adapter_type = engine.adapter_type();
+    let mut options = options;
+    if let (Some(state), AdapterType::Bigquery) = (state, adapter_type) {
+        let mut job_labels = maybe_query_comment
+            .as_ref()
+            .map_or_else(IndexMap::new, |comment| {
+                engine
+                    .query_comment()
+                    .get_job_labels_from_query_comment(comment)
+            });
+        if let Some(invocation_id_label) = state
+            .lookup("invocation_id", &[])
+            .and_then(|value| value.as_str().map(|label| label.to_owned()))
+        {
+            job_labels.insert("dbt_invocation_id".to_string(), invocation_id_label);
+        }
+
+        let job_label_option =
+            serde_json::to_string(&job_labels).expect("Should be able to serialize job labels");
+        options.push((
+            QUERY_LABELS.to_owned(),
+            OptionValue::String(job_label_option),
+        ));
+    }
+
+    let do_execute = |conn: &'_ mut dyn Connection| -> Result<
+        (Arc<Schema>, Vec<RecordBatch>),
+        Cancellable<adbc_core::error::Error>,
+    > {
+        use dbt_adbc::statement::Statement as _;
+
+        let mut stmt = if engine.has_query_cache() {
+            let stmt = conn.new_statement()?;
+            engine.new_query_cache_statement(stmt).map_err(|e| {
+                Cancellable::Error(adbc_core::error::Error::with_message_and_status(
+                    e.message(),
+                    adbc_core::error::Status::Internal,
+                ))
+            })?
+        } else {
+            conn.new_statement()?
+        };
+        if let Some(node_id) = ctx.node_id() {
+            stmt.set_option(
+                OptionStatement::Other(DBT_NODE_ID.to_string()),
+                OptionValue::String(node_id.clone()),
+            )?;
+        }
+        if let Some(p) = ctx.phase() {
+            stmt.set_option(
+                OptionStatement::Other(DBT_EXECUTION_PHASE.to_string()),
+                OptionValue::String(p.to_string()),
+            )?;
+        }
+        stmt.set_option(
+            OptionStatement::Other(DBT_METADATA.to_string()),
+            OptionValue::Int(ctx.is_metadata() as i64),
+        )?;
+        stmt.set_option(
+            OptionStatement::Other(DBT_FETCH.to_string()),
+            OptionValue::Int(fetch as i64),
+        )?;
+        if adapter_type == AdapterType::Snowflake
+            && let Some(traceparent) = read_current_span_start_info(|info| {
+                format!("00-{:032x}-{:016x}-01", info.trace_id, info.span_id)
+            })
+        {
+            stmt.set_option(
+                OptionStatement::Other("adbc.telemetry.trace_parent".to_string()),
+                OptionValue::String(traceparent),
+            )?;
+        }
+        options
+            .into_iter()
+            .try_for_each(|(key, value)| stmt.set_option(OptionStatement::Other(key), value))?;
+        stmt.set_sql_query(sql.as_ref())?;
+
+        // Make sure we don't create more statements after global cancellation.
+        token.check_cancellation()?;
+
+        // Track the statement so execution can be cancelled
+        // when the user Ctrl-C's the process.
+        let mut stmt = TrackedStatement::new(stmt);
+
+        // ClickHouse DDL/DML does not return an Arrow IPC schema header:
+        // This check should be removed after the fix lands in ClickHouse ADBC driver:
+        // https://github.com/ClickHouse/adbc_clickhouse/pull/54
+        if adapter_type == AdapterType::ClickHouse
+            && is_update_statement(sql.as_ref(), adapter_type)
+        {
+            stmt.execute_update()?;
+            token.check_cancellation()?;
+            return Ok((Arc::new(Schema::empty()), Vec::new()));
+        }
+
+        let reader = stmt.execute()?;
+        let schema = reader.schema();
+        let mut batches = Vec::with_capacity(1);
+
+        // Snowflake DML (MERGE/INSERT/UPDATE/DELETE) returns a one-row metadata batch
+        // with columns like "number of rows inserted". AdapterResponse needs that batch
+        // to compute rows_affected correctly, so we must drain even when fetch=false.
+        if !fetch && !schema.has_dml_columns(engine.adapter_type()) {
+            return Ok((schema, batches));
+        }
+
+        // This loop has been discovered to inexplicably hang in some circumstances
+        // See PR https://github.com/dbt-labs/fs/pull/7755
+        for res in reader {
+            let batch = res.map_err(adbc_core::error::Error::from)?;
+            batches.push(batch);
+            // Check for cancellation before processing the next batch
+            // or concatenating the batches produced so far.
+            token.check_cancellation()?;
+        }
+        Ok((schema, batches))
+    };
+    let _span = span!("SqlEngine::execute");
+
+    let sql_hash = code_hash(sql.as_ref());
+    let _query_span_guard = create_debug_span(QueryExecuted::start(
+        sql.to_string(),
+        sql_hash,
+        adapter_type.as_ref().to_owned(),
+        ctx.node_id().cloned(),
+        ctx.desc().cloned(),
+    ))
+    .entered();
+
+    let (schema, batches) = match do_execute(conn) {
+        Ok(res) => res,
+        Err(err @ (Cancellable::Cancelled | Cancellable::Error(_))) => {
+            let cancelled = || {
+                AdapterError::new(
+                    AdapterErrorKind::Cancelled,
+                    "SQL statement execution was cancelled",
+                )
+            };
+            let (adapter_error, error_message, vendor_code) = match err {
+                Cancellable::Cancelled => (cancelled(), None, None),
+                // Statements that were running while cancellation was triggered
+                // fail with an error here. But that error is a consequence of a
+                // forced cancellation, so we check the `CancellationToken` and
+                // treat the error as a cancellation and that makes the terminal
+                // output much better for users. Nothing went wrong with the SQL
+                // execution, it was just killed because the user asked for
+                // cancellation.
+                Cancellable::Error(_) if token.is_cancelled() => (cancelled(), None, None),
+                Cancellable::Error(e) => {
+                    let error_message = Some(format!("{:?}: {}", e.status, e.message));
+                    let vendor_code = Some(e.vendor_code);
+                    let adapter_error = adbc_error_to_adapter_error(e);
+                    (adapter_error, error_message, vendor_code)
+                }
+            };
+            let outcome = if adapter_error.kind() == AdapterErrorKind::Cancelled {
+                QueryOutcome::Canceled
+            } else {
+                QueryOutcome::Error
+            };
+            record_current_span_status_from_attrs(move |attrs| {
+                if let Some(attrs) = attrs.downcast_mut::<QueryExecuted>() {
+                    attrs.dbt_core_event_code = "E017".to_string();
+                    attrs.set_query_outcome(outcome);
+                    attrs.query_error_adapter_message = error_message.clone();
+                    attrs.query_error_vendor_code = vendor_code;
+                }
+            });
+            return Err(adapter_error);
+        }
+    };
+    let total_batch = concat_batches(&schema, &batches).map_err(arrow_error_to_adapter_error)?;
+    let total_batch = normalize_result_column_names(adapter_type, sql.as_ref(), total_batch);
+
+    record_current_span_status_from_attrs(|attrs| {
+        if let Some(attrs) = attrs.downcast_mut::<QueryExecuted>() {
+            attrs.dbt_core_event_code = "E017".to_string();
+            attrs.set_query_outcome(QueryOutcome::Success);
+            attrs.query_id = total_batch.query_id(adapter_type)
+        }
+    });
+
+    Ok(total_batch)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use arrow_array::{ArrayRef, StringArray};
+    use arrow_schema::{DataType, Field};
+    use minijinja::{Environment, Value};
+
+    fn uppercase_constraint_batch() -> RecordBatch {
+        RecordBatch::try_new(
+            Arc::new(Schema::new(vec![
+                Field::new("COLUMN_NAME", DataType::Utf8, false),
+                Field::new("CONSTRAINT_NAME", DataType::Utf8, false),
+                Field::new("RELY", DataType::Utf8, false),
+            ])),
+            vec![
+                Arc::new(StringArray::from(vec!["id", "account_id"])) as ArrayRef,
+                Arc::new(StringArray::from(vec!["pk_orders", "pk_orders"])) as ArrayRef,
+                Arc::new(StringArray::from(vec!["Y", "Y"])) as ArrayRef,
+            ],
+        )
+        .unwrap()
+    }
+
+    fn single_column_batch(column_name: &str) -> RecordBatch {
+        RecordBatch::try_new(
+            Arc::new(Schema::new(vec![Field::new(
+                column_name,
+                DataType::Utf8,
+                false,
+            )])),
+            vec![Arc::new(StringArray::from(vec!["value"])) as ArrayRef],
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn normalize_result_column_names_supports_dbt_constraints_access_pattern() {
+        let batch = normalize_result_column_names(
+            AdapterType::Snowflake,
+            "/* dbt query comment */ SHOW UNIQUE KEYS IN TABLE orders",
+            uppercase_constraint_batch(),
+        );
+        assert_eq!(
+            batch
+                .schema()
+                .fields()
+                .iter()
+                .map(|field| field.name().as_str())
+                .collect::<Vec<_>>(),
+            vec!["column_name", "constraint_name", "rely"]
+        );
+
+        let table = dbt_agate::AgateTable::from_record_batch(Arc::new(batch)).into_value();
+        let columns = table.get_attr("columns").unwrap();
+        let column = columns.get_item(&Value::from("column_name")).unwrap();
+        let env = Environment::new();
+        let state = env.empty_state();
+        let values = column.call_method(&state, "values", &[], &[]).unwrap();
+        assert_eq!(values.len(), Some(2));
+        assert_eq!(values.get_item_by_index(0).unwrap(), Value::from("id"));
+        assert_eq!(
+            values.get_item_by_index(1).unwrap(),
+            Value::from("account_id")
+        );
+
+        let row = table
+            .get_attr("rows")
+            .unwrap()
+            .get_item_by_index(0)
+            .unwrap();
+        assert_eq!(
+            row.get_item(&Value::from("constraint_name")).unwrap(),
+            Value::from("pk_orders")
+        );
+        assert_eq!(
+            row.get_item(&Value::from("column_name")).unwrap(),
+            Value::from("id")
+        );
+        assert_eq!(
+            row.get_item(&Value::from("rely")).unwrap(),
+            Value::from("Y")
+        );
+    }
+
+    #[test]
+    fn normalize_result_column_names_handles_snowflake_describe() {
+        for sql in [
+            "DESCRIBE TABLE orders",
+            "desc table orders",
+            "-- comment\nDESC TABLE orders",
+        ] {
+            let batch = normalize_result_column_names(
+                AdapterType::Snowflake,
+                sql,
+                uppercase_constraint_batch(),
+            );
+            assert_eq!(batch.schema().field(0).name(), "column_name");
+        }
+    }
+
+    #[test]
+    fn normalize_result_column_names_preserves_snowflake_select() {
+        let batch = normalize_result_column_names(
+            AdapterType::Snowflake,
+            "SELECT 1 AS a",
+            uppercase_constraint_batch(),
+        );
+        assert_eq!(batch.schema().field(0).name(), "COLUMN_NAME");
+    }
+
+    #[test]
+    fn normalize_result_column_names_uses_terminal_snowflake_flow_statement() {
+        for (sql, column_name) in [
+            (
+                r#"SHOW TABLES ->> SELECT "name" AS TABLE_NAME FROM $1"#,
+                "TABLE_NAME",
+            ),
+            (
+                r#"SHOW TABLES ->> /* result query */ SELECT "name" AS "MixedCase" FROM $1"#,
+                "MixedCase",
+            ),
+        ] {
+            let batch = normalize_result_column_names(
+                AdapterType::Snowflake,
+                sql,
+                single_column_batch(column_name),
+            );
+            assert_eq!(batch.schema().field(0).name(), column_name);
+        }
+
+        let batch = normalize_result_column_names(
+            AdapterType::Snowflake,
+            "SELECT 1 ->> SHOW TABLES",
+            single_column_batch("NAME"),
+        );
+        assert_eq!(batch.schema().field(0).name(), "name");
+    }
+
+    #[test]
+    fn normalize_result_column_names_ignores_flow_operators_in_snowflake_literals() {
+        for sql in [
+            "SHOW TABLES LIKE '->>'",
+            "SHOW TABLES LIKE $$->>$$",
+            "SHOW /* ->> SELECT 1 */ TABLES",
+        ] {
+            let batch = normalize_result_column_names(
+                AdapterType::Snowflake,
+                sql,
+                single_column_batch("NAME"),
+            );
+            assert_eq!(batch.schema().field(0).name(), "name");
+        }
+    }
+
+    #[test]
+    fn normalize_result_column_names_preserves_other_adapters() {
+        let batch = normalize_result_column_names(
+            AdapterType::Bigquery,
+            "SHOW PRIMARY KEYS IN TABLE orders",
+            uppercase_constraint_batch(),
+        );
+        assert_eq!(batch.schema().field(0).name(), "COLUMN_NAME");
+    }
+}
