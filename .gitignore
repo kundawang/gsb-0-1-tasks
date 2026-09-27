@@ -1,0 +1,9 @@
+.venv
+__pycache__
+/build
+/dist
+temporalio/bridge/target/
+temporalio/bridge/temporal_sdk_bridge*
+/tests/helpers/golangserver/golangserver
+/tests/helpers/golangworker/golangworker
+/.idea
