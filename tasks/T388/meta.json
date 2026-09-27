@@ -1,0 +1,37 @@
+{
+  "task_id": "T388",
+  "title": "fastapi/typer 缺陷修复：✨ Add pretty error tracebacks for user errors and support fo",
+  "created_at": "2026-09-27T17:37:08",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 fastapi/typer @ 04898575a9",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t388/base",
+    "sha": "644c8f1e13327dca761bdd400e36ced1a31885b3",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/644c8f1e13327dca761bdd400e36ced1a31885b3"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t388/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t388/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/fastapi/typer base=https://github.com/fastapi/typer/commit/04898575a96d17ca4462b9aaa2d2e179f2d06b3a fix=252ed30936fdd47ad6fad05f605fe0a004abb51c"
+}
