@@ -1,0 +1,37 @@
+{
+  "task_id": "T373",
+  "title": "redis/redis-py 缺陷修复：fix(asyncio): raise on EOF in can_read() so pools replace se",
+  "created_at": "2026-09-27T17:34:15",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 redis/redis-py @ 6a6b581b48",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t373/base",
+    "sha": "ab7e959d03cbda20791b45fc24720ac90ad74160",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/ab7e959d03cbda20791b45fc24720ac90ad74160"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t373/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t373/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/redis/redis-py base=https://github.com/redis/redis-py/commit/6a6b581b48225afa0b76912d1028c6035baee932 fix=0d2ce3b5a777ae57974b4e5f29eab71fca9b5ce8"
+}
