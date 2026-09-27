@@ -1,0 +1,37 @@
+{
+  "task_id": "T393",
+  "title": "django/django 缺陷修复：Fixed #27380 -- Added \"raw\" argument to m2m_changed signals.",
+  "created_at": "2026-09-27T17:38:12",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 django/django @ 12d574407c",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t393/base",
+    "sha": "14555afbde66a8c4ec2532c63c116b6315100806",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/14555afbde66a8c4ec2532c63c116b6315100806"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t393/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t393/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/django/django base=https://github.com/django/django/commit/12d574407c466c7929e455cfcfef4c0ff564e465 fix=4702b36120ea4c736d3f6b5595496f96e0021e46"
+}
