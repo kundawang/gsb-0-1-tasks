@@ -1,0 +1,37 @@
+{
+  "task_id": "T364",
+  "title": "PrefectHQ/prefect 缺陷修复：Fix TOCTOU race conditions in concurrency lease renewal (#19",
+  "created_at": "2026-09-27T17:47:07",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 PrefectHQ/prefect @ 256e188058",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t364/base",
+    "sha": "16b115b8f2783a6870f66ba0d2a64426ba011904",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/16b115b8f2783a6870f66ba0d2a64426ba011904"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t364/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t364/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/PrefectHQ/prefect base=https://github.com/PrefectHQ/prefect/commit/256e188058cee17efbc01f471d374b2462b6d461 fix=5ec04cda05a44109997870537f8cdaba0882dd6b"
+}
