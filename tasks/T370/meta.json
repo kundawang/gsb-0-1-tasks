@@ -1,0 +1,37 @@
+{
+  "task_id": "T370",
+  "title": "kubernetes-client/python 缺陷修复：Correct generated asyncio resource deletion responses",
+  "created_at": "2026-09-27T17:32:50",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 kubernetes-client/python @ 3954eb45f9",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t370/base",
+    "sha": "ff7aedb9d731677255694c2bacc8127dae18fcf9",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/ff7aedb9d731677255694c2bacc8127dae18fcf9"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t370/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t370/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/kubernetes-client/python base=https://github.com/kubernetes-client/python/commit/3954eb45f9f5c35c7ce6bbac1f70f31c6bbfa688 fix=81fce07b603360e4788eaf23bcd20e87935c9d1f"
+}
