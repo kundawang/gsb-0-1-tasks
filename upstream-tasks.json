@@ -5719,5 +5719,1228 @@
       "test/orm/declarative/test_typed_mapping.py"
     ],
     "prompt": "sqlalchemy 2.0.37 之后有个回归：在 `Mapped[...]` 里用不合适类型/对象时，本该抛出的 `ArgumentError` 消失了——错误被类型系统吞掉，用户拿到的是别的报错。\n\n请把这条检查恢复（decl_base / properties / exc 三处一起看），补一个构造左侧类型不对的测试。"
+  },
+  {
+    "index": 279,
+    "suggested_id": "T349",
+    "repo": "temporalio/sdk-python",
+    "repo_url": "https://github.com/temporalio/sdk-python",
+    "base_sha": "5df71923411726656f22f89be5d4d988fd6f8020",
+    "base_permalink": "https://github.com/temporalio/sdk-python/commit/5df71923411726656f22f89be5d4d988fd6f8020",
+    "fix_sha": "a66bca14a59686174e89fcd0eac75d5f3ef03fea",
+    "fix_date": "2026-07-27",
+    "subject": "Fix cancellations being swallowed in some circumstances (#1671)",
+    "src_files": [
+      "temporalio/worker/_replayer.py",
+      "temporalio/worker/_worker.py",
+      "temporalio/worker/_workflow.py",
+      "temporalio/worker/_workflow_instance.py"
+    ],
+    "test_files": [
+      "tests/worker/test_replayer.py",
+      "tests/worker/test_replayer_event_tracing_double_sig_at_start_single_batch.json",
+      "tests/worker/test_replayer_event_tracing_single_batch.json",
+      "tests/worker/test_workflow.py"
+    ],
+    "prompt": "temporalio 的 Python SDK 里，取消信号在某些情况下会被吞掉：工作流被取消之后，等待中的活动/子工作流没有按预期收到取消，重放（replay）还会出现历史不一致。\n\n请修好取消的传播与重放路径（不要靠 monkeypatch 兜），补测试：重放时的异步顺序、未标记的历史。"
+  },
+  {
+    "index": 280,
+    "suggested_id": "T350",
+    "repo": "temporalio/sdk-python",
+    "repo_url": "https://github.com/temporalio/sdk-python",
+    "base_sha": "a6a8b572a007904a36a11a2b75f42089067a10b2",
+    "base_permalink": "https://github.com/temporalio/sdk-python/commit/a6a8b572a007904a36a11a2b75f42089067a10b2",
+    "fix_sha": "ab25ed693f7ec77589346e66c98db299a8c9c9fe",
+    "fix_date": "2026-09-11",
+    "subject": "Fix repeated Deep Agents tool calls with identical arguments (#1806)",
+    "src_files": [
+      "temporalio/contrib/deepagents/_activity.py",
+      "temporalio/contrib/deepagents/_tools.py",
+      "temporalio/contrib/deepagents/workflow.py",
+      "tests/contrib/deepagents/histories/legacy_cache_carried_across_can.json",
+      "tests/contrib/deepagents/histories/legacy_dedup_repeated_tool_calls.json"
+    ],
+    "test_files": [
+      "tests/contrib/deepagents/test_backends.py",
+      "tests/contrib/deepagents/test_continue_as_new.py",
+      "tests/contrib/deepagents/test_legacy_cache_replay.py",
+      "tests/contrib/deepagents/test_model_activity.py",
+      "tests/contrib/deepagents/test_tools.py"
+    ],
+    "prompt": "temporalio 的 Deep Agents 集成里，参数完全相同的工具调用会被错误地缓存复用：第二次调用直接拿到上一次的结果，跨 continue-as-new 之后更明显，等于重复调用被吞。\n\n请修好这条缓存键的计算（可以用开关控制新旧行为），补测试：跨 continue-as-new 的相同调用要真的重跑、以及旧行为兼容。"
+  },
+  {
+    "index": 281,
+    "suggested_id": "T351",
+    "repo": "temporalio/sdk-python",
+    "repo_url": "https://github.com/temporalio/sdk-python",
+    "base_sha": "7ab0e9d8e7ae864d378ec511bac021060dc9fbd0",
+    "base_permalink": "https://github.com/temporalio/sdk-python/commit/7ab0e9d8e7ae864d378ec511bac021060dc9fbd0",
+    "fix_sha": "29dc19c2ea3f3a5a218b775a0883d5bdca2f9e7b",
+    "fix_date": "2026-06-15",
+    "subject": "Fix pdb / breakpoint() hang in workflow code (#1104) (#1568)",
+    "src_files": [
+      "temporalio/worker/_debugger.py",
+      "temporalio/worker/_workflow.py",
+      "temporalio/worker/workflow_sandbox/_importer.py",
+      "temporalio/worker/workflow_sandbox/_restrictions.py"
+    ],
+    "test_files": [
+      "tests/worker/test_breakpoint_hang.py"
+    ],
+    "prompt": "temporalio 的工作流在 debug 模式（debug_mode=True 或 TEMPORAL_DEBUG=1）下遇到 `breakpoint()` 会卡死：pdb 的交互提示出不来，工作流就挂在那儿。\n\n请让 debug 模式下断点能正常进入交互、退出后工作流继续跑，补测试（含从子工作流/异步上下文进入断点的情况）。"
+  },
+  {
+    "index": 282,
+    "suggested_id": "T352",
+    "repo": "temporalio/sdk-python",
+    "repo_url": "https://github.com/temporalio/sdk-python",
+    "base_sha": "4f646c20bd63e9f727f8407b44766052cc067bf0",
+    "base_permalink": "https://github.com/temporalio/sdk-python/commit/4f646c20bd63e9f727f8407b44766052cc067bf0",
+    "fix_sha": "2331aa4617dc20dd711944fed52e43afb06ec557",
+    "fix_date": "2024-06-20",
+    "subject": "Add WorkflowUpdateRPCTimeoutOrCancelledError (#548)",
+    "src_files": [
+      ".github/workflows/ci.yml",
+      "temporalio/client.py",
+      "tests/helpers/__init__.py"
+    ],
+    "test_files": [
+      "tests/worker/test_workflow.py"
+    ],
+    "prompt": "temporalio SDK 里工作流更新（Workflow Update）超时或被取消时，抛出来的异常跟其它 RPC 不一致：调用方拿不到能区分的错误类型，也没法判断是超时还是取消。\n\n请补上可区分的错误类型（超时/取消），补一个对应的测试。"
+  },
+  {
+    "index": 283,
+    "suggested_id": "T353",
+    "repo": "temporalio/sdk-python",
+    "repo_url": "https://github.com/temporalio/sdk-python",
+    "base_sha": "24badcfd8095312a67269c4b31fee09897ac4d79",
+    "base_permalink": "https://github.com/temporalio/sdk-python/commit/24badcfd8095312a67269c4b31fee09897ac4d79",
+    "fix_sha": "b9b2cc31db8fd85b23a81dd065da70a8bbab2616",
+    "fix_date": "2026-06-11",
+    "subject": "Fix interceptor contract inconsistency for start_update_with_start_workflow (#1588)",
+    "src_files": [
+      "temporalio/client/_client.py",
+      "temporalio/client/_impl.py",
+      "temporalio/client/_interceptor.py",
+      "temporalio/client/_workflow.py"
+    ],
+    "test_files": [
+      "tests/worker/test_update_with_start.py"
+    ],
+    "prompt": "temporalio 的拦截器约定不一致：`start_update_with_start_workflow` 这条路径没有把顶层的 rpc_metadata / rpc_timeout 传给拦截器，其它调用路径都传了，于是自定义拦截器在这条路径上拿到的是空值。\n\n请把约定统一（顶层字段要转发到拦截器），补测试。"
+  },
+  {
+    "index": 284,
+    "suggested_id": "T354",
+    "repo": "temporalio/sdk-python",
+    "repo_url": "https://github.com/temporalio/sdk-python",
+    "base_sha": "39b820d6786cf6e75edb983fb715b13bfb7c1bae",
+    "base_permalink": "https://github.com/temporalio/sdk-python/commit/39b820d6786cf6e75edb983fb715b13bfb7c1bae",
+    "fix_sha": "2eea030551707015d09500d4044d7393f8eee5ef",
+    "fix_date": "2026-08-06",
+    "subject": "fix(contrib): pool and idle-evict MCP connections in google_adk_agents (#1664)",
+    "src_files": [
+      "temporalio/contrib/google_adk_agents/__init__.py",
+      "temporalio/contrib/google_adk_agents/_mcp.py",
+      "temporalio/contrib/google_adk_agents/_plugin.py",
+      "tests/contrib/google_adk_agents/__init__.py"
+    ],
+    "test_files": [
+      "tests/contrib/google_adk_agents/test_mcp.py",
+      "tests/contrib/google_adk_agents/test_stateful_mcp.py"
+    ],
+    "prompt": "temporalio 的 google_adk_agents 集成里 MCP 连接没有池化也没有空闲回收：每次列工具/调工具都新建连接，出错时还不关闭，跑久了连接数一直涨。\n\n请加上连接池与空闲淘汰（出错路径也要关闭），补测试。"
+  },
+  {
+    "index": 285,
+    "suggested_id": "T355",
+    "repo": "dbt-labs/dbt-core",
+    "repo_url": "https://github.com/dbt-labs/dbt-core",
+    "base_sha": "6737ed27e1b6f3a33578b7f571ccf772e70322c7",
+    "base_permalink": "https://github.com/dbt-labs/dbt-core/commit/6737ed27e1b6f3a33578b7f571ccf772e70322c7",
+    "fix_sha": "9362e62672edc5021afd94fc8cc2b9ba831bed72",
+    "fix_date": "2026-03-20",
+    "subject": "Implement correct state:modified behavior for changed macros (#8760)",
+    "src_files": [
+      "crates/dbt-adapter/src/bridge_adapter.rs",
+      "crates/dbt-adapter/src/engine/adapter_engine.rs",
+      "crates/dbt-adapter/src/engine/xdbc.rs",
+      "crates/dbt-adapter/src/funcs.rs",
+      "crates/dbt-adapter/src/parse/adapter.rs",
+      "crates/dbt-adapter/src/python/snowflake.rs",
+      "crates/dbt-adapter/src/query_ctx.rs",
+      "crates/dbt-adapter/src/typed_adapter.rs",
+      "crates/dbt-jinja-utils/src/functions/base.rs",
+      "crates/dbt-jinja-utils/src/listener.rs",
+      "crates/dbt-jinja-utils/src/phases/run/run_node_context.rs",
+      "crates/dbt-jinja-utils/src/utils.rs",
+      "crates/dbt-jinja-vars/src/configured_var.rs",
+      "crates/dbt-jinja/minijinja-contrib/src/filters/datetime.rs",
+      "crates/dbt-jinja/minijinja-contrib/src/filters/mod.rs",
+      "crates/dbt-jinja/minijinja-contrib/src/globals.rs",
+      "crates/dbt-jinja/minijinja-py/src/state.rs",
+      "crates/dbt-jinja/minijinja/src/dispatch_object.rs",
+      "crates/dbt-jinja/minijinja/src/listener.rs",
+      "crates/dbt-jinja/minijinja/src/vm/mod.rs",
+      "crates/dbt-jinja/minijinja/src/vm/state.rs",
+      "crates/dbt-parser/src/dbt_namespace.rs",
+      "crates/dbt-parser/src/renderer.rs",
+      "crates/dbt-parser/src/resolve/resolve_analyses.rs",
+      "crates/dbt-parser/src/resolve/resolve_functions.rs",
+      "crates/dbt-parser/src/resolve/resolve_models.rs",
+      "crates/dbt-parser/src/resolve/resolve_tests/resolve_data_tests.rs",
+      "crates/dbt-parser/src/resolver.rs",
+      "crates/dbt-schemas/src/schemas/manifest/manifest.rs",
+      "crates/dbt-schemas/src/schemas/manifest/manifest_nodes.rs",
+      "crates/dbt-schemas/src/schemas/nodes.rs",
+      "crates/dbt-schemas/src/schemas/prev_state/mod.rs"
+    ],
+    "test_files": [
+      "crates/dbt-jinja/minijinja/tests/test_macros.rs",
+      "crates/dbt-jinja/minijinja/tests/test_state.rs",
+      "crates/dbt-jinja/minijinja/tests/test_templates.rs"
+    ],
+    "prompt": "dbt 的 `state:modified` 判断漏掉了宏：模型依赖的宏改了，`state:modified` 仍然认为模型没变，于是选择集不对（该跑的不跑）。从 manifest 里加载的宏节点还会被丢掉。\n\n请把宏依赖纳入状态比较（记录项目内宏的依赖、保留从 manifest 加载的宏节点），补测试。"
+  },
+  {
+    "index": 286,
+    "suggested_id": "T356",
+    "repo": "dbt-labs/dbt-core",
+    "repo_url": "https://github.com/dbt-labs/dbt-core",
+    "base_sha": "d593f605e808184fd1c647301d037cd3173c263d",
+    "base_permalink": "https://github.com/dbt-labs/dbt-core/commit/d593f605e808184fd1c647301d037cd3173c263d",
+    "fix_sha": "380f1016c767f51f5f295653b5ae7413f24ec831",
+    "fix_date": "2025-08-01",
+    "subject": "fix jinja stacktrace (#4772)",
+    "src_files": [
+      ".changes/unreleased/Fixes-20250730-074232.yaml",
+      "crates/dbt-common/src/error/code_location.rs",
+      "crates/dbt-jinja-utils/src/environment_builder.rs",
+      "crates/dbt-jinja-utils/src/phases/compile/compile_node_context.rs",
+      "crates/dbt-jinja-utils/src/phases/parse/resolve_model_context.rs",
+      "crates/dbt-jinja-utils/src/phases/run/run_node_context.rs",
+      "crates/dbt-jinja/minijinja/src/compiler/cfg.rs",
+      "crates/dbt-jinja/minijinja/src/compiler/codegen.rs",
+      "crates/dbt-jinja/minijinja/src/compiler/instructions.rs",
+      "crates/dbt-jinja/minijinja/src/compiler/tokens.rs",
+      "crates/dbt-jinja/minijinja/src/constants.rs",
+      "crates/dbt-jinja/minijinja/src/environment.rs",
+      "crates/dbt-jinja/minijinja/src/error.rs",
+      "crates/dbt-jinja/minijinja/src/lib.rs",
+      "crates/dbt-jinja/minijinja/src/vm/context.rs",
+      "crates/dbt-jinja/minijinja/src/vm/fuel.rs",
+      "crates/dbt-jinja/minijinja/src/vm/mod.rs",
+      "crates/dbt-jinja/minijinja/src/vm/mod_typecheck.rs",
+      "crates/dbt-jinja/minijinja/src/vm/state.rs",
+      "crates/dbt-jinja/minijinja/src/vm/typemeta.rs",
+      "crates/dbt-parser/src/renderer.rs",
+      "crates/dbt-parser/src/resolve/resolve_exposures.rs",
+      "crates/dbt-parser/src/resolve/resolve_tests/resolve_unit_tests.rs",
+      "crates/dbt-parser/src/tests.rs"
+    ],
+    "test_files": [
+      "crates/dbt-jinja/minijinja-contrib/tests/filters.rs",
+      "crates/dbt-jinja/minijinja/tests/test_cfg.rs",
+      "crates/dbt-jinja/minijinja/tests/test_compiler.rs",
+      "crates/dbt-jinja/minijinja/tests/test_templates.rs",
+      "crates/dbt-jinja/minijinja/tests/test_vm.rs"
+    ],
+    "prompt": "dbt 在 Jinja 渲染出错时给出的堆栈没法看：错误位置指向 dbt 自己的包装层，用户看不出是模板哪一行的问题。\n\n请改成能定位到模板/模型实际位置的堆栈，补测试。"
+  },
+  {
+    "index": 287,
+    "suggested_id": "T357",
+    "repo": "dbt-labs/dbt-core",
+    "repo_url": "https://github.com/dbt-labs/dbt-core",
+    "base_sha": "9ae1971c1d48d1bd07ed5bab4b10484def037070",
+    "base_permalink": "https://github.com/dbt-labs/dbt-core/commit/9ae1971c1d48d1bd07ed5bab4b10484def037070",
+    "fix_sha": "dd8225436a2a8bf3cbf127ccbeb6574779e6d2be",
+    "fix_date": "2026-05-11",
+    "subject": "fix(snowflake): control the retry loop on the dbt side by setting a short LOGIN_TIMEOUT on the Snowflake driver (#10019)",
+    "src_files": [
+      "crates/dbt-adapter/Cargo.toml",
+      "crates/dbt-adapter/src/connection.rs",
+      "crates/dbt-adapter/src/engine/mod.rs",
+      "crates/dbt-adapter/src/engine/retry.rs",
+      "crates/dbt-adapter/src/engine/xdbc.rs",
+      "crates/dbt-auth/src/config.rs",
+      "crates/dbt-auth/src/snowflake/mod.rs"
+    ],
+    "test_files": [
+      "crates/dbt-adapter/tests/snowflake_stale_connection.rs",
+      "crates/dbt-adapter/tests/snowflake_statement_timeout.rs",
+      "crates/dbt-test-utils/tests/data/hello/profiles.yml"
+    ],
+    "prompt": "dbt 的 snowflake 连接有线程局部缓存的连接残留：重试循环由 dbt 侧控制不住，旧连接被复用后报 context deadline exceeded 之类的超时，任务就卡住/失败。\n\n请把重试循环的控制权收到 dbt 这边并处理陈旧连接，补测试。"
+  },
+  {
+    "index": 288,
+    "suggested_id": "T358",
+    "repo": "dbt-labs/dbt-core",
+    "repo_url": "https://github.com/dbt-labs/dbt-core",
+    "base_sha": "68a8c15d80398ef6e168824184a2d1f4791b3b08",
+    "base_permalink": "https://github.com/dbt-labs/dbt-core/commit/68a8c15d80398ef6e168824184a2d1f4791b3b08",
+    "fix_sha": "088119f8f493b03626458d4c7004bd2a87e178f3",
+    "fix_date": "2025-08-11",
+    "subject": "fix stacktrace for run_operator (#5006)",
+    "src_files": [
+      ".changes/unreleased/Fixes-20250809-153705.yaml",
+      "Cargo.toml",
+      "crates/dbt-error/src/code_location.rs",
+      "crates/dbt-jinja/minijinja/src/vm/macro_object.rs",
+      "crates/dbt-jinja/minijinja/src/vm/mod.rs",
+      "crates/dbt-parser/src/resolve/resolve_operations.rs",
+      "crates/dbt-schemas/src/schemas/manifest/manifest.rs",
+      "crates/dbt-schemas/src/schemas/project/dbt_project.rs",
+      "crates/dbt-schemas/src/schemas/serde.rs",
+      "crates/dbt-schemas/src/state.rs"
+    ],
+    "test_files": [
+      "crates/dbt-jinja/minijinja/tests/inputs/err_self_macro_call.txt",
+      "crates/dbt-jinja/minijinja/tests/snapshots/test_templates__vm@err_self_macro_call.txt.snap"
+    ],
+    "prompt": "dbt 的 `run_operator` 出错时抛出的堆栈指向内部而不是实际出问题的位置（宏/模型），也很难看出实际执行的 SQL 属于哪个节点。\n\n请修好这条错误路径的堆栈，补测试。"
+  },
+  {
+    "index": 289,
+    "suggested_id": "T359",
+    "repo": "dbt-labs/dbt-core",
+    "repo_url": "https://github.com/dbt-labs/dbt-core",
+    "base_sha": "cd84fc80d2f5816fc54334584c2b11a1f09c6e12",
+    "base_permalink": "https://github.com/dbt-labs/dbt-core/commit/cd84fc80d2f5816fc54334584c2b11a1f09c6e12",
+    "fix_sha": "1304ee3d13facd37e73e3ce04df033d4f1862a1f",
+    "fix_date": "2026-07-29",
+    "subject": "fix(databricks): detect changed view definition for view_update_via_alter",
+    "src_files": [
+      "crates/dbt-adapter/src/adapter/mod.rs",
+      "crates/dbt-adapter/src/relation/databricks/config/components/query.rs",
+      "crates/dbt-adapter/src/relation/databricks/config/relation_types/view.rs",
+      "crates/dbt-jinja-utils/src/phases/parse/resolve_model_context.rs",
+      "crates/dbt-jinja-utils/src/phases/run/run_config.rs",
+      "crates/dbt-jinja-utils/src/phases/run/run_node_context.rs",
+      "crates/dbt-parser/src/resolve/resolve_models.rs",
+      "crates/dbt-scheduler/src/node_selector.rs",
+      "crates/dbt-scheduler/src/schedule.rs",
+      "crates/dbt-schemas/src/schemas/manifest/manifest.rs",
+      "crates/dbt-schemas/src/schemas/nodes.rs"
+    ],
+    "test_files": [
+      "crates/dbt-adapter/src/relation/databricks/config/test_helpers.rs"
+    ],
+    "prompt": "dbt 的 databricks 适配在 `view_update_via_alter` 下检测不到视图定义变化：视图的 query 配置改了，却被判定为没变，于是不会执行 ALTER。\n\n请把视图定义纳入变化检测，补测试。"
+  },
+  {
+    "index": 290,
+    "suggested_id": "T360",
+    "repo": "dbt-labs/dbt-core",
+    "repo_url": "https://github.com/dbt-labs/dbt-core",
+    "base_sha": "7e472738e87f406132f346781f991a394fb9f994",
+    "base_permalink": "https://github.com/dbt-labs/dbt-core/commit/7e472738e87f406132f346781f991a394fb9f994",
+    "fix_sha": "1b00927a14bc2c65d45d679fe7ea9ba62b8ec03c",
+    "fix_date": "2026-03-09",
+    "subject": "Fix duplicate CTE race condition in ephemeral model compilation (#12602)",
+    "src_files": [
+      ".changes/unreleased/Fixes-20260305-133929.yaml",
+      "core/dbt/compilation.py",
+      "core/dbt/contracts/graph/nodes.py"
+    ],
+    "test_files": [
+      "tests/unit/test_compilation_threading.py"
+    ],
+    "prompt": "dbt 并发编译 ephemeral 模型会有竞态：多个线程同时编译同一个 ephemeral 节点，生成的 CTE 重复/互相覆盖，产物不稳定。\n\n请给编译加按节点的锁（避免重复生成），补测试：并发编译同一 ephemeral 模型、以及锁不会互相阻塞。"
+  },
+  {
+    "index": 291,
+    "suggested_id": "T361",
+    "repo": "dbt-labs/dbt-core",
+    "repo_url": "https://github.com/dbt-labs/dbt-core",
+    "base_sha": "67450d802b4ef8e77df226311a7931059f3beb88",
+    "base_permalink": "https://github.com/dbt-labs/dbt-core/commit/67450d802b4ef8e77df226311a7931059f3beb88",
+    "fix_sha": "0f09e949f1b5b8049b7cbc56ac0e2320ad8d902b",
+    "fix_date": "2026-05-29",
+    "subject": "fix(dbt-run-cache): cached state_auth.json takes precedence over platform auth chain (#10676)",
+    "src_files": [
+      "crates/dbt-run-cache/src/auth/oauth.rs",
+      "crates/dbt-run-cache/src/service_client.rs"
+    ],
+    "test_files": [
+      "crates/dbt-run-cache/tests/interactive_auth.rs"
+    ],
+    "prompt": "dbt 的 run-cache 里，缓存的 `state_auth.json` 没有优先于平台自身的认证链：缓存命中时仍然走了平台认证，导致本可离线/免认证的场景失败。\n\n请让缓存的 state_auth 优先生效，补测试。"
+  },
+  {
+    "index": 292,
+    "suggested_id": "T362",
+    "repo": "dbt-labs/dbt-core",
+    "repo_url": "https://github.com/dbt-labs/dbt-core",
+    "base_sha": "9b4a8bba77bf42da3bd73e3e5ea44032d02eee1c",
+    "base_permalink": "https://github.com/dbt-labs/dbt-core/commit/9b4a8bba77bf42da3bd73e3e5ea44032d02eee1c",
+    "fix_sha": "e72b3b0f4807ee92f08408222c412489e9d5111d",
+    "fix_date": "2026-01-12",
+    "subject": "Fix concurrent batches deadlock (#12335)",
+    "src_files": [
+      ".changes/unreleased/Fixes-20260109-141332.yaml",
+      "core/dbt/graph/queue.py",
+      "core/dbt/graph/thread_pool.py",
+      "core/dbt/task/run.py",
+      "core/dbt/task/runnable.py"
+    ],
+    "test_files": [
+      "tests/functional/microbatch/test_microbatch.py",
+      "tests/unit/parser/test_manifest.py"
+    ],
+    "prompt": "dbt 的 microbatch 并发批次会死锁：多个批次同时编译/执行同一批模型时互相等待，整个运行挂住不推进。\n\n请把在推进中的批次节点记录下来、避免相互等待，补测试。"
+  },
+  {
+    "index": 293,
+    "suggested_id": "T363",
+    "repo": "PrefectHQ/prefect",
+    "repo_url": "https://github.com/PrefectHQ/prefect",
+    "base_sha": "9ffc22b77ab9cb5771b3c62faf1ed1e91c26fc0a",
+    "base_permalink": "https://github.com/PrefectHQ/prefect/commit/9ffc22b77ab9cb5771b3c62faf1ed1e91c26fc0a",
+    "fix_sha": "920e9f52ff2adc3d90e6dcbfaa212122032e079e",
+    "fix_date": "2026-08-07",
+    "subject": "fix(concurrency): release leases granted to callers that were cancelled mid-acquire (#22621)",
+    "src_files": [
+      "src/prefect/_internal/concurrency/services.py",
+      "src/prefect/concurrency/_asyncio.py",
+      "src/prefect/concurrency/services.py"
+    ],
+    "test_files": [
+      "tests/concurrency/test_acquire_concurrency_slots.py",
+      "tests/concurrency/test_concurrency_slot_acquisition_with_lease_service.py"
+    ],
+    "prompt": "prefect 的并发限流（concurrency lease）在调用方被取消/中断之后不会释放已经授予的租约：名额一直被占，后续流程拿不到许可，只能干等超时。\n\n请让没被真正使用或被中断的租约被释放（已经用完的不重复释放），补测试。"
+  },
+  {
+    "index": 294,
+    "suggested_id": "T364",
+    "repo": "PrefectHQ/prefect",
+    "repo_url": "https://github.com/PrefectHQ/prefect",
+    "base_sha": "256e188058cee17efbc01f471d374b2462b6d461",
+    "base_permalink": "https://github.com/PrefectHQ/prefect/commit/256e188058cee17efbc01f471d374b2462b6d461",
+    "fix_sha": "5ec04cda05a44109997870537f8cdaba0882dd6b",
+    "fix_date": "2025-10-16",
+    "subject": "Fix TOCTOU race conditions in concurrency lease renewal (#19187)",
+    "src_files": [
+      "src/integrations/prefect-redis/prefect_redis/lease_storage.py",
+      "src/prefect/server/api/concurrency_limits_v2.py",
+      "src/prefect/server/concurrency/lease_storage/__init__.py",
+      "src/prefect/server/concurrency/lease_storage/filesystem.py",
+      "src/prefect/server/concurrency/lease_storage/memory.py",
+      "src/prefect/server/utilities/leasing.py"
+    ],
+    "test_files": [
+      "tests/server/concurrency/test_filesystem_lease_storage.py",
+      "tests/server/concurrency/test_memory_lease_storage.py",
+      "tests/server/models/test_concurrency_limits_v2.py",
+      "tests/server/orchestration/api/test_concurrency_limits_v2.py"
+    ],
+    "prompt": "prefect 的并发租约续租有 TOCTOU 竞态：检查与续租之间租约可能已经过期或被别人拿走，于是出现同一名额被两个执行体同时持有。\n\n请把续租做成原子/带版本校验，补测试（含旧的实现要走兼容路径）。"
+  },
+  {
+    "index": 295,
+    "suggested_id": "T365",
+    "repo": "PrefectHQ/prefect",
+    "repo_url": "https://github.com/PrefectHQ/prefect",
+    "base_sha": "6185549ca64a967b83da6370c874ef2522e6deed",
+    "base_permalink": "https://github.com/PrefectHQ/prefect/commit/6185549ca64a967b83da6370c874ef2522e6deed",
+    "fix_sha": "55269f90e9cd5be4b3f71be4ad54b465132fd3f8",
+    "fix_date": "2023-06-01",
+    "subject": "Fix inconsistent work queue handling by agent when cancelling flow runs (#9757)",
+    "src_files": [
+      "src/prefect/agent.py",
+      "tests/fixtures/database.py"
+    ],
+    "test_files": [
+      "tests/agent/test_agent_run_cancellation.py"
+    ],
+    "prompt": "prefect 的 agent 在被取消时对工作队列（work queue）的处理不一致：有些路径不清理、有些把别的池/队列的许可也动了，表现为取消后队列状态错乱。\n\n请统一取消路径的队列处理，补测试（含跨工作池同名队列的情况）。"
+  },
+  {
+    "index": 296,
+    "suggested_id": "T366",
+    "repo": "PrefectHQ/prefect",
+    "repo_url": "https://github.com/PrefectHQ/prefect",
+    "base_sha": "f929e3646116170fd6b68e7f2fc45569feb9c478",
+    "base_permalink": "https://github.com/PrefectHQ/prefect/commit/f929e3646116170fd6b68e7f2fc45569feb9c478",
+    "fix_sha": "e4f53f8c14a54f0e47d1f9fb570eb74a38df681a",
+    "fix_date": "2023-05-03",
+    "subject": "Add `on_crashed` flow run state change hook (#9418)",
+    "src_files": [
+      "src/prefect/engine.py",
+      "src/prefect/flows.py"
+    ],
+    "test_files": [
+      "tests/test_engine.py",
+      "tests/test_flows.py"
+    ],
+    "prompt": "prefect 缺少流运行崩溃（crashed）状态的钩子：进程被杀之类的场景下想在崩溃时做告警/清理，现在没有对应入口，只能靠轮询状态。\n\n请补上 `on_crashed` 状态变化钩子（子流程也要触发），补测试。"
+  },
+  {
+    "index": 297,
+    "suggested_id": "T367",
+    "repo": "streamlit/streamlit",
+    "repo_url": "https://github.com/streamlit/streamlit",
+    "base_sha": "913f77c7ceedcde6b2433e1640db54d1d64cdd23",
+    "base_permalink": "https://github.com/streamlit/streamlit/commit/913f77c7ceedcde6b2433e1640db54d1d64cdd23",
+    "fix_sha": "a0394068b6230c821ae93c5790d688f83da69154",
+    "fix_date": "2026-08-31",
+    "subject": "[fix] Prevent upload hang when middleware reads the body first (#16709)",
+    "src_files": [
+      "e2e_playwright/mega_tester_app_test.py",
+      "lib/streamlit/web/server/starlette/starlette_routes.py"
+    ],
+    "test_files": [
+      "lib/tests/streamlit/web/server/starlette/starlette_routes_test.py"
+    ],
+    "prompt": "streamlit 的文件上传在中间件（比如 Sentry 的 ASGI 中间件）先把请求体读过一遍之后会挂住：上传一直不返回。\n\n请修好这条路径（请求体已被缓存时也要能正常取到），补测试：小文件上传、PUT 请求体。"
+  },
+  {
+    "index": 298,
+    "suggested_id": "T368",
+    "repo": "streamlit/streamlit",
+    "repo_url": "https://github.com/streamlit/streamlit",
+    "base_sha": "ca1485a557791f43ce9a8c13474ccae09c4877ba",
+    "base_permalink": "https://github.com/streamlit/streamlit/commit/ca1485a557791f43ce9a8c13474ccae09c4877ba",
+    "fix_sha": "dd6b8497c4e65e90a62d5ae99be52f350f11dd4f",
+    "fix_date": "2025-08-08",
+    "subject": "[fix] iframe and html change in default width when no width specified. (#12148)",
+    "src_files": [
+      "e2e_playwright/__snapshots__/linux/st_components_v1_test/st_components-html-iframe-in-vertical-container[chromium].png",
+      "e2e_playwright/__snapshots__/linux/st_components_v1_test/st_components-html-iframe-in-vertical-container[firefox].png",
+      "e2e_playwright/__snapshots__/linux/st_components_v1_test/st_components-html-iframe-in-vertical-container[webkit].png",
+      "e2e_playwright/__snapshots__/linux/st_components_v1_test/st_components-html-no-width-height-container[chromium].png",
+      "e2e_playwright/__snapshots__/linux/st_components_v1_test/st_components-html-no-width-height-container[firefox].png",
+      "e2e_playwright/__snapshots__/linux/st_components_v1_test/st_components-html-no-width-height-container[webkit].png",
+      "e2e_playwright/__snapshots__/linux/st_components_v1_test/st_components-iframe-fixed-width-height[chromium].png",
+      "e2e_playwright/__snapshots__/linux/st_components_v1_test/st_components-iframe-fixed-width-height[firefox].png",
+      "e2e_playwright/__snapshots__/linux/st_components_v1_test/st_components-iframe-fixed-width-height[webkit].png",
+      "e2e_playwright/__snapshots__/linux/st_components_v1_test/st_components-iframe-no-width-height[chromium].png",
+      "e2e_playwright/__snapshots__/linux/st_components_v1_test/st_components-iframe-no-width-height[firefox].png",
+      "e2e_playwright/__snapshots__/linux/st_components_v1_test/st_components-iframe-no-width-height[webkit].png",
+      "e2e_playwright/st_components_v1.py",
+      "e2e_playwright/st_components_v1_test.py",
+      "frontend/lib/src/components/core/Block/styled-components.ts",
+      "frontend/lib/src/components/elements/IFrame/IFrame.test.tsx",
+      "frontend/lib/src/components/elements/IFrame/IFrame.tsx",
+      "frontend/lib/src/components/elements/IFrame/styled-components.ts",
+      "lib/streamlit/elements/iframe.py",
+      "proto/streamlit/proto/IFrame.proto"
+    ],
+    "test_files": [
+      "lib/tests/streamlit/components_test.py",
+      "lib/tests/streamlit/elements/iframe_test.py"
+    ],
+    "prompt": "streamlit 的 `st.components.v1.iframe` 和 `st.html` 在没显式指定宽度时，默认宽度变了（跟着容器布局走），嵌进去的组件被拉伸或压扁。\n\n请把默认宽度行为修回原来的语义，补测试。"
+  },
+  {
+    "index": 299,
+    "suggested_id": "T369",
+    "repo": "kubernetes-client/python",
+    "repo_url": "https://github.com/kubernetes-client/python",
+    "base_sha": "81fce07b603360e4788eaf23bcd20e87935c9d1f",
+    "base_permalink": "https://github.com/kubernetes-client/python/commit/81fce07b603360e4788eaf23bcd20e87935c9d1f",
+    "fix_sha": "1c5984c4de04ce34711e437be57ef8e1e27806a3",
+    "fix_date": "2026-07-23",
+    "subject": "Correct generated synchronous resource deletion responses",
+    "src_files": [
+      "kubernetes/.openapi-generator/swagger.json-default.sha256",
+      "kubernetes/client/api/admissionregistration_v1_api.py",
+      "kubernetes/client/api/admissionregistration_v1alpha1_api.py",
+      "kubernetes/client/api/admissionregistration_v1beta1_api.py",
+      "kubernetes/client/api/apiextensions_v1_api.py",
+      "kubernetes/client/api/apiregistration_v1_api.py",
+      "kubernetes/client/api/apps_v1_api.py",
+      "kubernetes/client/api/autoscaling_v1_api.py",
+      "kubernetes/client/api/autoscaling_v2_api.py",
+      "kubernetes/client/api/batch_v1_api.py",
+      "kubernetes/client/api/certificates_v1_api.py",
+      "kubernetes/client/api/certificates_v1alpha1_api.py",
+      "kubernetes/client/api/certificates_v1beta1_api.py",
+      "kubernetes/client/api/coordination_v1_api.py",
+      "kubernetes/client/api/coordination_v1alpha2_api.py",
+      "kubernetes/client/api/coordination_v1beta1_api.py",
+      "kubernetes/client/api/core_v1_api.py",
+      "kubernetes/client/api/discovery_v1_api.py",
+      "kubernetes/client/api/events_v1_api.py",
+      "kubernetes/client/api/flowcontrol_apiserver_v1_api.py",
+      "kubernetes/client/api/internal_apiserver_v1alpha1_api.py",
+      "kubernetes/client/api/networking_v1_api.py",
+      "kubernetes/client/api/networking_v1beta1_api.py",
+      "kubernetes/client/api/node_v1_api.py",
+      "kubernetes/client/api/policy_v1_api.py",
+      "kubernetes/client/api/rbac_authorization_v1_api.py",
+      "kubernetes/client/api/scheduling_v1_api.py",
+      "kubernetes/client/api/scheduling_v1alpha2_api.py",
+      "kubernetes/client/api/storage_v1_api.py",
+      "kubernetes/client/api/storagemigration_v1beta1_api.py"
+    ],
+    "test_files": [
+      "kubernetes/test/test_generated_api.py"
+    ],
+    "prompt": "kubernetes 的 Python 客户端在同步资源的删除响应上处理不对：Kubernetes 的删除可能返回被删对象，也可能返回 Status，生成的客户端只认一种，另一种会被当成错误。\n\n请修好同步生成的删除响应处理（代码和文档从同一份契约生成），补测试。"
+  },
+  {
+    "index": 300,
+    "suggested_id": "T370",
+    "repo": "kubernetes-client/python",
+    "repo_url": "https://github.com/kubernetes-client/python",
+    "base_sha": "3954eb45f9f5c35c7ce6bbac1f70f31c6bbfa688",
+    "base_permalink": "https://github.com/kubernetes-client/python/commit/3954eb45f9f5c35c7ce6bbac1f70f31c6bbfa688",
+    "fix_sha": "81fce07b603360e4788eaf23bcd20e87935c9d1f",
+    "fix_date": "2026-07-23",
+    "subject": "Correct generated asyncio resource deletion responses",
+    "src_files": [
+      "kubernetes/aio/.openapi-generator/swagger.json-default.sha256",
+      "kubernetes/aio/client/api/admissionregistration_v1_api.py",
+      "kubernetes/aio/client/api/admissionregistration_v1alpha1_api.py",
+      "kubernetes/aio/client/api/admissionregistration_v1beta1_api.py",
+      "kubernetes/aio/client/api/apiextensions_v1_api.py",
+      "kubernetes/aio/client/api/apiregistration_v1_api.py",
+      "kubernetes/aio/client/api/apps_v1_api.py",
+      "kubernetes/aio/client/api/autoscaling_v1_api.py",
+      "kubernetes/aio/client/api/autoscaling_v2_api.py",
+      "kubernetes/aio/client/api/batch_v1_api.py",
+      "kubernetes/aio/client/api/certificates_v1_api.py",
+      "kubernetes/aio/client/api/certificates_v1alpha1_api.py",
+      "kubernetes/aio/client/api/certificates_v1beta1_api.py",
+      "kubernetes/aio/client/api/coordination_v1_api.py",
+      "kubernetes/aio/client/api/coordination_v1alpha2_api.py",
+      "kubernetes/aio/client/api/coordination_v1beta1_api.py",
+      "kubernetes/aio/client/api/core_v1_api.py",
+      "kubernetes/aio/client/api/discovery_v1_api.py",
+      "kubernetes/aio/client/api/events_v1_api.py",
+      "kubernetes/aio/client/api/flowcontrol_apiserver_v1_api.py",
+      "kubernetes/aio/client/api/internal_apiserver_v1alpha1_api.py",
+      "kubernetes/aio/client/api/networking_v1_api.py",
+      "kubernetes/aio/client/api/networking_v1beta1_api.py",
+      "kubernetes/aio/client/api/node_v1_api.py",
+      "kubernetes/aio/client/api/policy_v1_api.py",
+      "kubernetes/aio/client/api/rbac_authorization_v1_api.py",
+      "kubernetes/aio/client/api/scheduling_v1_api.py",
+      "kubernetes/aio/client/api/scheduling_v1alpha2_api.py",
+      "kubernetes/aio/client/api/storage_v1_api.py",
+      "kubernetes/aio/client/api/storagemigration_v1beta1_api.py"
+    ],
+    "test_files": [
+      "kubernetes/aio/test/test_generated_api.py"
+    ],
+    "prompt": "kubernetes 的 Python 客户端在 asyncio 版本的资源删除上同样只认一种响应：返回 Status 时判错，导致删除其实成功但调用方拿到异常。\n\n请修好 asyncio 生成的删除响应处理，补测试。"
+  },
+  {
+    "index": 301,
+    "suggested_id": "T371",
+    "repo": "celery/celery",
+    "repo_url": "https://github.com/celery/celery",
+    "base_sha": "c7018110173e8cfa3b2cc507608250c69a81132a",
+    "base_permalink": "https://github.com/celery/celery/commit/c7018110173e8cfa3b2cc507608250c69a81132a",
+    "fix_sha": "feb789accf0dcbbe1323ab59148b9e8b1e363bdd",
+    "fix_date": "2026-04-06",
+    "subject": "fix: prevent graceful shutdown regression in connection recovery (GH-9705) (#10242)",
+    "src_files": [
+      "celery/worker/consumer/connection.py",
+      "celery/worker/consumer/consumer.py"
+    ],
+    "test_files": [
+      "t/integration/test_connection_recovery.py",
+      "t/smoke/tests/test_consumer.py",
+      "t/unit/worker/test_consumer.py"
+    ],
+    "prompt": "celery 优雅关闭之后连接重建有问题：消费者重启时旧的（已经断掉的）socket 没有被关，`restart()` 之后连接状态是错的，任务发不出去或报连接错误。\n\n请给连接的 bootstep 补上 stop（重启时把坏连接关掉），补测试。"
+  },
+  {
+    "index": 302,
+    "suggested_id": "T372",
+    "repo": "celery/celery",
+    "repo_url": "https://github.com/celery/celery",
+    "base_sha": "166f705adcae57a43423b0ae7286ab828b55b244",
+    "base_permalink": "https://github.com/celery/celery/commit/166f705adcae57a43423b0ae7286ab828b55b244",
+    "fix_sha": "6804ea8615afcdbc95ed68e95b47ae623080fa2b",
+    "fix_date": "2025-08-30",
+    "subject": "fix: prevent celery from hanging due to spawned greenlet errors in greenlet drainers (#9371)",
+    "src_files": [
+      ".gitignore",
+      "celery/backends/asynchronous.py",
+      "celery/backends/redis.py"
+    ],
+    "test_files": [
+      "t/unit/backends/test_asynchronous.py"
+    ],
+    "prompt": "celery 依赖的 event drainer 在 greenlet 已经退出时不会把错误抛出来：worker 陷在无限循环里不推进，只能手动重启。\n\n请把 drainer 的错误传播出去（别再死循环），补测试。"
+  },
+  {
+    "index": 303,
+    "suggested_id": "T373",
+    "repo": "redis/redis-py",
+    "repo_url": "https://github.com/redis/redis-py",
+    "base_sha": "6a6b581b48225afa0b76912d1028c6035baee932",
+    "base_permalink": "https://github.com/redis/redis-py/commit/6a6b581b48225afa0b76912d1028c6035baee932",
+    "fix_sha": "0d2ce3b5a777ae57974b4e5f29eab71fca9b5ce8",
+    "fix_date": "2026-08-17",
+    "subject": "fix(asyncio): raise on EOF in can_read() so pools replace server-closed connections (#4260)",
+    "src_files": [
+      "redis/_parsers/base.py",
+      "redis/_parsers/hiredis.py"
+    ],
+    "test_files": [
+      "tests/test_asyncio/test_connection.py",
+      "tests/test_asyncio/test_connection_pool.py",
+      "tests/test_asyncio/test_scenario/test_maint_notifications.py"
+    ],
+    "prompt": "redis-py 的异步解析器把 EOF 折进了 can_read()：服务端把连接关掉时它只说\"没数据可读\"，连接池因此不换连接，调用方一直卡在同一个死连接上。\n\n请让 can_read() 在连接已被服务端关闭时抛错（有缓冲数据时优先返回缓冲），这样连接池会重建连接；补测试。"
+  },
+  {
+    "index": 304,
+    "suggested_id": "T374",
+    "repo": "redis/redis-py",
+    "repo_url": "https://github.com/redis/redis-py",
+    "base_sha": "1c77108df0ae50e9ac33770f33ef0cf8571c9ba6",
+    "base_permalink": "https://github.com/redis/redis-py/commit/1c77108df0ae50e9ac33770f33ef0cf8571c9ba6",
+    "fix_sha": "7abefd7e26998acaac24697d7685914db07fa947",
+    "fix_date": "2026-06-15",
+    "subject": "fix(asyncio): release pooled connection when Pipeline.reset() is cancelled (#4123)",
+    "src_files": [
+      "redis/asyncio/client.py",
+      "redis/asyncio/cluster.py"
+    ],
+    "test_files": [
+      "tests/test_asyncio/test_cluster_transaction.py",
+      "tests/test_asyncio/test_pipeline.py"
+    ],
+    "prompt": "redis-py 的 Pipeline 在被取消时不会把池化连接还回去：连接泄漏，池子很快耗尽。\n\n请修好 Pipeline.reset 的释放路径，补一个取消后连接被归还的测试。"
+  },
+  {
+    "index": 305,
+    "suggested_id": "T375",
+    "repo": "redis/redis-py",
+    "repo_url": "https://github.com/redis/redis-py",
+    "base_sha": "a00141618572764821bbe6bd74e025536e061587",
+    "base_permalink": "https://github.com/redis/redis-py/commit/a00141618572764821bbe6bd74e025536e061587",
+    "fix_sha": "4cf094fdd2c1f2ce335e671af3fad7ad0a48f309",
+    "fix_date": "2025-07-22",
+    "subject": "Fix ConnectionPool to raise MaxConnectionsError instead of Connection… (#3698)",
+    "src_files": [
+      "redis/__init__.py",
+      "redis/asyncio/cluster.py",
+      "redis/cluster.py",
+      "redis/connection.py",
+      "redis/exceptions.py"
+    ],
+    "test_files": [
+      "tests/test_connection_pool.py",
+      "tests/test_max_connections_error.py"
+    ],
+    "prompt": "redis-py 的连接池在达到 max_connections 时抛的是通用 ConnectionError，调用方没法区分\"池满\"和\"连不上\"。\n\n请补一个 `MaxConnectionsError`（继承 ConnectionError，保持兼容）并在池满时抛出，补测试（含集群客户端）。"
+  },
+  {
+    "index": 306,
+    "suggested_id": "T376",
+    "repo": "redis/redis-py",
+    "repo_url": "https://github.com/redis/redis-py",
+    "base_sha": "d6e0669120f878a851b4c68caa9ccc51e9416a9b",
+    "base_permalink": "https://github.com/redis/redis-py/commit/d6e0669120f878a851b4c68caa9ccc51e9416a9b",
+    "fix_sha": "c73fdd92c955b9d19fece2def1f8f2bd3de80c27",
+    "fix_date": "2026-09-04",
+    "subject": "fix(cluster): initialize async Pub/Sub before routing (#4297)",
+    "src_files": [
+      "redis/asyncio/cluster.py",
+      "redis/cluster.py"
+    ],
+    "test_files": [
+      "tests/test_asyncio/test_cluster.py",
+      "tests/test_asyncio/test_pubsub.py",
+      "tests/test_pubsub.py"
+    ],
+    "prompt": "redis-py 的异步集群客户端在刷新拓扑时会破坏 pub/sub 的订阅状态：刷新之后之前退订的频道又被重新订阅上。\n\n请把异步 Pub/Sub 的初始化放到路由之前，并在刷新时保住订阅状态（空分片退订要跳过），补测试。"
+  },
+  {
+    "index": 307,
+    "suggested_id": "T377",
+    "repo": "redis/redis-py",
+    "repo_url": "https://github.com/redis/redis-py",
+    "base_sha": "4cf094fdd2c1f2ce335e671af3fad7ad0a48f309",
+    "base_permalink": "https://github.com/redis/redis-py/commit/4cf094fdd2c1f2ce335e671af3fad7ad0a48f309",
+    "fix_sha": "7291deb5eb8054a0dc915a8bf499a17498bc5968",
+    "fix_date": "2025-07-23",
+    "subject": "add async Retry ``__eq__`` and ``__hash__`` & fix ExponentialWithJitterBackoff ``__eq__`` (#3668)",
+    "src_files": [
+      "redis/asyncio/retry.py",
+      "redis/backoff.py",
+      "redis/retry.py"
+    ],
+    "test_files": [
+      "tests/test_retry.py"
+    ],
+    "prompt": "redis-py 的重试策略有两个问题：`ExponentialWithJitterBackoff.__eq__` 比较逻辑写错（同名不同参数被判相等），异步 Retry 也没有实现 `__eq__`/`__hash__`，放进集合/去重时行为不对。\n\n请修好这两处，补一个 Retry 可比较、可哈希的测试。"
+  },
+  {
+    "index": 308,
+    "suggested_id": "T378",
+    "repo": "psycopg/psycopg",
+    "repo_url": "https://github.com/psycopg/psycopg",
+    "base_sha": "5e79487425342e1e05350c050cd0a537e8237d1e",
+    "base_permalink": "https://github.com/psycopg/psycopg/commit/5e79487425342e1e05350c050cd0a537e8237d1e",
+    "fix_sha": "31905a6fa55a0873e2e597713ca89c4673d54fd4",
+    "fix_date": "2024-03-31",
+    "subject": "fix: more careful stripping of error prefixes",
+    "src_files": [
+      "psycopg/psycopg/pq/misc.py",
+      "pyproject.toml",
+      "tools/update_error_prefixes.py"
+    ],
+    "test_files": [
+      "tests/test_errors.py"
+    ],
+    "prompt": "psycopg 剥掉错误信息前缀的做法太粗暴：只要开头像就剥，会把正文里真实的内容也去掉，非英文（本地化）消息前缀同样认不出来。\n\n请改成只剥已知的前缀（含已知本地化版本），补测试。"
+  },
+  {
+    "index": 309,
+    "suggested_id": "T379",
+    "repo": "psycopg/psycopg",
+    "repo_url": "https://github.com/psycopg/psycopg",
+    "base_sha": "b9c1a802f82bbe1a3ce3ebdeadb6a37eb88c5fc3",
+    "base_permalink": "https://github.com/psycopg/psycopg/commit/b9c1a802f82bbe1a3ce3ebdeadb6a37eb88c5fc3",
+    "fix_sha": "04e3d6fa4d69e0c378f4ca68d0621e7cbe7f5e60",
+    "fix_date": "2023-12-13",
+    "subject": "fix: set minimum timeout to 2s",
+    "src_files": [
+      "psycopg/psycopg/_connection_base.py",
+      "psycopg/psycopg/connection.py",
+      "psycopg/psycopg/connection_async.py",
+      "psycopg/psycopg/conninfo.py",
+      "tests/_test_connection.py"
+    ],
+    "test_files": [
+      "tests/test_connection.py",
+      "tests/test_connection_async.py",
+      "tests/test_dns.py",
+      "tests/test_module.py",
+      "tests/test_psycopg_dbapi20.py"
+    ],
+    "prompt": "psycopg 的等待超时没有下限：用户传了很小的值（甚至 0）时会忙等/行为怪异，而 libpq 自己是有最小超时约定的。\n\n请把超时下限设成 2 秒（和 libpq 一致，不要改动连接本身），补测试。"
+  },
+  {
+    "index": 310,
+    "suggested_id": "T380",
+    "repo": "psycopg/psycopg",
+    "repo_url": "https://github.com/psycopg/psycopg",
+    "base_sha": "24774792abf1d89b037926815daf2da5ceac93bd",
+    "base_permalink": "https://github.com/psycopg/psycopg/commit/24774792abf1d89b037926815daf2da5ceac93bd",
+    "fix_sha": "15280ed243d68bb297617767aef9708158a94ce4",
+    "fix_date": "2023-09-26",
+    "subject": "fix: don't hang forever if async connection is closed while querying",
+    "src_files": [
+      "psycopg/psycopg/connection.py",
+      "psycopg/psycopg/connection_async.py",
+      "psycopg/psycopg/waiting.py"
+    ],
+    "test_files": [
+      "tests/test_concurrency.py",
+      "tests/test_concurrency_async.py"
+    ],
+    "prompt": "psycopg 的异步连接在关闭过程中如果还有并发操作，会永远等下去（而不是给出明确错误）。\n\n请修好这条路径，别让调用方挂死，补一个并发关闭的测试。"
+  },
+  {
+    "index": 311,
+    "suggested_id": "T381",
+    "repo": "pypa/virtualenv",
+    "repo_url": "https://github.com/pypa/virtualenv",
+    "base_sha": "73c67e4058e583529b40cc9c509e557250dc700f",
+    "base_permalink": "https://github.com/pypa/virtualenv/commit/73c67e4058e583529b40cc9c509e557250dc700f",
+    "fix_sha": "91460add8f53f4654c4aae3898e739c03fb69946",
+    "fix_date": "2026-09-22",
+    "subject": "🐛 fix(seed): fail closed when PyPI digest is unknown (#3302)",
+    "src_files": [
+      "src/virtualenv/seed/wheels/acquire.py",
+      "src/virtualenv/seed/wheels/periodic_update.py"
+    ],
+    "test_files": [
+      "tests/unit/seed/wheels/test_acquire.py",
+      "tests/unit/seed/wheels/test_periodic_update.py"
+    ],
+    "prompt": "virtualenv 用内嵌 wheel 建环境时，如果拿不到 PyPI 上的摘要（离线/镜像异常），它会继续装下去而不是停下来：装出来的环境可能被投毒或损坏。\n\n请改成 digest 未知时 fail closed，补测试。"
+  },
+  {
+    "index": 312,
+    "suggested_id": "T382",
+    "repo": "getsentry/sentry-python",
+    "repo_url": "https://github.com/getsentry/sentry-python",
+    "base_sha": "7f20c235adef165dfce0b52db3b07ab9db83b1ae",
+    "base_permalink": "https://github.com/getsentry/sentry-python/commit/7f20c235adef165dfce0b52db3b07ab9db83b1ae",
+    "fix_sha": "dafa2bd4b1a4848732d1d37ad0c2b4fda6f8eb7a",
+    "fix_date": "2026-06-22",
+    "subject": "fix(asyncpg): Use distinct span ops for cursor iteration and fetch to prevent N+1 false positives (#6609)",
+    "src_files": [
+      "sentry_sdk/consts.py",
+      "sentry_sdk/integrations/asyncpg.py",
+      "sentry_sdk/tracing_utils.py"
+    ],
+    "test_files": [
+      "tests/integrations/asyncpg/test_asyncpg.py"
+    ],
+    "prompt": "sentry-python 的 asyncpg 集成把游标迭代和分批取数（Cursor.fetch）混用同一个 span 操作名，链路里分不清是迭代还是取数。\n\n请给两类操作不同的 span 操作，补测试。"
+  },
+  {
+    "index": 313,
+    "suggested_id": "T383",
+    "repo": "sphinx-doc/sphinx",
+    "repo_url": "https://github.com/sphinx-doc/sphinx",
+    "base_sha": "a7b6b6bb7fe732ecde97386631b6a7970fdc4721",
+    "base_permalink": "https://github.com/sphinx-doc/sphinx/commit/a7b6b6bb7fe732ecde97386631b6a7970fdc4721",
+    "fix_sha": "cead0f6ddfaa58ac4e8a365918dbad07b0b633fc",
+    "fix_date": "2021-01-19",
+    "subject": "linkcheck: Fix race condition that could lead to checking the availability of the same URL twice",
+    "src_files": [
+      "CHANGES",
+      "sphinx/builders/linkcheck.py",
+      "tests/roots/test-linkcheck-localserver-two-links/conf.py"
+    ],
+    "test_files": [
+      "tests/test_build_linkcheck.py"
+    ],
+    "prompt": "sphinx 的 linkcheck 有竞态：同一个 URL 被多个线程同时检查，出现重复报告/结果互相覆盖，有时还会漏报坏链接。\n\n请把同一 URL 的检查串行化（去重后再并发），补测试。"
+  },
+  {
+    "index": 314,
+    "suggested_id": "T384",
+    "repo": "sqlfluff/sqlfluff",
+    "repo_url": "https://github.com/sqlfluff/sqlfluff",
+    "base_sha": "e233d8a317a4d8992c3ba0151a75dd387b700dad",
+    "base_permalink": "https://github.com/sqlfluff/sqlfluff/commit/e233d8a317a4d8992c3ba0151a75dd387b700dad",
+    "fix_sha": "172dafea124fbba1251ccbf36fbb545ff725d707",
+    "fix_date": "2022-10-20",
+    "subject": "[BUGFIX] Changing cwd temporarily on manifest load as dbt is not using project_dir to read/write target folder (#3979)",
+    "src_files": [
+      "plugins/sqlfluff-templater-dbt/sqlfluff_templater_dbt/templater.py",
+      "src/sqlfluff/utils/testing/cli.py",
+      "test/cli/commands_test.py"
+    ],
+    "test_files": [
+      "plugins/sqlfluff-templater-dbt/test/linter_test.py",
+      "plugins/sqlfluff-templater-dbt/test/templater_test.py"
+    ],
+    "prompt": "sqlfluff 加载 dbt manifest 时会依赖当前工作目录（dbt 侧相对路径）：从别的目录调用时 manifest 里的路径解析错，找不到模型。\n\n请改成加载期间临时切换工作目录（用完恢复），补测试。"
+  },
+  {
+    "index": 315,
+    "suggested_id": "T385",
+    "repo": "aio-libs/aiobotocore",
+    "repo_url": "https://github.com/aio-libs/aiobotocore",
+    "base_sha": "e3bfcf8707514d4bc306d71eba418b767f59288c",
+    "base_permalink": "https://github.com/aio-libs/aiobotocore/commit/e3bfcf8707514d4bc306d71eba418b767f59288c",
+    "fix_sha": "e3c37ee943d925b0d677d5c0e6da38d0c3d628d8",
+    "fix_date": "2025-06-03",
+    "subject": "Fixes context propagation, adds context tests (#1369)",
+    "src_files": [
+      "aiobotocore/context.py",
+      "aiobotocore/paginate.py",
+      "aiobotocore/waiter.py",
+      "tests/botocore_tests/__init__.py",
+      "tests/botocore_tests/functional/__init__.py"
+    ],
+    "test_files": [
+      "tests/botocore_tests/functional/test_useragent.py",
+      "tests/test_patches.py"
+    ],
+    "prompt": "aiobotocore 的上下文传播有问题：注册过的特性标识会跨线程串（一个线程注册的配置影响另一个线程），并发场景下行为不可预期。\n\n请修好上下文的传播与隔离，补测试。"
+  },
+  {
+    "index": 316,
+    "suggested_id": "T386",
+    "repo": "aio-libs/aiobotocore",
+    "repo_url": "https://github.com/aio-libs/aiobotocore",
+    "base_sha": "2085dd1b543b5bb96541d186371ab1453b9e5e45",
+    "base_permalink": "https://github.com/aio-libs/aiobotocore/commit/2085dd1b543b5bb96541d186371ab1453b9e5e45",
+    "fix_sha": "9b5e4058eb34f2eae6c20b538b221826f82bc64e",
+    "fix_date": "2026-06-03",
+    "subject": "fix: build SSL context off event loop (closes #1469) (#1587)",
+    "src_files": [
+      "aiobotocore/httpsession.py",
+      "aiobotocore/httpxsession.py"
+    ],
+    "test_files": [
+      "tests/test_httpsession.py"
+    ],
+    "prompt": "aiobotocore 在事件循环里构建 SSL 上下文（要读证书文件），第一次请求会把整个循环卡住。\n\n请把 SSL 上下文的构建挪到循环外（线程里做），补测试：首次请求不在循环内构建。"
+  },
+  {
+    "index": 317,
+    "suggested_id": "T387",
+    "repo": "fastapi/typer",
+    "repo_url": "https://github.com/fastapi/typer",
+    "base_sha": "66acaedd9845a51a744e3967add8124d4cd97732",
+    "base_permalink": "https://github.com/fastapi/typer/commit/66acaedd9845a51a744e3967add8124d4cd97732",
+    "fix_sha": "c0aeb6e1f2a4288add296f067cfa3299fad9b4ac",
+    "fix_date": "2026-01-06",
+    "subject": "🐛 Fix escaping in help text when `rich` is installed but not used (#1089)",
+    "src_files": [
+      "tests/assets/cli/multi_app_norich.py",
+      "typer/cli.py",
+      "typer/core.py"
+    ],
+    "test_files": [
+      "tests/test_cli/test_doc.py",
+      "tests/test_rich_markup_mode.py"
+    ],
+    "prompt": "typer 在装了 rich 但没用 rich 的格式化时，帮助文本里的转义（方括号之类）会被吃掉或显示错。\n\n请修好帮助文本的转义处理，补测试（没有 rich 的场景）。"
+  },
+  {
+    "index": 318,
+    "suggested_id": "T388",
+    "repo": "fastapi/typer",
+    "repo_url": "https://github.com/fastapi/typer",
+    "base_sha": "04898575a96d17ca4462b9aaa2d2e179f2d06b3a",
+    "base_permalink": "https://github.com/fastapi/typer/commit/04898575a96d17ca4462b9aaa2d2e179f2d06b3a",
+    "fix_sha": "252ed30936fdd47ad6fad05f605fe0a004abb51c",
+    "fix_date": "2022-07-06",
+    "subject": "✨ Add pretty error tracebacks for user errors and support for Rich (#412)",
+    "src_files": [
+      "pyproject.toml",
+      "tests/assets/type_error_no_rich.py",
+      "tests/assets/type_error_normal_traceback.py",
+      "tests/assets/type_error_rich.py",
+      "typer/main.py"
+    ],
+    "test_files": [
+      "tests/test_tracebacks.py"
+    ],
+    "prompt": "typer 的用户错误（参数写错之类）现在抛出的是原始堆栈，很难看；也没有区分\"用户错误\"和\"程序内部错误\"。\n\n请给用户错误加上友好的回溯（保留程序内部错误原样抛出），补测试。"
+  },
+  {
+    "index": 319,
+    "suggested_id": "T389",
+    "repo": "strawberry-graphql/strawberry",
+    "repo_url": "https://github.com/strawberry-graphql/strawberry",
+    "base_sha": "61f9e3a1baf557dab7ce14f6104f74cdebeafd76",
+    "base_permalink": "https://github.com/strawberry-graphql/strawberry/commit/61f9e3a1baf557dab7ce14f6104f74cdebeafd76",
+    "fix_sha": "dd4c343da5a01ea6178bda46f0432abf7d172f15",
+    "fix_date": "2024-05-25",
+    "subject": "Fix unclear error when missing dependencies (#3511)",
+    "src_files": [
+      "strawberry/cli/__init__.py",
+      "strawberry/exceptions/__init__.py",
+      "strawberry/exceptions/missing_dependencies.py"
+    ],
+    "test_files": [
+      "tests/exceptions/classes/test_exception_class_missing_optional_dependencies_error.py"
+    ],
+    "prompt": "strawberry 缺少可选依赖（比如某些集成需要的包）时，报的是 ImportError 或者含义不明的 AttributeError，用户不知道是缺包。\n\n请补一个明确的 MissingOptionalDependenciesError 并在缺包时抛出，补测试。"
+  },
+  {
+    "index": 320,
+    "suggested_id": "T390",
+    "repo": "tortoise/tortoise-orm",
+    "repo_url": "https://github.com/tortoise/tortoise-orm",
+    "base_sha": "101eb871b7b935f687853262b5a07fe2d71239c8",
+    "base_permalink": "https://github.com/tortoise/tortoise-orm/commit/101eb871b7b935f687853262b5a07fe2d71239c8",
+    "fix_sha": "c7d5be1a5fe76439049b260e232286d3e01bbb9c",
+    "fix_date": "2024-10-13",
+    "subject": "Fix unittest error with pydantic2.9 (#1734)",
+    "src_files": [
+      "poetry.lock",
+      "pyproject.toml",
+      "tortoise/backends/psycopg/client.py",
+      "tortoise/contrib/fastapi/__init__.py",
+      "tortoise/expressions.py",
+      "tortoise/models.py"
+    ],
+    "test_files": [
+      "tests/contrib/test_pydantic.py",
+      "tortoise/contrib/test/__init__.py"
+    ],
+    "prompt": "tortoise-orm 在 pydantic 2.9 下单元测试跑不过：类型标注和实际类型对不上，pydantic 校验直接失败（连测试套件都起不来）。\n\n请修好类型标注与兼容（顺带把 README 的安装说明补清楚），补测试。"
+  },
+  {
+    "index": 321,
+    "suggested_id": "T391",
+    "repo": "tortoise/tortoise-orm",
+    "repo_url": "https://github.com/tortoise/tortoise-orm",
+    "base_sha": "a819a7924f3d03ce763b7c020b5ad4387ecb919e",
+    "base_permalink": "https://github.com/tortoise/tortoise-orm/commit/a819a7924f3d03ce763b7c020b5ad4387ecb919e",
+    "fix_sha": "f6b3eb120583c126fd45a19526d8c8b8dc9510fc",
+    "fix_date": "2023-07-20",
+    "subject": "Fix python3.11 testcase error & Allow ForeignKeyField(on_delete=NO_ACTION) (#1410)",
+    "src_files": [
+      ".github/workflows/ci.yml",
+      "examples/pydantic/basic.py",
+      "examples/relations.py",
+      "examples/relations_with_unique.py",
+      "pyproject.toml",
+      "tests/schema/models_fk_2.py",
+      "tests/schema/models_o2o_2.py",
+      "tests/testmodels.py",
+      "tortoise/fields/__init__.py",
+      "tortoise/fields/base.py",
+      "tortoise/fields/relational.py"
+    ],
+    "test_files": [
+      "tests/schema/test_generate_schema.py",
+      "tests/utils/test_describe_model.py",
+      "tortoise/contrib/test/__init__.py"
+    ],
+    "prompt": "tortoise-orm 有两个问题：Python 3.11 下测试用例失败（生成的 schema SQL 与预期不一致），以及 `ForeignKeyField(on_delete=NO_ACTION)` 不可用。\n\n请修好这两处（schema 生成与 NO_ACTION 支持），补测试。"
+  },
+  {
+    "index": 322,
+    "suggested_id": "T392",
+    "repo": "celery/kombu",
+    "repo_url": "https://github.com/celery/kombu",
+    "base_sha": "68cb9ce011d2a9167b63eb3180c8a5dce0a0783c",
+    "base_permalink": "https://github.com/celery/kombu/commit/68cb9ce011d2a9167b63eb3180c8a5dce0a0783c",
+    "fix_sha": "862d0bc7281eb4cb5a8eee99627177dcb119bb3d",
+    "fix_date": "2023-06-26",
+    "subject": "[fix #1726] Use boto3 for SQS async requests (#1759)",
+    "src_files": [
+      "kombu/asynchronous/aws/sqs/connection.py",
+      "kombu/asynchronous/aws/sqs/queue.py",
+      "kombu/transport/SQS.py"
+    ],
+    "test_files": [
+      "t/unit/asynchronous/aws/sqs/test_connection.py",
+      "t/unit/asynchronous/aws/sqs/test_queue.py",
+      "t/unit/transport/test_SQS.py"
+    ],
+    "prompt": "kombu 的 SQS 异步请求走的是自己手工构造的请求，服务端协议一变就挂（之前出过一次事故）；而且它依赖的 boto3 路径是阻塞的。\n\n请改成用 boto3 发 SQS 异步请求（协议由 boto3 保证），补测试覆盖队列创建/发送/接收。"
+  },
+  {
+    "index": 323,
+    "suggested_id": "T393",
+    "repo": "django/django",
+    "repo_url": "https://github.com/django/django",
+    "base_sha": "12d574407c466c7929e455cfcfef4c0ff564e465",
+    "base_permalink": "https://github.com/django/django/commit/12d574407c466c7929e455cfcfef4c0ff564e465",
+    "fix_sha": "4702b36120ea4c736d3f6b5595496f96e0021e46",
+    "fix_date": "2025-11-07",
+    "subject": "Fixed #27380 -- Added \"raw\" argument to m2m_changed signals.",
+    "src_files": [
+      "django/core/serializers/base.py",
+      "django/db/models/fields/related_descriptors.py",
+      "tests/m2m_signals/tests.py"
+    ],
+    "test_files": [
+      "tests/serializers/test_data.py"
+    ],
+    "prompt": "django 的 `m2m_changed` 信号没有告诉接收者这次改动是不是\"原始\"批量操作（比如在 fixture 加载或原始保存里），接收者没法区分要不要做副作用。\n\n请给信号加上 `raw` 参数（默认值保持兼容），补测试。"
+  },
+  {
+    "index": 324,
+    "suggested_id": "T394",
+    "repo": "django/django",
+    "repo_url": "https://github.com/django/django",
+    "base_sha": "4cad317ff1f9a79d54c1d5b12f1ccbd260ca009f",
+    "base_permalink": "https://github.com/django/django/commit/4cad317ff1f9a79d54c1d5b12f1ccbd260ca009f",
+    "fix_sha": "50f89ae850f6b4e35819fe725a08c7e579bfd099",
+    "fix_date": "2024-03-31",
+    "subject": "Fixed #35303 -- Implemented async auth backends and utils.",
+    "src_files": [
+      "django/contrib/auth/__init__.py",
+      "django/contrib/auth/backends.py",
+      "django/contrib/auth/base_user.py",
+      "django/contrib/auth/decorators.py",
+      "django/contrib/auth/middleware.py",
+      "django/contrib/auth/models.py",
+      "tests/auth_tests/models/custom_user.py"
+    ],
+    "test_files": [
+      "tests/async/test_async_auth.py",
+      "tests/auth_tests/test_auth_backends.py",
+      "tests/auth_tests/test_basic.py",
+      "tests/auth_tests/test_decorators.py",
+      "tests/auth_tests/test_models.py",
+      "tests/auth_tests/test_remote_user.py",
+      "tests/deprecation/test_middleware_mixin.py"
+    ],
+    "prompt": "django 的认证后端与工具函数只有同步版本：在 async 视图里调用要么得用 sync_to_async 包，要么直接报错，而 ORM 那边已经有 async 接口了。\n\n请补上 async 版本（`aauthenticate`、`alogin`、`alogout`、`aget_user` 等）并与同步版本行为一致，补测试。"
+  },
+  {
+    "index": 325,
+    "suggested_id": "T395",
+    "repo": "django/django",
+    "repo_url": "https://github.com/django/django",
+    "base_sha": "33c06ca0da6c4f151b84e5d8c305faff9ca30d98",
+    "base_permalink": "https://github.com/django/django/commit/33c06ca0da6c4f151b84e5d8c305faff9ca30d98",
+    "fix_sha": "f5c340684be3f27a145ec86ba55b24eb88d2780c",
+    "fix_date": "2023-10-16",
+    "subject": "Fixed #34901 -- Added async-compatible interface to session engines.",
+    "src_files": [
+      "django/contrib/auth/__init__.py",
+      "django/contrib/sessions/backends/base.py",
+      "django/contrib/sessions/backends/cache.py",
+      "django/contrib/sessions/backends/cached_db.py",
+      "django/contrib/sessions/backends/db.py",
+      "django/contrib/sessions/backends/file.py",
+      "django/contrib/sessions/backends/signed_cookies.py",
+      "tests/cache/failing_cache.py",
+      "tests/sessions_tests/tests.py"
+    ],
+    "test_files": [
+      "django/test/client.py"
+    ],
+    "prompt": "django 的 session 引擎只有同步接口，async 视图里用不了（要额外包一层）。\n\n请给 session 引擎补 async 兼容接口（`aget`/`aset`/`acycle_key` 之类），行为与同步一致，补测试。"
+  },
+  {
+    "index": 326,
+    "suggested_id": "T396",
+    "repo": "fsspec/filesystem_spec",
+    "repo_url": "https://github.com/fsspec/filesystem_spec",
+    "base_sha": "a988ce5c956571d9b14eafd193e81300603031b9",
+    "base_permalink": "https://github.com/fsspec/filesystem_spec/commit/a988ce5c956571d9b14eafd193e81300603031b9",
+    "fix_sha": "2fbe8deff1c8d79f3125def9d930d19c213f03f6",
+    "fix_date": "2023-08-17",
+    "subject": "Support cache mapper that is basename plus fixed number of parent directories (#1318)",
+    "src_files": [
+      "fsspec/implementations/cache_mapper.py",
+      "fsspec/implementations/cached.py"
+    ],
+    "test_files": [
+      "fsspec/implementations/tests/test_cached.py"
+    ],
+    "prompt": "fsspec 的缓存文件命名不够用：只能按 basename 或固定层级的父目录拼缓存名，碰撞概率高（不同目录下同名文件会互相覆盖缓存）。\n\n请支持\"basename + 固定数量的父目录\"这种缓存映射，补测试。"
+  },
+  {
+    "index": 327,
+    "suggested_id": "T397",
+    "repo": "tkem/cachetools",
+    "repo_url": "https://github.com/tkem/cachetools",
+    "base_sha": "2ce38a9974b0de1eb7a3f31c5a4fb8ecf589ba4a",
+    "base_permalink": "https://github.com/tkem/cachetools/commit/2ce38a9974b0de1eb7a3f31c5a4fb8ecf589ba4a",
+    "fix_sha": "143e78d528aaae92199257dc1f854b9d6ec74fc4",
+    "fix_date": "2025-02-21",
+    "subject": "Fix #334: Drop MRUCache.",
+    "src_files": [
+      "src/cachetools/__init__.py",
+      "src/cachetools/func.py"
+    ],
+    "test_files": [
+      "tests/test_func.py",
+      "tests/test_mru.py"
+    ],
+    "prompt": "cachetools 里的 MRUCache 语义有问题（最近使用淘汰在并发/连续访问下与文档不符），维护者决定直接移除它，保留其它缓存类型不变。\n\n请把 MRUCache 移除（相关导出、文档、测试一起清理），保证其它接口不受影响，补/改测试。"
+  },
+  {
+    "index": 328,
+    "suggested_id": "T398",
+    "repo": "aiogram/aiogram",
+    "repo_url": "https://github.com/aiogram/aiogram",
+    "base_sha": "7760ab1d0d7fdd367824a33eed50ad7f3bf1671a",
+    "base_permalink": "https://github.com/aiogram/aiogram/commit/7760ab1d0d7fdd367824a33eed50ad7f3bf1671a",
+    "fix_sha": "1df3adaba1889ac95f12b8cce702ff37fc387e14",
+    "fix_date": "2024-06-17",
+    "subject": "Fail redis and mongo tests if incorrect URI provided + some storages tests refactoring (#1510)",
+    "src_files": [
+      "aiogram/filters/command.py",
+      "examples/multibot.py"
+    ],
+    "test_files": [
+      "tests/conftest.py",
+      "tests/test_fsm/storage/test_isolation.py",
+      "tests/test_fsm/storage/test_mongo.py",
+      "tests/test_fsm/storage/test_storages.py"
+    ],
+    "prompt": "aiogram 的存储后端在 URI 写错时会一直等（Mongo 默认 30 秒超时）或者干脆不报错，测试里很难发现配置问题。\n\n请让 Redis/Mongo 存储在 URI 错误时快速失败并给出明确错误（同时缩短 Mongo 的连接超时），补测试。"
   }
 ]
