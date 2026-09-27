@@ -1,0 +1,37 @@
+{
+  "task_id": "T369",
+  "title": "kubernetes-client/python 缺陷修复：Correct generated synchronous resource deletion responses",
+  "created_at": "2026-09-27T17:31:30",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 kubernetes-client/python @ 81fce07b60",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t369/base",
+    "sha": "28474380372322d9baec87aea8edc3548e312c1a",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/28474380372322d9baec87aea8edc3548e312c1a"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t369/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t369/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/kubernetes-client/python base=https://github.com/kubernetes-client/python/commit/81fce07b603360e4788eaf23bcd20e87935c9d1f fix=1c5984c4de04ce34711e437be57ef8e1e27806a3"
+}
