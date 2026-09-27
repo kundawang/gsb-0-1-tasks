@@ -1,0 +1,37 @@
+{
+  "task_id": "T395",
+  "title": "django/django 缺陷修复：Fixed #34901 -- Added async-compatible interface to session ",
+  "created_at": "2026-09-27T17:40:55",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 django/django @ 33c06ca0da",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t395/base",
+    "sha": "0c7d11922d084ac899aa6d15258436286abca3a6",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/0c7d11922d084ac899aa6d15258436286abca3a6"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t395/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t395/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/django/django base=https://github.com/django/django/commit/33c06ca0da6c4f151b84e5d8c305faff9ca30d98 fix=f5c340684be3f27a145ec86ba55b24eb88d2780c"
+}
