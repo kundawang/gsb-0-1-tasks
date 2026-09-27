@@ -1,0 +1,37 @@
+{
+  "task_id": "T392",
+  "title": "celery/kombu 缺陷修复：[fix #1726] Use boto3 for SQS async requests (#1759)",
+  "created_at": "2026-09-27T17:37:39",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 celery/kombu @ 68cb9ce011",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t392/base",
+    "sha": "24969d62d7d969a4bfa7fc3b9ea8cb4dcbc302c4",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/24969d62d7d969a4bfa7fc3b9ea8cb4dcbc302c4"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t392/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t392/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/celery/kombu base=https://github.com/celery/kombu/commit/68cb9ce011d2a9167b63eb3180c8a5dce0a0783c fix=862d0bc7281eb4cb5a8eee99627177dcb119bb3d"
+}
