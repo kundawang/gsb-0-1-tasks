@@ -1,0 +1,37 @@
+{
+  "task_id": "T380",
+  "title": "psycopg/psycopg 缺陷修复：fix: don't hang forever if async connection is closed while ",
+  "created_at": "2026-09-27T17:35:12",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 psycopg/psycopg @ 24774792ab",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t380/base",
+    "sha": "7c6c76f4aa09e54225f764b17665b7430836281a",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/7c6c76f4aa09e54225f764b17665b7430836281a"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t380/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t380/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/psycopg/psycopg base=https://github.com/psycopg/psycopg/commit/24774792abf1d89b037926815daf2da5ceac93bd fix=15280ed243d68bb297617767aef9708158a94ce4"
+}
