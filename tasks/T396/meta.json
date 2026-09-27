@@ -1,0 +1,37 @@
+{
+  "task_id": "T396",
+  "title": "fsspec/filesystem_spec 缺陷修复：Support cache mapper that is basename plus fixed number of p",
+  "created_at": "2026-09-27T17:41:42",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 fsspec/filesystem_spec @ a988ce5c95",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t396/base",
+    "sha": "6dc33fddf7ee8a275f2b7e9c90c6da65f894a7df",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/6dc33fddf7ee8a275f2b7e9c90c6da65f894a7df"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t396/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t396/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/fsspec/filesystem_spec base=https://github.com/fsspec/filesystem_spec/commit/a988ce5c956571d9b14eafd193e81300603031b9 fix=2fbe8deff1c8d79f3125def9d930d19c213f03f6"
+}
