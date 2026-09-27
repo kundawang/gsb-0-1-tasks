@@ -1,0 +1,37 @@
+{
+  "task_id": "T394",
+  "title": "django/django 缺陷修复：Fixed #35303 -- Implemented async auth backends and utils.",
+  "created_at": "2026-09-27T17:39:39",
+  "task_type": "缺陷修复",
+  "difficulty": "困难",
+  "language_framework": "Python",
+  "harness": "Codex CLI",
+  "harness_version": "",
+  "os": "Windows",
+  "env_level": "上游仓库 django/django @ 4cad317ff1",
+  "prompt_file": "prompt.md",
+  "initial_snapshot": {
+    "branch": "t394/base",
+    "sha": "21ea2e04e53a5407db6142b92e7d54b130434c90",
+    "permalink": "https://github.com/kundawang/gsb-0-1-tasks/commit/21ea2e04e53a5407db6142b92e7d54b130434c90"
+  },
+  "runs": {
+    "A": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t394/a",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    },
+    "B": {
+      "session_id": "",
+      "trajectory_local": "",
+      "trajectory_url": "",
+      "branch": "t394/b",
+      "product_snapshot_sha": "",
+      "product_snapshot_permalink": ""
+    }
+  },
+  "notes": "upstream: https://github.com/django/django base=https://github.com/django/django/commit/4cad317ff1f9a79d54c1d5b12f1ccbd260ca009f fix=50f89ae850f6b4e35819fe725a08c7e579bfd099"
+}
